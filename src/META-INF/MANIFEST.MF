@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Built-By: Emmanuel Bourg <ebourg@apache.org>
-Created-By: Apache Maven 3.5.0
-Build-Jdk: 1.8.0_121
+Ant-Version: Apache Ant 1.9.6
+Created-By: 1.8.0_171-8u171-b11-0ubuntu0.16.04.1-b11 (Oracle Corporati
+ on)
 
