@@ -15,6 +15,7 @@
         <maven_jacoco_version>0.8.2</maven_jacoco_version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <skip_maven_deploy>false</skip_maven_deploy>
+        <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
     </properties>
 
     <dependencies>
@@ -39,11 +40,21 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <version>4.0.1</version>
+            <version>${javax.servlet-api.version}</version>
         </dependency>
     </dependencies>
 
     <build>
+        <sourceDirectory>src</sourceDirectory>
+        <resources>
+            <resource>
+                <filtering>true</filtering>
+                <directory>src</directory>
+                <includes>
+                    <include>*.*</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -51,8 +62,8 @@
                 <version>3.7.0</version>
                 <configuration>
                     <compilerArgument>-proc:none</compilerArgument>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
