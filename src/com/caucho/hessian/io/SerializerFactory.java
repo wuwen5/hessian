@@ -326,9 +326,8 @@ public class SerializerFactory extends AbstractSerializerFactory
       return _collectionSerializer;
     }
 
-    else if (cl.isArray()) {
+    else if (cl.isArray())
       return new ArraySerializer();
-    }
 
     else if (Throwable.class.isAssignableFrom(cl))
       return new ThrowableSerializer(cl, getClassLoader());
@@ -440,11 +439,6 @@ public class SerializerFactory extends AbstractSerializerFactory
     else
       factory = ContextSerializerFactory.create(_systemClassLoader);
 
-    deserializer = factory.getDeserializer(cl.getName());
-    
-    if (deserializer != null)
-      return deserializer;
-    
     deserializer = factory.getCustomDeserializer(cl);
 
     if (deserializer != null)
@@ -479,7 +473,7 @@ public class SerializerFactory extends AbstractSerializerFactory
 
     else
       deserializer = getDefaultDeserializer(cl);
-    
+
     return deserializer;
   }
 
