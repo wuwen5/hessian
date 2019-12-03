@@ -49,32 +49,21 @@
 package com.caucho.hessian.io;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 /**
- * Serializing an object for known object types.
+ * Serializing an object. 
  */
-public class ThrowableSerializer extends AbstractSerializerWrapper {
-  private final Serializer _ser;
+abstract public class AbstractSerializerWrapper implements Serializer {
+  protected static final Logger log
+    = Logger.getLogger(AbstractSerializerWrapper.class.getName());
   
-  public ThrowableSerializer(Serializer ser)
-  {
-    _ser = ser;
-  }
-  
-  @Override
-  protected Serializer getDelegate()
-  {
-    return _ser;
-  }
+  abstract protected Serializer getDelegate();
   
   @Override
   public void writeObject(Object obj, AbstractHessianOutput out)
     throws IOException
   {
-    Throwable e = (Throwable) obj;
-
-    e.getStackTrace();
-
-    _ser.writeObject(obj, out);
+    getDelegate().writeObject(obj, out);
   }
 }

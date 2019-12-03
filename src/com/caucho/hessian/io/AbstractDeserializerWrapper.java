@@ -51,30 +51,93 @@ package com.caucho.hessian.io;
 import java.io.IOException;
 
 /**
- * Serializing an object for known object types.
+ * Deserializing an object. 
  */
-public class ThrowableSerializer extends AbstractSerializerWrapper {
-  private final Serializer _ser;
-  
-  public ThrowableSerializer(Serializer ser)
-  {
-    _ser = ser;
-  }
+abstract public class AbstractDeserializerWrapper implements Deserializer {
+  abstract protected Deserializer getDelegate();
   
   @Override
-  protected Serializer getDelegate()
+  public Class<?> getType()
   {
-    return _ser;
+    return getDelegate().getType();
   }
-  
+
   @Override
-  public void writeObject(Object obj, AbstractHessianOutput out)
+  public boolean isReadResolve()
+  {
+    return getDelegate().isReadResolve();
+  }
+
+  @Override
+  public Object readObject(AbstractHessianInput in)
     throws IOException
   {
-    Throwable e = (Throwable) obj;
+    return getDelegate().readObject(in);
+  }
 
-    e.getStackTrace();
+  @Override
+  public Object readList(AbstractHessianInput in, int length)
+    throws IOException
+  {
+    return getDelegate().readList(in, length);
+  }
+  
+  @Override
+  public Object readLengthList(AbstractHessianInput in, int length)
+    throws IOException
+  {
+    return getDelegate().readLengthList(in, length);
+  }
 
-    _ser.writeObject(obj, out);
+  @Override
+  public Object readMap(AbstractHessianInput in)
+    throws IOException
+  {
+    return getDelegate().readMap(in);
+  }
+  
+  /**
+   * Creates the field array for a class. The default
+   * implementation returns a String[] array.
+   *
+   * @param len number of items in the array
+   * @return the new empty array
+   */
+  @Override
+  public Object []createFields(int len)
+  {
+    return getDelegate().createFields(len);
+  }
+  
+  /**
+   * Creates a field value class. The default
+   * implementation returns the String.
+   *
+   * @param len number of items in the array
+   * @return the new empty array
+   */
+  @Override
+  public Object createField(String name)
+  {
+    return getDelegate().createField(name);
+  }
+  
+  @Override
+  public Object readObject(AbstractHessianInput in,
+                           String []fieldNames)
+    throws IOException
+  {
+    return getDelegate().readObject(in, fieldNames);
+  }
+  
+  /**
+   * Reads an object instance from the input stream
+   */
+  @Override
+  public Object readObject(AbstractHessianInput in, 
+                           Object []fields)
+    throws IOException
+  {
+    return getDelegate().readObject(in, fields);
   }
 }
