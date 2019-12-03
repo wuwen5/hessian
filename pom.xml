@@ -5,7 +5,7 @@
     <groupId>com.caucho</groupId>
     <artifactId>hessian</artifactId>
     <packaging>jar</packaging>
-    <version>4.0.60</version>
+    <version>4.0.61</version>
     <description>Hessian is a compact binary protocol for connecting web services.</description>
     <url>http://hessian.caucho.com</url>
     <developers>
