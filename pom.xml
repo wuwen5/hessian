@@ -5,8 +5,26 @@
     <groupId>com.caucho</groupId>
     <artifactId>hessian</artifactId>
     <packaging>jar</packaging>
-    <version>3.2.5-SNAPSHOT</version>
-    <name>Hessian from hessian-source.jar</name>
+    <version>4.0.59</version>
+    <description>Hessian is a compact binary protocol for connecting web services.</description>
+    <url>http://hessian.caucho.com</url>
+    <developers>
+        <developer>
+            <id>ferg</id>
+            <name>Scott Ferguson</name>
+            <email>ferg@caucho.com</email>
+        </developer>
+    </developers>
+
+    <organization>
+        <name>Caucho Technology, Inc</name>
+        <url>http://caucho.com</url>
+    </organization>
+
+    <scm>
+        <url>svn://svn.caucho.com/home/svn/svnroot/resin/trunk/modules/hessian</url>
+        <connection>scm:svn:svn://svn.caucho.com/home/svn/svnroot/resin/trunk/modules/hessian</connection>
+    </scm>
 
     <properties>
         <junit_version>4.12</junit_version>
