@@ -27,7 +27,7 @@ jobs:
       - name: Build with Maven
         run: ./mvnw -B clean package --file pom.xml
       - name: Upload coverage to Codecov
-        if: matrix.os == 'ubuntu-latest' && matrix.jdk == '11'
+        if: matrix.os == 'ubuntu-latest' && matrix.java == '11'
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
