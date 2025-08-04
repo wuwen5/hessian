@@ -31,4 +31,6 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./hessian2-codec/target/site/jacoco/jacoco.xml
+          flags: hessian2-codec
 
