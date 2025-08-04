@@ -52,219 +52,177 @@ import java.util.logging.*;
 import java.io.*;
 
 import io.github.wuwen5.hessian.util.HessianFreeList;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
  * Factory for creating HessianInput and HessianOutput streams.
  */
-public class HessianFactory
-{
-  public static final Logger log
-    = Logger.getLogger(HessianFactory.class.getName());
+@Slf4j
+public class HessianFactory {
 
-  private SerializerFactory _serializerFactory;
-  private SerializerFactory _defaultSerializerFactory;
+    @Setter
+    private SerializerFactory serializerFactory;
+    private final SerializerFactory defaultSerializerFactory;
 
-  private final HessianFreeList<Hessian2Output> _freeHessian2Output
-    = new HessianFreeList<Hessian2Output>(32);
+    private final HessianFreeList<Hessian2Output> freeHessian2Output
+            = new HessianFreeList<>(32);
 
-  private final HessianFreeList<HessianOutput> _freeHessianOutput
-    = new HessianFreeList<HessianOutput>(32);
+    private final HessianFreeList<Hessian2Input> freeHessian2Input
+            = new HessianFreeList<>(32);
 
-  private final HessianFreeList<Hessian2Input> _freeHessian2Input
-    = new HessianFreeList<Hessian2Input>(32);
-
-  private final HessianFreeList<HessianInput> _freeHessianInput
-    = new HessianFreeList<HessianInput>(32);
-
-  public HessianFactory()
-  {
-    _defaultSerializerFactory = SerializerFactory.createDefault();
-    _serializerFactory = _defaultSerializerFactory;
-  }
-
-  public void setSerializerFactory(SerializerFactory factory)
-  {
-    _serializerFactory = factory;
-  }
-
-  public SerializerFactory getSerializerFactory()
-  {
-    // the default serializer factory cannot be modified by external
-    // callers
-    if (_serializerFactory == _defaultSerializerFactory) {
-      _serializerFactory = new SerializerFactory();
+    public HessianFactory() {
+        defaultSerializerFactory = SerializerFactory.createDefault();
+        serializerFactory = defaultSerializerFactory;
     }
 
-    return _serializerFactory;
-  }
+    public SerializerFactory getSerializerFactory() {
+        // the default serializer factory cannot be modified by external
+        // callers
+        if (serializerFactory == defaultSerializerFactory) {
+            serializerFactory = new SerializerFactory();
+        }
 
-  /**
-   * Enable whitelist deserialization mode. Only classes matching the whitelist
-   * will be allowed.
-   */
-  public void setWhitelist(boolean isWhitelist)
-  {
-    getSerializerFactory().getClassFactory().setWhitelist(isWhitelist);
-  }
-
-  /**
-   * Allow a class or package based on a pattern.
-   *
-   * Examples: "java.util.*", "com.foo.io.Bean"
-   */
-  public void allow(String pattern)
-  {
-    getSerializerFactory().getClassFactory().allow(pattern);
-  }
-
-
-  /**
-   * Deny a class or package based on a pattern.
-   *
-   * Examples: "java.util.*", "com.foo.io.Bean"
-   */
-  public void deny(String pattern)
-  {
-    getSerializerFactory().getClassFactory().deny(pattern);
-  }
-
-  /**
-   * Creates a new Hessian 2.0 deserializer.
-   */
-  public Hessian2Input createHessian2Input(InputStream is)
-  {
-    Hessian2Input in = _freeHessian2Input.allocate();
-
-    if (in == null) {
-      in = new Hessian2Input(is);
-      in.setSerializerFactory(getSerializerFactory());
-    }
-    else {
-      in.init(is);
+        return serializerFactory;
     }
 
-    return in;
-  }
-
-  /**
-   * Frees a Hessian 2.0 deserializer
-   */
-  public void freeHessian2Input(Hessian2Input in)
-  {
-    if (in == null)
-      return;
-
-    in.free();
-
-    _freeHessian2Input.free(in);
-  }
-
-  /**
-   * Creates a new Hessian 2.0 deserializer.
-   */
-  public Hessian2StreamingInput createHessian2StreamingInput(InputStream is)
-  {
-    Hessian2StreamingInput in = new Hessian2StreamingInput(is);
-    in.setSerializerFactory(getSerializerFactory());
-
-    return in;
-  }
-
-  /**
-   * Frees a Hessian 2.0 deserializer
-   */
-  public void freeHessian2StreamingInput(Hessian2StreamingInput in)
-  {
-  }
-
-  /**
-   * Creates a new Hessian 1.0 deserializer.
-   */
-  public HessianInput createHessianInput(InputStream is)
-  {
-    return new HessianInput(is);
-  }
-
-  /**
-   * Creates a new Hessian 2.0 serializer.
-   */
-  public Hessian2Output createHessian2Output(OutputStream os)
-  {
-    Hessian2Output out = createHessian2Output();
-
-    out.init(os);
-
-    return out;
-  }
-
-  /**
-   * Creates a new Hessian 2.0 serializer.
-   */
-  public Hessian2Output createHessian2Output()
-  {
-    Hessian2Output out = _freeHessian2Output.allocate();
-
-    if (out == null) {
-      out = new Hessian2Output();
-
-      out.setSerializerFactory(getSerializerFactory());
+    /**
+     * Enable whitelist deserialization mode. Only classes matching the whitelist
+     * will be allowed.
+     */
+    public void setWhitelist(boolean isWhitelist) {
+        getSerializerFactory().getClassFactory().setWhitelist(isWhitelist);
     }
 
-    return out;
-  }
+    /**
+     * Allow a class or package based on a pattern.
+     * <p>
+     * Examples: "java.util.*", "com.foo.io.Bean"
+     */
+    public void allow(String pattern) {
+        getSerializerFactory().getClassFactory().allow(pattern);
+    }
 
-  /**
-   * Frees a Hessian 2.0 serializer
-   */
-  public void freeHessian2Output(Hessian2Output out)
-  {
-    if (out == null)
-      return;
 
-    out.free();
+    /**
+     * Deny a class or package based on a pattern.
+     * <p>
+     * Examples: "java.util.*", "com.foo.io.Bean"
+     */
+    public void deny(String pattern) {
+        getSerializerFactory().getClassFactory().deny(pattern);
+    }
 
-    _freeHessian2Output.free(out);
-  }
+    /**
+     * Creates a new Hessian 2.0 deserializer.
+     */
+    public Hessian2Input createHessian2Input(InputStream is) {
+        Hessian2Input in = freeHessian2Input.allocate();
 
-  /**
-   * Creates a new Hessian 2.0 serializer.
-   */
-  public Hessian2StreamingOutput createHessian2StreamingOutput(OutputStream os)
-  {
-    Hessian2Output out = createHessian2Output(os);
+        if (in == null) {
+            in = new Hessian2Input(is);
+            in.setSerializerFactory(getSerializerFactory());
+        } else {
+            in.init(is);
+        }
 
-    return new Hessian2StreamingOutput(out);
-  }
+        return in;
+    }
 
-  /**
-   * Frees a Hessian 2.0 serializer
-   */
-  public void freeHessian2StreamingOutput(Hessian2StreamingOutput out)
-  {
-    if (out == null)
-      return;
+    /**
+     * Frees a Hessian 2.0 deserializer
+     */
+    public void freeHessian2Input(Hessian2Input in) {
+        if (in == null)
+            return;
 
-    freeHessian2Output(out.getHessian2Output());
-  }
+        in.free();
 
-  /**
-   * Creates a new Hessian 1.0 serializer.
-   */
-  public HessianOutput createHessianOutput(OutputStream os)
-  {
-    return new HessianOutput(os);
-  }
+        freeHessian2Input.free(in);
+    }
 
-  public OutputStream createHessian2DebugOutput(OutputStream os,
-                                                Logger log,
-                                                Level level)
-  {
-    HessianDebugOutputStream out
-      = new HessianDebugOutputStream(os, log, level);
+    /**
+     * Creates a new Hessian 2.0 deserializer.
+     */
+    public Hessian2StreamingInput createHessian2StreamingInput(InputStream is) {
+        Hessian2StreamingInput in = new Hessian2StreamingInput(is);
+        in.setSerializerFactory(getSerializerFactory());
 
-    out.startTop2();
+        return in;
+    }
 
-    return out;
-  }
+    /**
+     * Frees a Hessian 2.0 deserializer
+     */
+    public void freeHessian2StreamingInput(Hessian2StreamingInput in) {
+    }
+
+    /**
+     * Creates a new Hessian 2.0 serializer.
+     */
+    public Hessian2Output createHessian2Output(OutputStream os) {
+        Hessian2Output out = createHessian2Output();
+
+        out.init(os);
+
+        return out;
+    }
+
+    /**
+     * Creates a new Hessian 2.0 serializer.
+     */
+    public Hessian2Output createHessian2Output() {
+        Hessian2Output out = freeHessian2Output.allocate();
+
+        if (out == null) {
+            out = new Hessian2Output();
+
+            out.setSerializerFactory(getSerializerFactory());
+        }
+
+        return out;
+    }
+
+    /**
+     * Frees a Hessian 2.0 serializer
+     */
+    public void freeHessian2Output(Hessian2Output out) {
+        if (out == null)
+            return;
+
+        out.free();
+
+        freeHessian2Output.free(out);
+    }
+
+    /**
+     * Creates a new Hessian 2.0 serializer.
+     */
+    public Hessian2StreamingOutput createHessian2StreamingOutput(OutputStream os) {
+        Hessian2Output out = createHessian2Output(os);
+
+        return new Hessian2StreamingOutput(out);
+    }
+
+    /**
+     * Frees a Hessian 2.0 serializer
+     */
+    public void freeHessian2StreamingOutput(Hessian2StreamingOutput out) {
+        if (out == null)
+            return;
+
+        freeHessian2Output(out.getHessian2Output());
+    }
+
+    public OutputStream createHessian2DebugOutput(OutputStream os,
+                                                  Logger log,
+                                                  Level level) {
+        HessianDebugOutputStream out
+                = new HessianDebugOutputStream(os, log, level);
+
+        out.startTop2();
+
+        return out;
+    }
 }

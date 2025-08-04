@@ -48,73 +48,57 @@
 
 package com.caucho.hessian.client;
 
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.HttpURLConnection;
-
-import java.io.IOException;
-
-import java.util.logging.Logger;
 import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 /**
  * Internal factory for creating connections to the server.  The default
  * factory is java.net
  */
 public class HessianURLConnectionFactory implements HessianConnectionFactory {
-  private static final Logger log
-    = Logger.getLogger(HessianURLConnectionFactory.class.getName());
-  
-  private HessianProxyFactory _proxyFactory;
+    private static final Logger log
+            = Logger.getLogger(HessianURLConnectionFactory.class.getName());
 
-  public void setHessianProxyFactory(HessianProxyFactory factory)
-  {
-    _proxyFactory = factory;
-  }
-  
-  /**
-   * Opens a new or recycled connection to the HTTP server.
-   */
-  public HessianConnection open(URL url)
-    throws IOException
-  {
-    if (log.isLoggable(Level.FINER))
-      log.finer(this + " open(" + url + ")");
+    private HessianProxyFactory proxyFactory;
 
-    URLConnection conn = url.openConnection();
-
-    // HttpURLConnection httpConn = (HttpURLConnection) conn;
-    // httpConn.setRequestMethod("POST");
-    // conn.setDoInput(true);
-
-    long connectTimeout = _proxyFactory.getConnectTimeout();
-
-    if (connectTimeout >= 0)
-      conn.setConnectTimeout((int) connectTimeout);
-
-    conn.setDoOutput(true);
-
-    long readTimeout = _proxyFactory.getReadTimeout();
-
-    if (readTimeout > 0) {
-      try {
-        conn.setReadTimeout((int) readTimeout);
-      } catch (Throwable e) {
-      }
+    @Override
+    public void setHessianProxyFactory(HessianProxyFactory factory) {
+        proxyFactory = factory;
     }
 
-    /*
-    // Used chunked mode when available, i.e. JDK 1.5.
-    if (_proxyFactory.isChunkedPost() && conn instanceof HttpURLConnection) {
-      try {
-        HttpURLConnection httpConn = (HttpURLConnection) conn;
+    /**
+     * Opens a new or recycled connection to the HTTP server.
+     */
+    @Override
+    public HessianConnection open(URL url)
+            throws IOException {
+        if (log.isLoggable(Level.FINER)) {
+            log.finer(this + " open(" + url + ")");
+        }
 
-        httpConn.setChunkedStreamingMode(8 * 1024);
-      } catch (Throwable e) {
-      }
+        URLConnection conn = url.openConnection();
+
+        long connectTimeout = proxyFactory.getConnectTimeout();
+
+        if (connectTimeout >= 0) {
+            conn.setConnectTimeout((int) connectTimeout);
+        }
+
+        conn.setDoOutput(true);
+
+        long readTimeout = proxyFactory.getReadTimeout();
+
+        if (readTimeout > 0) {
+            try {
+                conn.setReadTimeout((int) readTimeout);
+            } catch (Throwable ignored) {
+            }
+        }
+
+        return new HessianURLConnection(url, conn);
     }
-    */
-    
-    return new HessianURLConnection(url, conn);
-  }
 }
