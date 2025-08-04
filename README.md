@@ -16,10 +16,33 @@ This project is a refactored and modularized version of the original [Hessian](h
 
 While the **Hessian RPC framework** is considered outdated today, its **binary serialization protocol** remains valuable due to the following key advantages:
 
-* **High Performance**: Fast (de)serialization
-* **Compact Size**: Efficient binary encoding
-* **Cross-language Compatibility**: Useful in polyglot systems
-* **Ease of use**: simple to use, no predefined data structure required
+* ⚡ **High Performance**: Fast (de)serialization
+* 📦 **Compact Size**: Efficient binary encoding
+* 🌐 **Cross-language Compatibility**: Useful in polyglot systems
+* 🛠️ **Ease of use**: simple to use, no predefined data structure required
+
+### ✅ Object Reference Reuse: Hessian2’s Unique Strength
+
+Hessian2 **supports shared references and cyclic object graphs** out-of-the-box. It detects duplicated object instances and reuses them during serialization, and can correctly handle circular references without stack overflow or infinite loops.
+
+In contrast:
+
+| Format       | Shared References | Cyclic References | Notes                                                                  |
+| ------------ | ----------------- | ----------------- | ---------------------------------------------------------------------- |
+| **Hessian2** | ✅ Yes             | ✅ Yes             | Native support, no special handling                                    |
+| **JSON**     | ❌ No              | ❌ No              | Value copy only; circular references cause errors                      |
+| **Protobuf** | ❌ No              | ❌ No              | Tree-based, cannot represent object graphs with cycles or shared state |
+
+### 🌍 When Hessian2 Still Shines
+
+These features make Hessian2 ideal for scenarios such as:
+
+* Java object persistence or caching with shared/circular references
+* Deep cloning or snapshotting of runtime state
+* Java-to-Java microservice communication with contextual state
+* RPC frameworks that demand full fidelity object reconstruction
+
+Even in modern systems, **Hessian2 remains irreplaceable** in certain specialized fields due to its fidelity, compactness, and ease of integration.
 
 ### Overview of Hessian2 Protocol
 
@@ -29,22 +52,16 @@ Hessian2 is an enhanced version of the original Hessian protocol, with the follo
 * **Object reference support** to prevent redundant serialization
 * **Class definition caching** to reduce payload size
 * Designed for **high-efficiency data transmission**
-* Not compatible with Hessian1 protocol (this project drops Hessian1 support)
 
 📄 **Protocol Documentation**: [Hessian2 Protocol Specification (English)](./docs/hessian-serialization.md)
 
-### Key Features
+### What’s Special About This Project
 
 * Strip the RPC-related code from the original Hessian project
 * Modularized architecture for better extensibility and maintenance
 * Supports **Hessian 2 protocol only**
 * Ideal for use as a standalone, high-efficiency serialization library
-
-### Use Cases
-
-* Pluggable serialization layer in custom RPC or messaging systems
-* Compact data transfer in bandwidth-constrained environments
-* Lightweight and efficient data encoding for IoT, mobile, or embedded systems
+* Supports Java 11 and above versions
 
 Community contributions are welcome. We are committed to keeping a clean, modular, and efficient implementation of the Hessian serialization protocol in Java.
 
