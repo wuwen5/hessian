@@ -48,126 +48,72 @@
 
 package io.github.wuwen5.hessian.io;
 
-import java.util.logging.*;
-import java.io.*;
 
-public class HessianInputFactory
-{
-  public static final Logger log
-    = Logger.getLogger(HessianInputFactory.class.getName());
+import lombok.extern.slf4j.Slf4j;
 
-  private HessianFactory _factory = new HessianFactory();
+import java.io.IOException;
+import java.io.InputStream;
 
-  public void setSerializerFactory(SerializerFactory factory)
-  {
-    _factory.setSerializerFactory(factory);
-  }
 
-  public SerializerFactory getSerializerFactory()
-  {
-    return _factory.getSerializerFactory();
-  }
+@Slf4j
+public class HessianInputFactory {
 
-  public HeaderType readHeader(InputStream is)
-    throws IOException
-  {
-    int code = is.read();
+    private final HessianFactory factory = new HessianFactory();
 
-    int major = is.read();
-    int minor = is.read();
-
-    switch (code) {
-    case -1:
-      throw new IOException("Unexpected end of file for Hessian message");
-
-    case 'c':
-      if (major >= 2)
-        return HeaderType.CALL_1_REPLY_2;
-      else
-        return HeaderType.CALL_1_REPLY_1;
-    case 'r':
-      return HeaderType.REPLY_1;
-
-    case 'H':
-      return HeaderType.HESSIAN_2;
-
-    default:
-      throw new IOException((char) code + " 0x" + Integer.toHexString(code) + " is an unknown Hessian message code.");
-    }
-  }
-
-  public AbstractHessianInput open(InputStream is)
-    throws IOException
-  {
-    int code = is.read();
-
-    int major = is.read();
-    int minor = is.read();
-
-    switch (code) {
-    case 'c':
-    case 'C':
-    case 'r':
-    case 'R':
-      if (major >= 2) {
-        return _factory.createHessian2Input(is);
-      }
-      else {
-        return _factory.createHessianInput(is);
-      }
-
-    default:
-      throw new IOException((char) code + " is an unknown Hessian message code.");
-    }
-  }
-
-  public enum HeaderType {
-    CALL_1_REPLY_1,
-      CALL_1_REPLY_2,
-      HESSIAN_2,
-      REPLY_1,
-      REPLY_2;
-
-    public boolean isCall1()
-    {
-      switch (this) {
-      case CALL_1_REPLY_1:
-      case CALL_1_REPLY_2:
-        return true;
-      default:
-        return false;
-      }
+    public void setSerializerFactory(SerializerFactory factory) {
+        this.factory.setSerializerFactory(factory);
     }
 
-    public boolean isCall2()
-    {
-      switch (this) {
-      case HESSIAN_2:
-        return true;
-      default:
-        return false;
-      }
+    public SerializerFactory getSerializerFactory() {
+        return factory.getSerializerFactory();
     }
 
-    public boolean isReply1()
-    {
-      switch (this) {
-      case CALL_1_REPLY_1:
-        return true;
-      default:
-        return false;
-      }
+    public HeaderType readHeader(InputStream is)
+            throws IOException {
+        int code = is.read();
+
+        int major = is.read();
+        int minor = is.read();
+
+        log.debug("Hessian header: code={}, major={}, minor={}", (char) code, major, minor);
+
+        switch (code) {
+            case -1:
+                throw new IOException("Unexpected end of file for Hessian message");
+            case 'H':
+                return HeaderType.HESSIAN_2;
+            default:
+                throw new IOException((char) code + " 0x" + Integer.toHexString(code) + " is an unknown Hessian2 message code.");
+        }
     }
 
-    public boolean isReply2()
-    {
-      switch (this) {
-      case CALL_1_REPLY_2:
-      case HESSIAN_2:
-        return true;
-      default:
-        return false;
-      }
+    public AbstractHessianInput open(InputStream is)
+            throws IOException {
+        int code = is.read();
+
+        int major = is.read();
+        int minor = is.read();
+        log.debug("Hessian header: code={}, major={}, minor={}", (char) code, major, minor);
+
+        switch (code) {
+            case 'c':
+            case 'C':
+            case 'r':
+            case 'R':
+                if (major >= 2) {
+                    return factory.createHessian2Input(is);
+                } else {
+                    throw new IOException("major version " + major
+                            + " is not supported for Hessian 2.0 messages");
+                }
+
+            default:
+                throw new IOException((char) code + " is an unknown Hessian message code.");
+        }
     }
-  }
+
+    public enum HeaderType {
+        HESSIAN_2,
+        REPLY_2;
+    }
 }
