@@ -35,7 +35,7 @@
         <skip_maven_deploy>false</skip_maven_deploy>
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
         <jetty-server>10.0.25</jetty-server>
-        <vavr.version>0.10.6</vavr.version>
+        <vavr.version>0.10.7</vavr.version>
     </properties>
 
     <url>https://github.com/wuwen5/hessian</url>
