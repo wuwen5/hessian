@@ -56,61 +56,51 @@ import java.io.OutputStream;
  * Internal connection to a server.  The default connection is based on
  * java.net
  */
-abstract public class AbstractHessianConnection implements HessianConnection {
-  /**
-   * Adds HTTP headers.
-   */
-  public void addHeader(String key, String value)
-  {
-  }
-  
-  /**
-   * Returns the output stream for the request.
-   */
-  abstract public OutputStream getOutputStream()
-    throws IOException;
+public abstract class AbstractHessianConnection implements HessianConnection {
+    /**
+     * Adds HTTP headers.
+     */
+    public void addHeader(String key, String value) {}
 
-  /**
-   * Sends the query
-   */
-  abstract public void sendRequest()
-    throws IOException;
+    /**
+     * Returns the output stream for the request.
+     */
+    public abstract OutputStream getOutputStream() throws IOException;
 
-  /**
-   * Returns the status code.
-   */
-  abstract public int getStatusCode();
+    /**
+     * Sends the query
+     */
+    public abstract void sendRequest() throws IOException;
 
-  /**
-   * Returns the status string.
-   */
-  abstract public String getStatusMessage();
+    /**
+     * Returns the status code.
+     */
+    public abstract int getStatusCode();
 
-  /**
-   * Returns the InputStream to the result
-   */
-  abstract public InputStream getInputStream()
-    throws IOException;
+    /**
+     * Returns the status string.
+     */
+    public abstract String getStatusMessage();
 
-  @Override
-  public String getContentEncoding()
-  {
-    return null;
-  }
-  
-  /**
-   * Close/free the connection, using keepalive if appropriate.
-   */
-  public void close()
-    throws IOException
-  {
-    destroy();
-  }
+    /**
+     * Returns the InputStream to the result
+     */
+    public abstract InputStream getInputStream() throws IOException;
 
-  /**
-   * Destroy/disconnect the connection
-   */
-  abstract public void destroy()
-    throws IOException;
+    @Override
+    public String getContentEncoding() {
+        return null;
+    }
+
+    /**
+     * Close/free the connection, using keepalive if appropriate.
+     */
+    public void close() throws IOException {
+        destroy();
+    }
+
+    /**
+     * Destroy/disconnect the connection
+     */
+    public abstract void destroy() throws IOException;
 }
-

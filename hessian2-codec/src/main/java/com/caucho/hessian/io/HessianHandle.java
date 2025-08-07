@@ -51,5 +51,4 @@ package com.caucho.hessian.io;
 /**
  * Marks a type as a handle
  */
-public interface HessianHandle extends io.github.wuwen5.hessian.io.HessianHandle {
-}
+public interface HessianHandle extends io.github.wuwen5.hessian.io.HessianHandle {}

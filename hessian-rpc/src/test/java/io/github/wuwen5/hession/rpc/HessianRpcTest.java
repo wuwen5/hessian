@@ -1,18 +1,17 @@
 package io.github.wuwen5.hession.rpc;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import com.caucho.hessian.client.HessianProxyFactory;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author wuwen
@@ -53,10 +52,8 @@ public class HessianRpcTest {
         BasicAPI client = (BasicAPI) factory.create(BasicAPI.class, url);
 
         // tes exception handling for division by zero
-        ArithmeticException exception = assertThrows(ArithmeticException.class,
-                () -> client.divide(10, 0));
+        ArithmeticException exception = assertThrows(ArithmeticException.class, () -> client.divide(10, 0));
 
         assertEquals("Division by zero", exception.getMessage());
     }
-
 }

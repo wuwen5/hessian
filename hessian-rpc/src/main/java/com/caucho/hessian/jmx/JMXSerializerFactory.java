@@ -54,67 +54,56 @@ import io.github.wuwen5.hessian.io.HessianProtocolException;
 import io.github.wuwen5.hessian.io.Serializer;
 import io.github.wuwen5.hessian.io.StringValueDeserializer;
 import io.github.wuwen5.hessian.io.StringValueSerializer;
-
 import javax.management.*;
 
 /**
  * Serializers for JMX classes.
  */
 public class JMXSerializerFactory extends AbstractSerializerFactory {
-  /**
-   * Returns the serializer for a class.
-   *
-   * @param cl the class of the object that needs to be serialized.
-   *
-   * @return a serializer object for the serialization.
-   */
-  public Serializer getSerializer(Class cl)
-    throws HessianProtocolException
-  {
-    if (ObjectName.class.equals(cl)) {
-      return new StringValueSerializer();
+    /**
+     * Returns the serializer for a class.
+     *
+     * @param cl the class of the object that needs to be serialized.
+     *
+     * @return a serializer object for the serialization.
+     */
+    public Serializer getSerializer(Class cl) throws HessianProtocolException {
+        if (ObjectName.class.equals(cl)) {
+            return new StringValueSerializer();
+        }
+
+        return null;
     }
 
-    return null;
-  }
+    /**
+     * Returns the deserializer for a class.
+     *
+     * @param cl the class of the object that needs to be deserialized.
+     *
+     * @return a deserializer object for the serialization.
+     */
+    public Deserializer getDeserializer(Class cl) throws HessianProtocolException {
+        if (ObjectName.class.equals(cl)) {
+            return new StringValueDeserializer(cl);
+        } else if (ObjectInstance.class.equals(cl)) {
+            return new ObjectInstanceDeserializer();
+        } else if (MBeanAttributeInfo.class.isAssignableFrom(cl)) {
+            return new MBeanAttributeInfoDeserializer();
+        } else if (MBeanConstructorInfo.class.isAssignableFrom(cl)) {
+            return new MBeanConstructorInfoDeserializer();
+        } else if (MBeanOperationInfo.class.isAssignableFrom(cl)) {
+            return new MBeanOperationInfoDeserializer();
+        } else if (MBeanParameterInfo.class.isAssignableFrom(cl)) {
+            return new MBeanParameterInfoDeserializer();
+        } else if (MBeanNotificationInfo.class.isAssignableFrom(cl)) {
+            return new MBeanNotificationInfoDeserializer();
+        }
+        /*
+        else if (MBeanInfo.class.equals(cl)) {
+          return new MBeanInfoDeserializer();
+        }
+        */
 
-  /**
-   * Returns the deserializer for a class.
-   *
-   * @param cl the class of the object that needs to be deserialized.
-   *
-   * @return a deserializer object for the serialization.
-   */
-  public Deserializer getDeserializer(Class cl)
-    throws HessianProtocolException
-  {
-    if (ObjectName.class.equals(cl)) {
-      return new StringValueDeserializer(cl);
+        return null;
     }
-    else if (ObjectInstance.class.equals(cl)) {
-      return new ObjectInstanceDeserializer();
-    }
-    else if (MBeanAttributeInfo.class.isAssignableFrom(cl)) {
-      return new MBeanAttributeInfoDeserializer();
-    }
-    else if (MBeanConstructorInfo.class.isAssignableFrom(cl)) {
-      return new MBeanConstructorInfoDeserializer();
-    }
-    else if (MBeanOperationInfo.class.isAssignableFrom(cl)) {
-      return new MBeanOperationInfoDeserializer();
-    }
-    else if (MBeanParameterInfo.class.isAssignableFrom(cl)) {
-      return new MBeanParameterInfoDeserializer();
-    }
-    else if (MBeanNotificationInfo.class.isAssignableFrom(cl)) {
-      return new MBeanNotificationInfoDeserializer();
-    }
-    /*
-    else if (MBeanInfo.class.equals(cl)) {
-      return new MBeanInfoDeserializer();
-    }
-    */
-
-    return null;
-  }
 }

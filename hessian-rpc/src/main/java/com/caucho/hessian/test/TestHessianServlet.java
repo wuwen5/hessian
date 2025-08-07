@@ -14,51 +14,40 @@ import java.util.*;
  * <li>methodHello
  * </ul>
  */
-public class TestHessianServlet
-  extends HessianServlet
-  implements Test
-{
-  private ThreadLocal<CharArrayWriter> _threadWriter
-    = new ThreadLocal<CharArrayWriter>();
-  
-  /**
-   * Does nothing.
-   */
-  public void nullCall()
-  {
-  }
-  
-  /**
-   * Hello, World.
-   */
-  public String hello()
-  {
-    return "Hello, World";
-  }
-  
-  /**
-   * Subtraction
-   */
-  public int subtract(int a, int b)
-  {
-    return a - b;
-  }
-  
-  /**
-   * Echos the object to the server.
-   * <pre>
-   */
-  public Object echo(Object value)
-  {
-    return value;
-  }
-  
-  /**
-   * Throws an application fault.
-   */
-  public void fault()
-    throws IOException
-  {
-    throw new NullPointerException("sample exception");
-  }
+public class TestHessianServlet extends HessianServlet implements Test {
+    private ThreadLocal<CharArrayWriter> _threadWriter = new ThreadLocal<CharArrayWriter>();
+
+    /**
+     * Does nothing.
+     */
+    public void nullCall() {}
+
+    /**
+     * Hello, World.
+     */
+    public String hello() {
+        return "Hello, World";
+    }
+
+    /**
+     * Subtraction
+     */
+    public int subtract(int a, int b) {
+        return a - b;
+    }
+
+    /**
+     * Echos the object to the server.
+     * <pre>
+     */
+    public Object echo(Object value) {
+        return value;
+    }
+
+    /**
+     * Throws an application fault.
+     */
+    public void fault() throws IOException {
+        throw new NullPointerException("sample exception");
+    }
 }

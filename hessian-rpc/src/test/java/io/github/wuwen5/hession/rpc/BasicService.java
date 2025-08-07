@@ -2,14 +2,12 @@ package io.github.wuwen5.hession.rpc;
 
 import com.caucho.hessian.server.HessianServlet;
 
-
 /**
  * @author wuwen
  */
 public class BasicService extends HessianServlet implements BasicAPI {
 
-    public String hello(String name)
-    {
+    public String hello(String name) {
         return "Hello " + name;
     }
 

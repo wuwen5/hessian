@@ -50,7 +50,6 @@ package com.caucho.burlap.io;
 
 import io.github.wuwen5.hessian.io.AbstractHessianInput;
 
-
 /**
  * Abstract base class for Burlap requests.  Burlap users should only
  * need to use the methods in this class.
@@ -66,5 +65,4 @@ import io.github.wuwen5.hessian.io.AbstractHessianInput;
  * in.completeReply();      // read reply footer
  * </pre>
  */
-abstract public class AbstractBurlapInput extends AbstractHessianInput {
-}
+public abstract class AbstractBurlapInput extends AbstractHessianInput {}

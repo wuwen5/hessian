@@ -54,14 +54,12 @@ import java.net.URLConnection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 /**
  * Internal factory for creating connections to the server.  The default
  * factory is java.net
  */
 public class HessianURLConnectionFactory implements HessianConnectionFactory {
-    private static final Logger log
-            = Logger.getLogger(HessianURLConnectionFactory.class.getName());
+    private static final Logger log = Logger.getLogger(HessianURLConnectionFactory.class.getName());
 
     private HessianProxyFactory proxyFactory;
 
@@ -74,8 +72,7 @@ public class HessianURLConnectionFactory implements HessianConnectionFactory {
      * Opens a new or recycled connection to the HTTP server.
      */
     @Override
-    public HessianConnection open(URL url)
-            throws IOException {
+    public HessianConnection open(URL url) throws IOException {
         if (log.isLoggable(Level.FINER)) {
             log.finer(this + " open(" + url + ")");
         }

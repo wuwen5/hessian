@@ -46,14 +46,12 @@
  * @author Scott Ferguson
  */
 
-
 package com.caucho.hessian;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
 
 /**
  * Marks the class and all children as unshared.
@@ -64,5 +62,4 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface HessianUnshared {
-}
+public @interface HessianUnshared {}

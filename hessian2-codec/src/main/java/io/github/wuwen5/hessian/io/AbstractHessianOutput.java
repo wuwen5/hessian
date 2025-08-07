@@ -52,7 +52,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-
 /**
  * Abstract output stream for Hessian requests.
  *
@@ -66,7 +65,7 @@ import java.io.OutputStream;
  * out.completeCall();      // complete the call
  * </pre>
  */
-abstract public class AbstractHessianOutput {
+public abstract class AbstractHessianOutput {
     // serializer factory
     private SerializerFactory _defaultSerializerFactory;
 
@@ -113,8 +112,7 @@ abstract public class AbstractHessianOutput {
     /**
      * Initialize the output with a new underlying stream.
      */
-    public void init(OutputStream os) {
-    }
+    public void init(OutputStream os) {}
 
     public boolean setUnshared(boolean isUnshared) {
         throw new UnsupportedOperationException(getClass().getSimpleName());
@@ -123,14 +121,12 @@ abstract public class AbstractHessianOutput {
     /**
      * Writes a complete method call.
      */
-    public void call(String method, Object[] args)
-            throws IOException {
+    public void call(String method, Object[] args) throws IOException {
         int length = args != null ? args.length : 0;
 
         startCall(method, length);
 
-        for (int i = 0; i < length; i++)
-            writeObject(args[i]);
+        for (int i = 0; i < length; i++) writeObject(args[i]);
 
         completeCall();
     }
@@ -144,8 +140,7 @@ abstract public class AbstractHessianOutput {
      *
      * @param method the method name to call.
      */
-    abstract public void startCall()
-            throws IOException;
+    public abstract void startCall() throws IOException;
 
     /**
      * Starts the method call:
@@ -156,16 +151,14 @@ abstract public class AbstractHessianOutput {
      *
      * @param method the method name to call.
      */
-    abstract public void startCall(String method, int length)
-            throws IOException;
+    public abstract void startCall(String method, int length) throws IOException;
 
     /**
      * For Hessian 2.0, use the Header envelope instead
      *
      * @deprecated
      */
-    public void writeHeader(String name)
-            throws IOException {
+    public void writeHeader(String name) throws IOException {
         throw new UnsupportedOperationException(getClass().getSimpleName());
     }
 
@@ -178,8 +171,7 @@ abstract public class AbstractHessianOutput {
      *
      * @param method the method name to call.
      */
-    abstract public void writeMethod(String method)
-            throws IOException;
+    public abstract void writeMethod(String method) throws IOException;
 
     /**
      * Completes the method call:
@@ -187,8 +179,7 @@ abstract public class AbstractHessianOutput {
      * <code><pre>
      * </pre></code>
      */
-    abstract public void completeCall()
-            throws IOException;
+    public abstract void completeCall() throws IOException;
 
     /**
      * Writes a boolean value to the stream.  The boolean will be written
@@ -201,8 +192,7 @@ abstract public class AbstractHessianOutput {
      *
      * @param value the boolean value to write.
      */
-    abstract public void writeBoolean(boolean value)
-            throws IOException;
+    public abstract void writeBoolean(boolean value) throws IOException;
 
     /**
      * Writes an integer value to the stream.  The integer will be written
@@ -214,8 +204,7 @@ abstract public class AbstractHessianOutput {
      *
      * @param value the integer value to write.
      */
-    abstract public void writeInt(int value)
-            throws IOException;
+    public abstract void writeInt(int value) throws IOException;
 
     /**
      * Writes a long value to the stream.  The long will be written
@@ -227,8 +216,7 @@ abstract public class AbstractHessianOutput {
      *
      * @param value the long value to write.
      */
-    abstract public void writeLong(long value)
-            throws IOException;
+    public abstract void writeLong(long value) throws IOException;
 
     /**
      * Writes a double value to the stream.  The double will be written
@@ -240,8 +228,7 @@ abstract public class AbstractHessianOutput {
      *
      * @param value the double value to write.
      */
-    abstract public void writeDouble(double value)
-            throws IOException;
+    public abstract void writeDouble(double value) throws IOException;
 
     /**
      * Writes a date to the stream.
@@ -252,8 +239,7 @@ abstract public class AbstractHessianOutput {
      *
      * @param time the date in milliseconds from the epoch in UTC
      */
-    abstract public void writeUTCDate(long time)
-            throws IOException;
+    public abstract void writeUTCDate(long time) throws IOException;
 
     /**
      * Writes a null value to the stream.
@@ -265,8 +251,7 @@ abstract public class AbstractHessianOutput {
      *
      * @param value the string value to write.
      */
-    abstract public void writeNull()
-            throws IOException;
+    public abstract void writeNull() throws IOException;
 
     /**
      * Writes a string value to the stream using UTF-8 encoding.
@@ -284,8 +269,7 @@ abstract public class AbstractHessianOutput {
      *
      * @param value the string value to write.
      */
-    abstract public void writeString(String value)
-            throws IOException;
+    public abstract void writeString(String value) throws IOException;
 
     /**
      * Writes a string value to the stream using UTF-8 encoding.
@@ -303,8 +287,7 @@ abstract public class AbstractHessianOutput {
      *
      * @param value the string value to write.
      */
-    abstract public void writeString(char[] buffer, int offset, int length)
-            throws IOException;
+    public abstract void writeString(char[] buffer, int offset, int length) throws IOException;
 
     /**
      * Writes a byte array to the stream.
@@ -322,8 +305,7 @@ abstract public class AbstractHessianOutput {
      *
      * @param value the string value to write.
      */
-    abstract public void writeBytes(byte[] buffer)
-            throws IOException;
+    public abstract void writeBytes(byte[] buffer) throws IOException;
 
     /**
      * Writes a byte array to the stream.
@@ -341,14 +323,12 @@ abstract public class AbstractHessianOutput {
      *
      * @param value the string value to write.
      */
-    abstract public void writeBytes(byte[] buffer, int offset, int length)
-            throws IOException;
+    public abstract void writeBytes(byte[] buffer, int offset, int length) throws IOException;
 
     /**
      * Writes a byte buffer to the stream.
      */
-    abstract public void writeByteBufferStart()
-            throws IOException;
+    public abstract void writeByteBufferStart() throws IOException;
 
     /**
      * Writes a byte buffer to the stream.
@@ -359,10 +339,7 @@ abstract public class AbstractHessianOutput {
      *
      * @param value the string value to write.
      */
-    abstract public void writeByteBufferPart(byte[] buffer,
-                                             int offset,
-                                             int length)
-            throws IOException;
+    public abstract void writeByteBufferPart(byte[] buffer, int offset, int length) throws IOException;
 
     /**
      * Writes the last chunk of a byte buffer to the stream.
@@ -373,20 +350,15 @@ abstract public class AbstractHessianOutput {
      *
      * @param value the string value to write.
      */
-    abstract public void writeByteBufferEnd(byte[] buffer,
-                                            int offset,
-                                            int length)
-            throws IOException;
+    public abstract void writeByteBufferEnd(byte[] buffer, int offset, int length) throws IOException;
 
     /**
      * Writes a full output stream.
      */
-    public void writeByteStream(InputStream is)
-            throws IOException {
+    public void writeByteStream(InputStream is) throws IOException {
         writeByteBufferStart();
 
-        if (_byteBuffer == null)
-            _byteBuffer = new byte[1024];
+        if (_byteBuffer == null) _byteBuffer = new byte[1024];
 
         byte[] buffer = _byteBuffer;
 
@@ -418,22 +390,19 @@ abstract public class AbstractHessianOutput {
      *
      * @param value the integer value to write.
      */
-    abstract protected void writeRef(int value)
-            throws IOException;
+    protected abstract void writeRef(int value) throws IOException;
 
     /**
      * Removes a reference.
      */
-    public boolean removeRef(Object obj)
-            throws IOException {
+    public boolean removeRef(Object obj) throws IOException {
         return false;
     }
 
     /**
      * Replaces a reference from one object to another.
      */
-    abstract public boolean replaceRef(Object oldRef, Object newRef)
-            throws IOException;
+    public abstract boolean replaceRef(Object oldRef, Object newRef) throws IOException;
 
     /**
      * Adds an object to the reference list.  If the object already exists,
@@ -447,26 +416,23 @@ abstract public class AbstractHessianOutput {
      * @param object the object to add as a reference.
      * @return true if the object has already been written.
      */
-    abstract public boolean addRef(Object object)
-            throws IOException;
+    public abstract boolean addRef(Object object) throws IOException;
 
     /**
      * @param obj
      * @return
      */
-    abstract public int getRef(Object obj);
+    public abstract int getRef(Object obj);
 
     /**
      * Resets the references for streaming.
      */
-    public void resetReferences() {
-    }
+    public void resetReferences() {}
 
     /**
      * Writes a generic object to the output stream.
      */
-    abstract public void writeObject(Object object)
-            throws IOException;
+    public abstract void writeObject(Object object) throws IOException;
 
     /**
      * Writes the list header to the stream.  List writers will call
@@ -483,14 +449,12 @@ abstract public class AbstractHessianOutput {
      * &lt;/list>
      * </pre></code>
      */
-    abstract public boolean writeListBegin(int length, String type)
-            throws IOException;
+    public abstract boolean writeListBegin(int length, String type) throws IOException;
 
     /**
      * Writes the tail of the list to the stream.
      */
-    abstract public void writeListEnd()
-            throws IOException;
+    public abstract void writeListEnd() throws IOException;
 
     /**
      * Writes the map header to the stream.  Map writers will call
@@ -501,14 +465,12 @@ abstract public class AbstractHessianOutput {
      * M type (<key> <value>)* Z
      * </pre></code>
      */
-    abstract public void writeMapBegin(String type)
-            throws IOException;
+    public abstract void writeMapBegin(String type) throws IOException;
 
     /**
      * Writes the tail of the map to the stream.
      */
-    abstract public void writeMapEnd()
-            throws IOException;
+    public abstract void writeMapEnd() throws IOException;
 
     /**
      * Writes the object header to the stream (for Hessian 2.0), or a
@@ -523,8 +485,7 @@ abstract public class AbstractHessianOutput {
      *
      * @return true if the object has already been defined.
      */
-    public int writeObjectBegin(String type)
-            throws IOException {
+    public int writeObjectBegin(String type) throws IOException {
         writeMapBegin(type);
 
         return -2;
@@ -533,42 +494,26 @@ abstract public class AbstractHessianOutput {
     /**
      * Writes the end of the class.
      */
-    public void writeClassFieldLength(int len)
-            throws IOException {
-    }
+    public void writeClassFieldLength(int len) throws IOException {}
 
     /**
      * Writes the tail of the object to the stream.
      */
-    public void writeObjectEnd()
-            throws IOException {
-    }
+    public void writeObjectEnd() throws IOException {}
 
-    public void writeReply(Object o)
-            throws IOException {
+    public void writeReply(Object o) throws IOException {
         startReply();
         writeObject(o);
         completeReply();
     }
 
+    public void startReply() throws IOException {}
 
-    public void startReply()
-            throws IOException {
-    }
+    public void completeReply() throws IOException {}
 
-    public void completeReply()
-            throws IOException {
-    }
+    public void writeFault(String code, String message, Object detail) throws IOException {}
 
-    public void writeFault(String code, String message, Object detail)
-            throws IOException {
-    }
+    public void flush() throws IOException {}
 
-    public void flush()
-            throws IOException {
-    }
-
-    public void close()
-            throws IOException {
-    }
+    public void close() throws IOException {}
 }

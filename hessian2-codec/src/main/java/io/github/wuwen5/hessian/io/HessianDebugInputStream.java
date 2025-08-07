@@ -48,162 +48,107 @@
 
 package io.github.wuwen5.hessian.io;
 
+import io.github.wuwen5.hessian.LineFlushingWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.io.Writer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.function.Consumer;
 
 /**
  * Debugging input stream for Hessian requests.
  */
-public class HessianDebugInputStream extends InputStream
-{
-  private InputStream _is;
+public class HessianDebugInputStream extends InputStream {
+    private InputStream is;
 
-  private HessianDebugState _state;
+    private HessianDebugState state;
 
-  /**
-   * Creates an uninitialized Hessian input stream.
-   */
-  public HessianDebugInputStream(InputStream is, OutputStream os)
-  {
-    this(is, new PrintWriter(os));
-  }
-
-  /**
-   * Creates an uninitialized Hessian input stream.
-   */
-  public HessianDebugInputStream(InputStream is, PrintWriter dbg)
-  {
-    _is = is;
-
-    if (dbg == null)
-      dbg = new PrintWriter(System.out);
-
-    _state = new HessianDebugState(dbg);
-  }
-
-  /**
-   * Creates an uninitialized Hessian input stream.
-   */
-  public HessianDebugInputStream(InputStream is, Logger log, Level level)
-  {
-    this(is, new PrintWriter(new LogWriter(log, level)));
-  }
-
-  /**
-   * Creates an uninitialized Hessian input stream.
-   */
-  public HessianDebugInputStream(Logger log, Level level)
-  {
-    this(null, log, level);
-  }
-
-  public void initPacket(InputStream is)
-  {
-    _is = is;
-  }
-
-  public void startTop2()
-  {
-    _state.startTop2();
-  }
-
-  public void startData1()
-  {
-    _state.startData1();
-  }
-
-  public void startStreaming()
-  {
-    _state.startStreaming();
-  }
-
-  public void setDepth(int depth)
-  {
-    _state.setDepth(depth);
-  }
-
-  /**
-   * Reads a character.
-   */
-  public int read()
-    throws IOException
-  {
-    int ch;
-
-    InputStream is = _is;
-
-    if (is == null)
-      return -1;
-    else {
-      ch = is.read();
+    /**
+     * Creates an uninitialized Hessian input stream.
+     */
+    public HessianDebugInputStream(InputStream is, OutputStream os) {
+        this(is, new PrintWriter(os));
     }
 
-    _state.next(ch);
+    /**
+     * Creates an uninitialized Hessian input stream.
+     */
+    public HessianDebugInputStream(InputStream is, PrintWriter dbg) {
+        this.is = is;
 
-    return ch;
-  }
-
-  /**
-   * closes the stream.
-   */
-  public void close()
-    throws IOException
-  {
-    InputStream is = _is;
-    _is = null;
-
-    if (is != null)
-      is.close();
-
-    _state.println();
-  }
-
-  static class LogWriter extends Writer {
-    private Logger _log;
-    private Level _level;
-    private StringBuilder _sb = new StringBuilder();
-
-    LogWriter(Logger log, Level level)
-    {
-      _log = log;
-      _level = level;
-    }
-
-    public void write(char ch)
-    {
-      if (ch == '\n' && _sb.length() > 0) {
-        _log.log(_level, _sb.toString());
-        _sb.setLength(0);
-      }
-      else
-        _sb.append((char) ch);
-    }
-
-    public void write(char []buffer, int offset, int length)
-    {
-      for (int i = 0; i < length; i++) {
-        char ch = buffer[offset + i];
-
-        if (ch == '\n' && _sb.length() > 0) {
-          _log.log(_level, _sb.toString());
-          _sb.setLength(0);
+        if (dbg == null) {
+            dbg = new PrintWriter(System.out);
         }
-        else
-          _sb.append((char) ch);
-      }
+
+        state = new HessianDebugState(dbg);
     }
 
-    public void flush()
-    {
+    /**
+     * Creates an uninitialized Hessian input stream.
+     */
+    public HessianDebugInputStream(InputStream is, Consumer<String> logger) {
+        this(is, new PrintWriter(new LineFlushingWriter(logger)));
     }
 
-    public void close()
-    {
+    /**
+     * Creates an uninitialized Hessian input stream.
+     */
+    public HessianDebugInputStream(Consumer<String> logger) {
+        this(null, logger);
     }
-  }
+
+    public void initPacket(InputStream is) {
+        this.is = is;
+    }
+
+    public void startTop2() {
+        state.startTop2();
+    }
+
+    public void startData1() {
+        state.startData1();
+    }
+
+    public void startStreaming() {
+        state.startStreaming();
+    }
+
+    public void setDepth(int depth) {
+        state.setDepth(depth);
+    }
+
+    /**
+     * Reads a character.
+     */
+    @Override
+    public int read() throws IOException {
+        int ch;
+
+        InputStream is = this.is;
+
+        if (is == null) {
+            return -1;
+        } else {
+            ch = is.read();
+        }
+
+        state.next(ch);
+
+        return ch;
+    }
+
+    /**
+     * closes the stream.
+     */
+    @Override
+    public void close() throws IOException {
+        InputStream is = this.is;
+        this.is = null;
+
+        if (is != null) {
+            is.close();
+        }
+
+        state.println();
+    }
 }

@@ -48,15 +48,6 @@
 
 package com.caucho.hessian.io;
 
-import io.github.wuwen5.hessian.io.Hessian2Output;
-import io.github.wuwen5.hessian.io.IOExceptionWrapper;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-
 /**
  * Output stream for Hessian requests.
  *
@@ -85,5 +76,4 @@ import java.lang.reflect.Modifier;
  * out.completeCall();      // complete the call
  * </pre>
  */
-public class HessianSerializerOutput extends io.github.wuwen5.hessian.io.HessianSerializerOutput {
-}
+public class HessianSerializerOutput extends io.github.wuwen5.hessian.io.HessianSerializerOutput {}

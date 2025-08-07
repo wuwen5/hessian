@@ -51,7 +51,6 @@ package com.caucho.hessian.io;
 import java.io.Closeable;
 import java.io.IOException;
 
-
 /**
  * Abstract output stream for Hessian requests.
  *
@@ -263,9 +262,7 @@ public interface AbstractHessianOutput extends Closeable {
      *
      * @param value the string value to write.
      */
-    void writeByteBufferPart(byte[] buffer,
-                             int offset,
-                             int length) throws IOException;
+    void writeByteBufferPart(byte[] buffer, int offset, int length) throws IOException;
 
     /**
      * Writes the last chunk of a byte buffer to the stream.
@@ -274,9 +271,7 @@ public interface AbstractHessianOutput extends Closeable {
      * b b16 b18 bytes
      * </pre></code>
      */
-    void writeByteBufferEnd(byte[] buffer,
-                            int offset,
-                            int length) throws IOException;
+    void writeByteBufferEnd(byte[] buffer, int offset, int length) throws IOException;
 
     /**
      * Writes a generic object to the output stream.

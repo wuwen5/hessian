@@ -49,7 +49,6 @@
 package com.caucho.burlap.io;
 
 import io.github.wuwen5.hessian.io.AbstractHessianOutput;
-
 import java.io.IOException;
 
 /**
@@ -65,14 +64,11 @@ import java.io.IOException;
  * out.completeCall();      // complete the call
  * </pre>
  */
-abstract public class AbstractBurlapOutput extends AbstractHessianOutput {
-  @Override
-  public void startCall(String method, int length)
-    throws IOException
-  {
-    startCall(method);
-  }
+public abstract class AbstractBurlapOutput extends AbstractHessianOutput {
+    @Override
+    public void startCall(String method, int length) throws IOException {
+        startCall(method);
+    }
 
-  abstract void startCall(String method)
-    throws IOException;
+    abstract void startCall(String method) throws IOException;
 }

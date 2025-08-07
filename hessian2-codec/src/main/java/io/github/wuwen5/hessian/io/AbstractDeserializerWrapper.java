@@ -50,12 +50,11 @@ package io.github.wuwen5.hessian.io;
 
 import java.io.IOException;
 
-
 /**
  * Deserializing an object.
  */
-abstract public class AbstractDeserializerWrapper implements Deserializer {
-    abstract protected Deserializer getDelegate();
+public abstract class AbstractDeserializerWrapper implements Deserializer {
+    protected abstract Deserializer getDelegate();
 
     @Override
     public Class<?> getType() {
@@ -68,26 +67,22 @@ abstract public class AbstractDeserializerWrapper implements Deserializer {
     }
 
     @Override
-    public Object readObject(AbstractHessianInput in)
-            throws IOException {
+    public Object readObject(AbstractHessianInput in) throws IOException {
         return getDelegate().readObject(in);
     }
 
     @Override
-    public Object readList(AbstractHessianInput in, int length)
-            throws IOException {
+    public Object readList(AbstractHessianInput in, int length) throws IOException {
         return getDelegate().readList(in, length);
     }
 
     @Override
-    public Object readLengthList(AbstractHessianInput in, int length)
-            throws IOException {
+    public Object readLengthList(AbstractHessianInput in, int length) throws IOException {
         return getDelegate().readLengthList(in, length);
     }
 
     @Override
-    public Object readMap(AbstractHessianInput in)
-            throws IOException {
+    public Object readMap(AbstractHessianInput in) throws IOException {
         return getDelegate().readMap(in);
     }
 
@@ -116,9 +111,7 @@ abstract public class AbstractDeserializerWrapper implements Deserializer {
     }
 
     @Override
-    public Object readObject(AbstractHessianInput in,
-                             String[] fieldNames)
-            throws IOException {
+    public Object readObject(AbstractHessianInput in, String[] fieldNames) throws IOException {
         return getDelegate().readObject(in, fieldNames);
     }
 
@@ -126,9 +119,7 @@ abstract public class AbstractDeserializerWrapper implements Deserializer {
      * Reads an object instance from the input stream
      */
     @Override
-    public Object readObject(AbstractHessianInput in,
-                             Object[] fields)
-            throws IOException {
+    public Object readObject(AbstractHessianInput in, Object[] fields) throws IOException {
         return getDelegate().readObject(in, fields);
     }
 }

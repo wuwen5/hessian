@@ -48,22 +48,21 @@
 
 package com.caucho.hessian.client;
 
-import java.net.URL;
 import java.io.IOException;
+import java.net.URL;
 
 /**
  * Internal factory for creating connections to the server.  The default
  * factory is java.net
  */
 public interface HessianConnectionFactory {
-  /**
-   * Sets the HessianProxyFactory
-   */
-  public void setHessianProxyFactory(HessianProxyFactory factory);
-  
-  /**
-   * Opens a new or recycled connection to the HTTP server.
-   */
-  public HessianConnection open(URL url)
-    throws IOException;
+    /**
+     * Sets the HessianProxyFactory
+     */
+    public void setHessianProxyFactory(HessianProxyFactory factory);
+
+    /**
+     * Opens a new or recycled connection to the HTTP server.
+     */
+    public HessianConnection open(URL url) throws IOException;
 }

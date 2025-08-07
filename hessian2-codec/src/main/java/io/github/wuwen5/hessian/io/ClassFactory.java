@@ -55,171 +55,154 @@ import java.util.regex.Pattern;
 /**
  * Loads a class from the classloader.
  */
-public class ClassFactory
-{
-  private static ArrayList<Allow> _staticAllowList;
+public class ClassFactory {
+    private static ArrayList<Allow> _staticAllowList;
 
-  private static ArrayList<Allow> _staticDenyList;
+    private static ArrayList<Allow> _staticDenyList;
 
-  private ClassLoader _loader;
+    private ClassLoader _loader;
 
-  private boolean _isWhitelist;
+    private boolean _isWhitelist;
 
-  private ArrayList<Allow> _allowList;
+    private ArrayList<Allow> _allowList;
 
-  ClassFactory(ClassLoader loader)
-  {
-    _loader = loader;
-  }
-
-  public Class<?> load(String className)
-    throws ClassNotFoundException
-  {
-    if (isAllow(className)) {
-      return Class.forName(className, false, _loader);
-    }
-    else {
-      return HashMap.class;
-    }
-  }
-
-  private boolean isAllow(String className)
-  {
-    ArrayList<Allow> allowList = _allowList;
-
-    if (allowList == null) {
-      Boolean isAllow = isAllow(_staticDenyList, className);
-
-      if (isAllow != null) {
-        return isAllow;
-      }
-      else {
-        return true;
-      }
-
+    ClassFactory(ClassLoader loader) {
+        _loader = loader;
     }
 
-    Boolean isAllow = isAllow(_allowList, className);
-    if (isAllow != null) {
-      return isAllow;
+    public Class<?> load(String className) throws ClassNotFoundException {
+        if (isAllow(className)) {
+            return Class.forName(className, false, _loader);
+        } else {
+            return HashMap.class;
+        }
     }
 
-    isAllow = isAllow(_staticAllowList, className);
+    private boolean isAllow(String className) {
+        ArrayList<Allow> allowList = _allowList;
 
-    if (isAllow != null) {
-      return isAllow;
+        if (allowList == null) {
+            Boolean isAllow = isAllow(_staticDenyList, className);
+
+            if (isAllow != null) {
+                return isAllow;
+            } else {
+                return true;
+            }
+        }
+
+        Boolean isAllow = isAllow(_allowList, className);
+        if (isAllow != null) {
+            return isAllow;
+        }
+
+        isAllow = isAllow(_staticAllowList, className);
+
+        if (isAllow != null) {
+            return isAllow;
+        }
+
+        return !_isWhitelist;
     }
 
-    return ! _isWhitelist;
-  }
+    private Boolean isAllow(ArrayList<Allow> allowList, String className) {
+        if (allowList == null) {
+            return null;
+        }
 
-  private Boolean isAllow(ArrayList<Allow> allowList, String className)
-  {
-    if (allowList == null) {
-      return null;
-    }
+        int size = allowList.size();
+        for (int i = 0; i < size; i++) {
+            Allow allow = allowList.get(i);
 
-    int size = allowList.size();
-    for (int i = 0; i < size; i++) {
-      Allow allow = allowList.get(i);
+            Boolean isAllow = allow.allow(className);
 
-      Boolean isAllow = allow.allow(className);
+            if (isAllow != null) {
+                return isAllow;
+            }
+        }
 
-      if (isAllow != null) {
-        return isAllow;
-      }
-    }
-
-    return null;
-  }
-
-  public void setWhitelist(boolean isWhitelist)
-  {
-    initAllow();
-
-    _isWhitelist = isWhitelist;
-  }
-
-  /**
-   * Allow a class or package based on a pattern.
-   *
-   * Examples: "java.util.*", "com.foo.io.Bean"
-   */
-  public void allow(String pattern)
-  {
-    initAllow();
-
-    synchronized (this) {
-      _allowList.add(new Allow(toPattern(pattern), true));
-    }
-  }
-
-  /**
-   * Deny a class or package based on a pattern.
-   *
-   * Examples: "java.util.*", "com.foo.io.Bean"
-   */
-  public void deny(String pattern)
-  {
-    initAllow();
-
-    synchronized (this) {
-      _allowList.add(new Allow(toPattern(pattern), false));
-    }
-  }
-
-  private String toPattern(String pattern)
-  {
-    pattern = pattern.replace(".", "\\.");
-    pattern = pattern.replace("*", ".*");
-
-    return pattern;
-  }
-
-  private void initAllow()
-  {
-    synchronized (this) {
-      if (_allowList == null) {
-        _allowList = new ArrayList<Allow>();
-        _isWhitelist = true;
-      }
-    }
-  }
-
-  static class Allow {
-    private Boolean _isAllow;
-    private Pattern _pattern;
-
-    private Allow(String pattern, boolean isAllow)
-    {
-      _isAllow = isAllow;
-      _pattern = Pattern.compile(pattern);
-    }
-
-    Boolean allow(String className)
-    {
-      if (_pattern.matcher(className).matches()) {
-        return _isAllow;
-      }
-      else {
         return null;
-      }
     }
-  }
 
-  static {
-    ArrayList<Allow> blacklist = new ArrayList<Allow>();
+    public void setWhitelist(boolean isWhitelist) {
+        initAllow();
 
-    blacklist.add(new Allow("java\\.lang\\.Runtime", false));
-    blacklist.add(new Allow("java\\.lang\\.Process", false));
-    blacklist.add(new Allow("java\\.lang\\.System", false));
-    blacklist.add(new Allow("java\\.lang\\.Thread", false));
+        _isWhitelist = isWhitelist;
+    }
 
-    _staticAllowList = new ArrayList<Allow>(blacklist);
+    /**
+     * Allow a class or package based on a pattern.
+     *
+     * Examples: "java.util.*", "com.foo.io.Bean"
+     */
+    public void allow(String pattern) {
+        initAllow();
 
-    _staticAllowList.add(new Allow("java\\..+", true));
-    _staticAllowList.add(new Allow("javax\\.management\\..+", true));
+        synchronized (this) {
+            _allowList.add(new Allow(toPattern(pattern), true));
+        }
+    }
 
-    _staticDenyList = new ArrayList<Allow>(blacklist);
-  }
+    /**
+     * Deny a class or package based on a pattern.
+     *
+     * Examples: "java.util.*", "com.foo.io.Bean"
+     */
+    public void deny(String pattern) {
+        initAllow();
+
+        synchronized (this) {
+            _allowList.add(new Allow(toPattern(pattern), false));
+        }
+    }
+
+    private String toPattern(String pattern) {
+        pattern = pattern.replace(".", "\\.");
+        pattern = pattern.replace("*", ".*");
+
+        return pattern;
+    }
+
+    private void initAllow() {
+        synchronized (this) {
+            if (_allowList == null) {
+                _allowList = new ArrayList<>();
+                _isWhitelist = true;
+            }
+        }
+    }
+
+    static class Allow {
+        private Boolean _isAllow;
+        private Pattern _pattern;
+
+        private Allow(String pattern, boolean isAllow) {
+            _isAllow = isAllow;
+            _pattern = Pattern.compile(pattern);
+        }
+
+        Boolean allow(String className) {
+            if (_pattern.matcher(className).matches()) {
+                return _isAllow;
+            } else {
+                return null;
+            }
+        }
+    }
+
+    static {
+        ArrayList<Allow> blacklist = new ArrayList<Allow>();
+
+        blacklist.add(new Allow("java\\.lang\\.Runtime", false));
+        blacklist.add(new Allow("java\\.lang\\.Process", false));
+        blacklist.add(new Allow("java\\.lang\\.System", false));
+        blacklist.add(new Allow("java\\.lang\\.Thread", false));
+
+        _staticAllowList = new ArrayList<Allow>(blacklist);
+
+        _staticAllowList.add(new Allow("java\\..+", true));
+        _staticAllowList.add(new Allow("javax\\.management\\..+", true));
+
+        _staticDenyList = new ArrayList<Allow>(blacklist);
+    }
 }
