@@ -48,99 +48,142 @@
 
 package io.github.wuwen5.hessian.io;
 
-public interface Hessian2Constants
-{
-  public static final int BC_BINARY = 'B'; // final chunk
-  public static final int BC_BINARY_CHUNK = 'A'; // non-final chunk
-  public static final int BC_BINARY_DIRECT = 0x20; // 1-byte length binary
-  public static final int BINARY_DIRECT_MAX = 0x0f;
-  public static final int BC_BINARY_SHORT = 0x34; // 2-byte length binary
-  public static final int BINARY_SHORT_MAX = 0x3ff; // 0-1023 binary
+public interface Hessian2Constants {
+    /**
+     * final chunk
+     */
+    int BC_BINARY = 'B';
+    /**
+     * non-final chunk
+     */
+    int BC_BINARY_CHUNK = 'A';
+    /**
+     * 1-byte length binary
+     */
+    int BC_BINARY_DIRECT = 0x20;
 
-  public static final int BC_CLASS_DEF = 'C'; // object/class definition
+    int BINARY_DIRECT_MAX = 0x0f;
+    /**
+     * 2-byte length binary
+     */
+    int BC_BINARY_SHORT = 0x34;
+    /**
+     * 0-1023 binary
+     */
+    int BINARY_SHORT_MAX = 0x3ff;
 
-  public static final int BC_DATE = 0x4a; // 64-bit millisecond UTC date
-  public static final int BC_DATE_MINUTE = 0x4b; // 32-bit minute UTC date
+    /**
+     * object/class definition
+     */
+    int BC_CLASS_DEF = 'C';
 
-  public static final int BC_DOUBLE = 'D'; // IEEE 64-bit double
+    /**
+     * 64-bit millisecond UTC date
+     */
+    int BC_DATE = 0x4a;
+    /**
+     * 32-bit minute UTC date
+     */
+    int BC_DATE_MINUTE = 0x4b;
 
-  public static final int BC_DOUBLE_ZERO = 0x5b;
-  public static final int BC_DOUBLE_ONE = 0x5c;
-  public static final int BC_DOUBLE_BYTE = 0x5d;
-  public static final int BC_DOUBLE_SHORT = 0x5e;
-  public static final int BC_DOUBLE_MILL = 0x5f;
+    /**
+     * IEEE 64-bit double
+     */
+    int BC_DOUBLE = 'D';
 
-  public static final int BC_FALSE = 'F'; // boolean false
+    int BC_DOUBLE_ZERO = 0x5b;
+    int BC_DOUBLE_ONE = 0x5c;
+    int BC_DOUBLE_BYTE = 0x5d;
+    int BC_DOUBLE_SHORT = 0x5e;
+    int BC_DOUBLE_MILL = 0x5f;
 
-  public static final int BC_INT = 'I'; // 32-bit int
+    /**
+     * boolean false
+     */
+    int BC_FALSE = 'F';
 
-  public static final int INT_DIRECT_MIN = -0x10;
-  public static final int INT_DIRECT_MAX = 0x2f;
-  public static final int BC_INT_ZERO = 0x90;
+    /**
+     * 32-bit int
+     */
+    int BC_INT = 'I';
 
-  public static final int INT_BYTE_MIN = -0x800;
-  public static final int INT_BYTE_MAX = 0x7ff;
-  public static final int BC_INT_BYTE_ZERO = 0xc8;
+    int INT_DIRECT_MIN = -0x10;
+    int INT_DIRECT_MAX = 0x2f;
+    int BC_INT_ZERO = 0x90;
 
-  public static final int BC_END = 'Z';
+    int INT_BYTE_MIN = -0x800;
+    int INT_BYTE_MAX = 0x7ff;
+    int BC_INT_BYTE_ZERO = 0xc8;
 
-  public static final int INT_SHORT_MIN = -0x40000;
-  public static final int INT_SHORT_MAX = 0x3ffff;
-  public static final int BC_INT_SHORT_ZERO = 0xd4;
+    int BC_END = 'Z';
 
-  public static final int BC_LIST_VARIABLE = 0x55;
-  public static final int BC_LIST_FIXED = 'V';
-  public static final int BC_LIST_VARIABLE_UNTYPED = 0x57;
-  public static final int BC_LIST_FIXED_UNTYPED = 0x58;
+    int INT_SHORT_MIN = -0x40000;
+    int INT_SHORT_MAX = 0x3ffff;
+    int BC_INT_SHORT_ZERO = 0xd4;
 
-  public static final int BC_LIST_DIRECT = 0x70;
-  public static final int BC_LIST_DIRECT_UNTYPED = 0x78;
-  public static final int LIST_DIRECT_MAX = 0x7;
+    int BC_LIST_VARIABLE = 0x55;
+    int BC_LIST_FIXED = 'V';
+    int BC_LIST_VARIABLE_UNTYPED = 0x57;
+    int BC_LIST_FIXED_UNTYPED = 0x58;
 
-  public static final int BC_LONG = 'L'; // 64-bit signed integer
-  public static final long LONG_DIRECT_MIN = -0x08;
-  public static final long LONG_DIRECT_MAX =  0x0f;
-  public static final int BC_LONG_ZERO = 0xe0;
+    int BC_LIST_DIRECT = 0x70;
+    int BC_LIST_DIRECT_UNTYPED = 0x78;
+    int LIST_DIRECT_MAX = 0x7;
 
-  public static final long LONG_BYTE_MIN = -0x800;
-  public static final long LONG_BYTE_MAX =  0x7ff;
-  public static final int BC_LONG_BYTE_ZERO = 0xf8;
+    /**
+     * 64-bit signed integer
+     */
+    int BC_LONG = 'L';
 
-  public static final int LONG_SHORT_MIN = -0x40000;
-  public static final int LONG_SHORT_MAX = 0x3ffff;
-  public static final int BC_LONG_SHORT_ZERO = 0x3c;
+    long LONG_DIRECT_MIN = -0x08;
+    long LONG_DIRECT_MAX = 0x0f;
+    int BC_LONG_ZERO = 0xe0;
 
-  public static final int BC_LONG_INT = 0x59;
+    long LONG_BYTE_MIN = -0x800;
+    long LONG_BYTE_MAX = 0x7ff;
+    int BC_LONG_BYTE_ZERO = 0xf8;
 
-  public static final int BC_MAP = 'M';
-  public static final int BC_MAP_UNTYPED = 'H';
+    int LONG_SHORT_MIN = -0x40000;
+    int LONG_SHORT_MAX = 0x3ffff;
+    int BC_LONG_SHORT_ZERO = 0x3c;
 
-  public static final int BC_NULL = 'N';
+    int BC_LONG_INT = 0x59;
 
-  public static final int BC_OBJECT = 'O';
-  public static final int BC_OBJECT_DEF = 'C';
+    int BC_MAP = 'M';
+    int BC_MAP_UNTYPED = 'H';
 
-  public static final int BC_OBJECT_DIRECT = 0x60;
-  public static final int OBJECT_DIRECT_MAX = 0x0f;
+    int BC_NULL = 'N';
 
-  public static final int BC_REF = 0x51;
+    int BC_OBJECT = 'O';
+    int BC_OBJECT_DEF = 'C';
 
-  public static final int BC_STRING = 'S'; // final string
-  public static final int BC_STRING_CHUNK = 'R'; // non-final string
+    int BC_OBJECT_DIRECT = 0x60;
+    int OBJECT_DIRECT_MAX = 0x0f;
 
-  public static final int BC_STRING_DIRECT = 0x00;
-  public static final int STRING_DIRECT_MAX = 0x1f;
-  public static final int BC_STRING_SHORT = 0x30;
-  public static final int STRING_SHORT_MAX = 0x3ff;
+    int BC_REF = 0x51;
 
-  public static final int BC_TRUE = 'T';
+    /**
+     * final string
+     */
+    int BC_STRING = 'S';
+    /**
+     * non-final string
+     */
+    int BC_STRING_CHUNK = 'R';
 
-  public static final int P_PACKET_CHUNK = 0x4f;
-  public static final int P_PACKET = 'P';
+    int BC_STRING_DIRECT = 0x00;
+    int STRING_DIRECT_MAX = 0x1f;
+    int BC_STRING_SHORT = 0x30;
+    int STRING_SHORT_MAX = 0x3ff;
 
-  public static final int P_PACKET_DIRECT = 0x80;
-  public static final int PACKET_DIRECT_MAX = 0x7f;
+    int BC_TRUE = 'T';
 
-  public static final int P_PACKET_SHORT = 0x70;
-  public static final int PACKET_SHORT_MAX = 0xfff;
+    int P_PACKET_CHUNK = 0x4f;
+    int P_PACKET = 'P';
+
+    int P_PACKET_DIRECT = 0x80;
+    int PACKET_DIRECT_MAX = 0x7f;
+
+    int P_PACKET_SHORT = 0x70;
+    int PACKET_SHORT_MAX = 0xfff;
 }

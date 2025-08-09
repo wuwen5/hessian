@@ -55,34 +55,29 @@ import io.github.wuwen5.hessian.io.HessianProtocolException;
  * This exception is required for MicroBurlapInput.
  */
 public class BurlapProtocolException extends HessianProtocolException {
-  /**
-   * Zero-arg constructor.
-   */
-  public BurlapProtocolException()
-  {
-  }
+    /**
+     * Zero-arg constructor.
+     */
+    public BurlapProtocolException() {}
 
-  /**
-   * Create the exception.
-   */
-  public BurlapProtocolException(String message)
-  {
-    super(message);
-  }
+    /**
+     * Create the exception.
+     */
+    public BurlapProtocolException(String message) {
+        super(message);
+    }
 
-  /**
-   * Create the exception.
-   */
-  public BurlapProtocolException(String message, Throwable rootCause)
-  {
-    super(message, rootCause);
-  }
+    /**
+     * Create the exception.
+     */
+    public BurlapProtocolException(String message, Throwable rootCause) {
+        super(message, rootCause);
+    }
 
-  /**
-   * Create the exception.
-   */
-  public BurlapProtocolException(Throwable rootCause)
-  {
-    super(rootCause);
-  }
+    /**
+     * Create the exception.
+     */
+    public BurlapProtocolException(Throwable rootCause) {
+        super(rootCause);
+    }
 }

@@ -77,5 +77,4 @@ package com.caucho.hessian.io;
  * in.completeReply();      // read reply footer
  * </pre>
  */
-public class HessianSerializerInput extends io.github.wuwen5.hessian.io.HessianSerializerInput {
-}
+public class HessianSerializerInput extends io.github.wuwen5.hessian.io.HessianSerializerInput {}

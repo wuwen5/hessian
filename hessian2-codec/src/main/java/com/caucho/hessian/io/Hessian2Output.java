@@ -50,7 +50,6 @@ package com.caucho.hessian.io;
 
 import java.io.OutputStream;
 
-
 /**
  * Output stream for Hessian 2 requests.
  *

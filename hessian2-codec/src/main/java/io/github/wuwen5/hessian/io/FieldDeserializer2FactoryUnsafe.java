@@ -49,522 +49,458 @@
 package io.github.wuwen5.hessian.io;
 
 import com.caucho.hessian.io.FieldDeserializer2;
-import sun.misc.Unsafe;
-
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import sun.misc.Unsafe;
 
 /**
  * Serializing an object for known object types.
  */
 public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
-  private static final Logger log
-    = Logger.getLogger(JavaDeserializer.class.getName());
+    private static final Logger log = Logger.getLogger(JavaDeserializer.class.getName());
 
-  private static boolean _isEnabled;
-  @SuppressWarnings("restriction")
-  private static Unsafe _unsafe;
+    private static boolean _isEnabled;
 
-  /**
-   * Creates a map of the classes fields.
-   */
-  @Override
-  public FieldDeserializer2 create(Field field)
-  {
-    if (Modifier.isTransient(field.getModifiers())
-        || Modifier.isStatic(field.getModifiers())) {
-      return NullFieldDeserializer.DESER;
-    }
+    @SuppressWarnings("restriction")
+    private static Unsafe _unsafe;
 
-    /*
-    // XXX: could parameterize the handler to only deal with public
-    try {
-      field.setAccessible(true);
-    } catch (Throwable e) {
-      e.printStackTrace();
-    }
-    */
-
-    Class<?> type = field.getType();
-    FieldDeserializer2 deser;
-
-    if (String.class.equals(type)) {
-      deser = new StringFieldDeserializer(field);
-    }
-    else if (byte.class.equals(type)) {
-      deser = new ByteFieldDeserializer(field);
-    }
-    else if (char.class.equals(type)) {
-      deser = new CharFieldDeserializer(field);
-    }
-    else if (short.class.equals(type)) {
-      deser = new ShortFieldDeserializer(field);
-    }
-    else if (int.class.equals(type)) {
-      deser = new IntFieldDeserializer(field);
-    }
-    else if (long.class.equals(type)) {
-      deser = new LongFieldDeserializer(field);
-    }
-    else if (float.class.equals(type)) {
-      deser = new FloatFieldDeserializer(field);
-    }
-    else if (double.class.equals(type)) {
-      deser = new DoubleFieldDeserializer(field);
-    }
-    else if (boolean.class.equals(type)) {
-      deser = new BooleanFieldDeserializer(field);
-    }
-    else if (java.sql.Date.class.equals(type)) {
-      deser = new SqlDateFieldDeserializer(field);
-    }
-    else if (java.sql.Timestamp.class.equals(type)) {
-      deser = new SqlTimestampFieldDeserializer(field);
-    }
-    else if (java.sql.Time.class.equals(type)) {
-      deser = new SqlTimeFieldDeserializer(field);
-    }
-    else {
-      deser = new ObjectFieldDeserializer(field);
-    }
-
-    return deser;
-  }
-
-  static class NullFieldDeserializer implements FieldDeserializer2 {
-    static NullFieldDeserializer DESER = new NullFieldDeserializer();
-
+    /**
+     * Creates a map of the classes fields.
+     */
     @Override
-    public void deserialize(AbstractHessianInput in, Object obj)
-      throws IOException
-    {
-      in.readObject();
-    }
-  }
+    public FieldDeserializer2 create(Field field) {
+        if (Modifier.isTransient(field.getModifiers()) || Modifier.isStatic(field.getModifiers())) {
+            return NullFieldDeserializer.DESER;
+        }
 
-  static class ObjectFieldDeserializer implements FieldDeserializer2 {
-    private final Field _field;
-    private final long _offset;
+        /*
+        // XXX: could parameterize the handler to only deal with public
+        try {
+          field.setAccessible(true);
+        } catch (Throwable e) {
+          e.printStackTrace();
+        }
+        */
 
-    @SuppressWarnings("restriction")
-    ObjectFieldDeserializer(Field field)
-    {
-      _field = field;
-      _offset = _unsafe.objectFieldOffset(_field);
-    }
+        Class<?> type = field.getType();
+        FieldDeserializer2 deser;
 
-    @SuppressWarnings("restriction")
-    public void deserialize(AbstractHessianInput in, Object obj)
-      throws IOException
-    {
-      Object value = null;
+        if (String.class.equals(type)) {
+            deser = new StringFieldDeserializer(field);
+        } else if (byte.class.equals(type)) {
+            deser = new ByteFieldDeserializer(field);
+        } else if (char.class.equals(type)) {
+            deser = new CharFieldDeserializer(field);
+        } else if (short.class.equals(type)) {
+            deser = new ShortFieldDeserializer(field);
+        } else if (int.class.equals(type)) {
+            deser = new IntFieldDeserializer(field);
+        } else if (long.class.equals(type)) {
+            deser = new LongFieldDeserializer(field);
+        } else if (float.class.equals(type)) {
+            deser = new FloatFieldDeserializer(field);
+        } else if (double.class.equals(type)) {
+            deser = new DoubleFieldDeserializer(field);
+        } else if (boolean.class.equals(type)) {
+            deser = new BooleanFieldDeserializer(field);
+        } else if (java.sql.Date.class.equals(type)) {
+            deser = new SqlDateFieldDeserializer(field);
+        } else if (java.sql.Timestamp.class.equals(type)) {
+            deser = new SqlTimestampFieldDeserializer(field);
+        } else if (java.sql.Time.class.equals(type)) {
+            deser = new SqlTimeFieldDeserializer(field);
+        } else {
+            deser = new ObjectFieldDeserializer(field);
+        }
 
-      try {
-        value = in.readObject(_field.getType());
-
-        _unsafe.putObject(obj, _offset, value);
-      } catch (Exception e) {
-        logDeserializeError(_field, obj, value, e);
-      }
-    }
-  }
-
-  static class BooleanFieldDeserializer implements FieldDeserializer2 {
-    private final Field _field;
-    private final long _offset;
-
-    @SuppressWarnings("restriction")
-    BooleanFieldDeserializer(Field field)
-    {
-      _field = field;
-      _offset = _unsafe.objectFieldOffset(_field);
-    }
-
-    @SuppressWarnings("restriction")
-    public void deserialize(AbstractHessianInput in, Object obj)
-      throws IOException
-    {
-      boolean value = false;
-
-      try {
-        value = in.readBoolean();
-
-        _unsafe.putBoolean(obj, _offset, value);
-      } catch (Exception e) {
-        logDeserializeError(_field, obj, value, e);
-      }
-    }
-  }
-
-  static class ByteFieldDeserializer implements FieldDeserializer2 {
-    private final Field _field;
-    private final long _offset;
-
-    @SuppressWarnings("restriction")
-    ByteFieldDeserializer(Field field)
-    {
-      _field = field;
-      _offset = _unsafe.objectFieldOffset(_field);
+        return deser;
     }
 
-    @SuppressWarnings("restriction")
-    public void deserialize(AbstractHessianInput in, Object obj)
-      throws IOException
-    {
-      int value = 0;
+    static class NullFieldDeserializer implements FieldDeserializer2 {
+        static NullFieldDeserializer DESER = new NullFieldDeserializer();
 
-      try {
-        value = in.readInt();
-
-        _unsafe.putByte(obj, _offset, (byte) value);
-      } catch (Exception e) {
-        logDeserializeError(_field, obj, value, e);
-      }
-    }
-  }
-
-  static class CharFieldDeserializer implements FieldDeserializer2 {
-    private final Field _field;
-    private final long _offset;
-
-    @SuppressWarnings("restriction")
-    CharFieldDeserializer(Field field)
-    {
-      _field = field;
-      _offset = _unsafe.objectFieldOffset(_field);
+        @Override
+        public void deserialize(AbstractHessianInput in, Object obj) throws IOException {
+            in.readObject();
+        }
     }
 
-    @SuppressWarnings("restriction")
-    public void deserialize(AbstractHessianInput in, Object obj)
-      throws IOException
-    {
-      String value = null;
+    static class ObjectFieldDeserializer implements FieldDeserializer2 {
+        private final Field _field;
+        private final long _offset;
 
-      try {
-        value = in.readString();
+        @SuppressWarnings("restriction")
+        ObjectFieldDeserializer(Field field) {
+            _field = field;
+            _offset = _unsafe.objectFieldOffset(_field);
+        }
 
-        char ch;
+        @SuppressWarnings("restriction")
+        public void deserialize(AbstractHessianInput in, Object obj) throws IOException {
+            Object value = null;
 
-        if (value != null && value.length() > 0)
-          ch = value.charAt(0);
+            try {
+                value = in.readObject(_field.getType());
+
+                _unsafe.putObject(obj, _offset, value);
+            } catch (Exception e) {
+                logDeserializeError(_field, obj, value, e);
+            }
+        }
+    }
+
+    static class BooleanFieldDeserializer implements FieldDeserializer2 {
+        private final Field _field;
+        private final long _offset;
+
+        @SuppressWarnings("restriction")
+        BooleanFieldDeserializer(Field field) {
+            _field = field;
+            _offset = _unsafe.objectFieldOffset(_field);
+        }
+
+        @SuppressWarnings("restriction")
+        public void deserialize(AbstractHessianInput in, Object obj) throws IOException {
+            boolean value = false;
+
+            try {
+                value = in.readBoolean();
+
+                _unsafe.putBoolean(obj, _offset, value);
+            } catch (Exception e) {
+                logDeserializeError(_field, obj, value, e);
+            }
+        }
+    }
+
+    static class ByteFieldDeserializer implements FieldDeserializer2 {
+        private final Field _field;
+        private final long _offset;
+
+        @SuppressWarnings("restriction")
+        ByteFieldDeserializer(Field field) {
+            _field = field;
+            _offset = _unsafe.objectFieldOffset(_field);
+        }
+
+        @SuppressWarnings("restriction")
+        public void deserialize(AbstractHessianInput in, Object obj) throws IOException {
+            int value = 0;
+
+            try {
+                value = in.readInt();
+
+                _unsafe.putByte(obj, _offset, (byte) value);
+            } catch (Exception e) {
+                logDeserializeError(_field, obj, value, e);
+            }
+        }
+    }
+
+    static class CharFieldDeserializer implements FieldDeserializer2 {
+        private final Field _field;
+        private final long _offset;
+
+        @SuppressWarnings("restriction")
+        CharFieldDeserializer(Field field) {
+            _field = field;
+            _offset = _unsafe.objectFieldOffset(_field);
+        }
+
+        @SuppressWarnings("restriction")
+        public void deserialize(AbstractHessianInput in, Object obj) throws IOException {
+            String value = null;
+
+            try {
+                value = in.readString();
+
+                char ch;
+
+                if (value != null && value.length() > 0) ch = value.charAt(0);
+                else ch = 0;
+
+                _unsafe.putChar(obj, _offset, ch);
+            } catch (Exception e) {
+                logDeserializeError(_field, obj, value, e);
+            }
+        }
+    }
+
+    static class ShortFieldDeserializer implements FieldDeserializer2 {
+        private final Field _field;
+        private final long _offset;
+
+        @SuppressWarnings("restriction")
+        ShortFieldDeserializer(Field field) {
+            _field = field;
+            _offset = _unsafe.objectFieldOffset(_field);
+        }
+
+        @SuppressWarnings("restriction")
+        public void deserialize(AbstractHessianInput in, Object obj) throws IOException {
+            int value = 0;
+
+            try {
+                value = in.readInt();
+
+                _unsafe.putShort(obj, _offset, (short) value);
+            } catch (Exception e) {
+                logDeserializeError(_field, obj, value, e);
+            }
+        }
+    }
+
+    static class IntFieldDeserializer implements FieldDeserializer2 {
+        private final Field _field;
+        private final long _offset;
+
+        @SuppressWarnings("restriction")
+        IntFieldDeserializer(Field field) {
+            _field = field;
+            _offset = _unsafe.objectFieldOffset(_field);
+        }
+
+        @SuppressWarnings("restriction")
+        public void deserialize(AbstractHessianInput in, Object obj) throws IOException {
+            int value = 0;
+
+            try {
+                value = in.readInt();
+
+                _unsafe.putInt(obj, _offset, value);
+            } catch (Exception e) {
+                logDeserializeError(_field, obj, value, e);
+            }
+        }
+    }
+
+    static class LongFieldDeserializer implements FieldDeserializer2 {
+        private final Field _field;
+        private final long _offset;
+
+        @SuppressWarnings("restriction")
+        LongFieldDeserializer(Field field) {
+            _field = field;
+            _offset = _unsafe.objectFieldOffset(_field);
+        }
+
+        @SuppressWarnings("restriction")
+        public void deserialize(AbstractHessianInput in, Object obj) throws IOException {
+            long value = 0;
+
+            try {
+                value = in.readLong();
+
+                _unsafe.putLong(obj, _offset, value);
+            } catch (Exception e) {
+                logDeserializeError(_field, obj, value, e);
+            }
+        }
+    }
+
+    static class FloatFieldDeserializer implements FieldDeserializer2 {
+        private final Field _field;
+        private final long _offset;
+
+        @SuppressWarnings("restriction")
+        FloatFieldDeserializer(Field field) {
+            _field = field;
+            _offset = _unsafe.objectFieldOffset(_field);
+        }
+
+        public void deserialize(AbstractHessianInput in, Object obj) throws IOException {
+            double value = 0;
+
+            try {
+                value = in.readDouble();
+
+                _unsafe.putFloat(obj, _offset, (float) value);
+            } catch (Exception e) {
+                logDeserializeError(_field, obj, value, e);
+            }
+        }
+    }
+
+    static class DoubleFieldDeserializer implements FieldDeserializer2 {
+        private final Field _field;
+        private final long _offset;
+
+        DoubleFieldDeserializer(Field field) {
+            _field = field;
+            _offset = _unsafe.objectFieldOffset(_field);
+        }
+
+        @SuppressWarnings("restriction")
+        public void deserialize(AbstractHessianInput in, Object obj) throws IOException {
+            double value = 0;
+
+            try {
+                value = in.readDouble();
+
+                _unsafe.putDouble(obj, _offset, value);
+            } catch (Exception e) {
+                logDeserializeError(_field, obj, value, e);
+            }
+        }
+    }
+
+    static class StringFieldDeserializer implements FieldDeserializer2 {
+        private final Field _field;
+        private final long _offset;
+
+        @SuppressWarnings("restriction")
+        StringFieldDeserializer(Field field) {
+            _field = field;
+            _offset = _unsafe.objectFieldOffset(_field);
+        }
+
+        @SuppressWarnings("restriction")
+        public void deserialize(AbstractHessianInput in, Object obj) throws IOException {
+            String value = null;
+
+            try {
+                value = in.readString();
+
+                _unsafe.putObject(obj, _offset, value);
+            } catch (Exception e) {
+                logDeserializeError(_field, obj, value, e);
+            }
+        }
+    }
+
+    static class SqlDateFieldDeserializer implements FieldDeserializer2 {
+        private final Field _field;
+        private final long _offset;
+
+        @SuppressWarnings("restriction")
+        SqlDateFieldDeserializer(Field field) {
+            _field = field;
+            _offset = _unsafe.objectFieldOffset(_field);
+        }
+
+        @SuppressWarnings("restriction")
+        public void deserialize(AbstractHessianInput in, Object obj) throws IOException {
+            java.sql.Date value = null;
+
+            try {
+                java.util.Date date = (java.util.Date) in.readObject();
+
+                if (date != null) {
+                    value = new java.sql.Date(date.getTime());
+
+                    _unsafe.putObject(obj, _offset, value);
+                } else {
+                    _unsafe.putObject(obj, _offset, null);
+                }
+            } catch (Exception e) {
+                logDeserializeError(_field, obj, value, e);
+            }
+        }
+    }
+
+    static class SqlTimestampFieldDeserializer implements FieldDeserializer2 {
+        private final Field _field;
+        private final long _offset;
+
+        @SuppressWarnings("restriction")
+        SqlTimestampFieldDeserializer(Field field) {
+            _field = field;
+            _offset = _unsafe.objectFieldOffset(_field);
+        }
+
+        @SuppressWarnings("restriction")
+        public void deserialize(AbstractHessianInput in, Object obj) throws IOException {
+            java.sql.Timestamp value = null;
+
+            try {
+                java.util.Date date = (java.util.Date) in.readObject();
+
+                if (date != null) {
+                    value = new java.sql.Timestamp(date.getTime());
+
+                    _unsafe.putObject(obj, _offset, value);
+                } else {
+                    _unsafe.putObject(obj, _offset, null);
+                }
+            } catch (Exception e) {
+                logDeserializeError(_field, obj, value, e);
+            }
+        }
+    }
+
+    static class SqlTimeFieldDeserializer implements FieldDeserializer2 {
+        private final Field _field;
+        private final long _offset;
+
+        @SuppressWarnings("restriction")
+        SqlTimeFieldDeserializer(Field field) {
+            _field = field;
+            _offset = _unsafe.objectFieldOffset(_field);
+        }
+
+        @SuppressWarnings("restriction")
+        public void deserialize(AbstractHessianInput in, Object obj) throws IOException {
+            java.sql.Time value = null;
+
+            try {
+                java.util.Date date = (java.util.Date) in.readObject();
+
+                if (date != null) {
+                    value = new java.sql.Time(date.getTime());
+
+                    _unsafe.putObject(obj, _offset, value);
+                } else {
+                    _unsafe.putObject(obj, _offset, null);
+                }
+            } catch (Exception e) {
+                logDeserializeError(_field, obj, value, e);
+            }
+        }
+    }
+
+    static void logDeserializeError(Field field, Object obj, Object value, Throwable e) throws IOException {
+        String fieldName = (field.getDeclaringClass().getName() + "." + field.getName());
+
+        if (e instanceof HessianFieldException) throw (HessianFieldException) e;
+        else if (e instanceof IOException) throw new HessianFieldException(fieldName + ": " + e.getMessage(), e);
+
+        if (value != null)
+            throw new HessianFieldException(
+                    fieldName + ": " + value.getClass().getName() + " (" + value + ")" + " cannot be assigned to '"
+                            + field.getType().getName() + "'",
+                    e);
         else
-          ch = 0;
-
-        _unsafe.putChar(obj, _offset, ch);
-      } catch (Exception e) {
-        logDeserializeError(_field, obj, value, e);
-      }
-    }
-  }
-
-  static class ShortFieldDeserializer implements FieldDeserializer2 {
-    private final Field _field;
-    private final long _offset;
-
-    @SuppressWarnings("restriction")
-    ShortFieldDeserializer(Field field)
-    {
-      _field = field;
-      _offset = _unsafe.objectFieldOffset(_field);
+            throw new HessianFieldException(
+                    fieldName + ": " + field.getType().getName() + " cannot be assigned from null", e);
     }
 
-    @SuppressWarnings("restriction")
-    public void deserialize(AbstractHessianInput in, Object obj)
-      throws IOException
-    {
-      int value = 0;
+    static {
+        boolean isEnabled = false;
 
-      try {
-        value = in.readInt();
+        try {
+            Class<?> unsafe = Class.forName("sun.misc.Unsafe");
+            Field theUnsafe = null;
+            for (Field field : unsafe.getDeclaredFields()) {
+                if (field.getName().equals("theUnsafe")) theUnsafe = field;
+            }
 
-        _unsafe.putShort(obj, _offset, (short) value);
-      } catch (Exception e) {
-        logDeserializeError(_field, obj, value, e);
-      }
-    }
-  }
+            if (theUnsafe != null) {
+                theUnsafe.setAccessible(true);
+                _unsafe = (Unsafe) theUnsafe.get(null);
+            }
 
-  static class IntFieldDeserializer implements FieldDeserializer2 {
-    private final Field _field;
-    private final long _offset;
+            isEnabled = _unsafe != null;
 
-    @SuppressWarnings("restriction")
-    IntFieldDeserializer(Field field)
-    {
-      _field = field;
-      _offset = _unsafe.objectFieldOffset(_field);
-    }
+            String unsafeProp = System.getProperty("com.caucho.hessian.unsafe");
 
-    @SuppressWarnings("restriction")
-    public void deserialize(AbstractHessianInput in, Object obj)
-      throws IOException
-    {
-      int value = 0;
-
-      try {
-        value = in.readInt();
-
-        _unsafe.putInt(obj, _offset, value);
-      } catch (Exception e) {
-        logDeserializeError(_field, obj, value, e);
-      }
-    }
-  }
-
-  static class LongFieldDeserializer implements FieldDeserializer2 {
-    private final Field _field;
-    private final long _offset;
-
-    @SuppressWarnings("restriction")
-    LongFieldDeserializer(Field field)
-    {
-      _field = field;
-      _offset = _unsafe.objectFieldOffset(_field);
-    }
-
-    @SuppressWarnings("restriction")
-    public void deserialize(AbstractHessianInput in, Object obj)
-      throws IOException
-    {
-      long value = 0;
-
-      try {
-        value = in.readLong();
-
-        _unsafe.putLong(obj, _offset, value);
-      } catch (Exception e) {
-        logDeserializeError(_field, obj, value, e);
-      }
-    }
-  }
-
-  static class FloatFieldDeserializer implements FieldDeserializer2 {
-    private final Field _field;
-    private final long _offset;
-
-    @SuppressWarnings("restriction")
-    FloatFieldDeserializer(Field field)
-    {
-      _field = field;
-      _offset = _unsafe.objectFieldOffset(_field);
-    }
-
-    public void deserialize(AbstractHessianInput in, Object obj)
-      throws IOException
-    {
-      double value = 0;
-
-      try {
-        value = in.readDouble();
-
-        _unsafe.putFloat(obj, _offset, (float) value);
-      } catch (Exception e) {
-        logDeserializeError(_field, obj, value, e);
-      }
-    }
-  }
-
-  static class DoubleFieldDeserializer implements FieldDeserializer2 {
-    private final Field _field;
-    private final long _offset;
-
-    DoubleFieldDeserializer(Field field)
-    {
-      _field = field;
-      _offset = _unsafe.objectFieldOffset(_field);
-    }
-
-    @SuppressWarnings("restriction")
-    public void deserialize(AbstractHessianInput in, Object obj)
-      throws IOException
-    {
-      double value = 0;
-
-      try {
-        value = in.readDouble();
-
-        _unsafe.putDouble(obj, _offset, value);
-      } catch (Exception e) {
-        logDeserializeError(_field, obj, value, e);
-      }
-    }
-  }
-
-  static class StringFieldDeserializer implements FieldDeserializer2 {
-    private final Field _field;
-    private final long _offset;
-
-    @SuppressWarnings("restriction")
-    StringFieldDeserializer(Field field)
-    {
-      _field = field;
-      _offset = _unsafe.objectFieldOffset(_field);
-    }
-
-    @SuppressWarnings("restriction")
-    public void deserialize(AbstractHessianInput in, Object obj)
-      throws IOException
-    {
-      String value = null;
-
-      try {
-        value = in.readString();
-
-        _unsafe.putObject(obj, _offset, value);
-      } catch (Exception e) {
-        logDeserializeError(_field, obj, value, e);
-      }
-    }
-  }
-
-  static class SqlDateFieldDeserializer implements FieldDeserializer2 {
-    private final Field _field;
-    private final long _offset;
-
-    @SuppressWarnings("restriction")
-    SqlDateFieldDeserializer(Field field)
-    {
-      _field = field;
-      _offset = _unsafe.objectFieldOffset(_field);
-    }
-
-    @SuppressWarnings("restriction")
-    public void deserialize(AbstractHessianInput in, Object obj)
-      throws IOException
-    {
-      java.sql.Date value = null;
-
-      try {
-        java.util.Date date = (java.util.Date) in.readObject();
-
-        if (date != null) {
-          value = new java.sql.Date(date.getTime());
-
-          _unsafe.putObject(obj, _offset, value);
-        } else {
-          _unsafe.putObject(obj, _offset, null);
+            if ("false".equals(unsafeProp)) isEnabled = false;
+        } catch (Throwable e) {
+            log.log(Level.FINER, e.toString(), e);
         }
-      } catch (Exception e) {
-        logDeserializeError(_field, obj, value, e);
-      }
+
+        _isEnabled = isEnabled;
     }
-  }
-
-  static class SqlTimestampFieldDeserializer implements FieldDeserializer2 {
-    private final Field _field;
-    private final long _offset;
-
-    @SuppressWarnings("restriction")
-    SqlTimestampFieldDeserializer(Field field)
-    {
-      _field = field;
-      _offset = _unsafe.objectFieldOffset(_field);
-    }
-
-    @SuppressWarnings("restriction")
-    public void deserialize(AbstractHessianInput in, Object obj)
-      throws IOException
-    {
-      java.sql.Timestamp value = null;
-
-      try {
-        java.util.Date date = (java.util.Date) in.readObject();
-
-        if (date != null) {
-          value = new java.sql.Timestamp(date.getTime());
-
-          _unsafe.putObject(obj, _offset, value);
-        }
-        else {
-          _unsafe.putObject(obj, _offset, null);
-        }
-      } catch (Exception e) {
-        logDeserializeError(_field, obj, value, e);
-      }
-    }
-  }
-
-  static class SqlTimeFieldDeserializer implements FieldDeserializer2 {
-    private final Field _field;
-    private final long _offset;
-
-    @SuppressWarnings("restriction")
-    SqlTimeFieldDeserializer(Field field)
-    {
-      _field = field;
-      _offset = _unsafe.objectFieldOffset(_field);
-    }
-
-    @SuppressWarnings("restriction")
-    public void deserialize(AbstractHessianInput in, Object obj)
-      throws IOException
-    {
-      java.sql.Time value = null;
-
-      try {
-        java.util.Date date = (java.util.Date) in.readObject();
-
-        if (date != null) {
-          value = new java.sql.Time(date.getTime());
-
-          _unsafe.putObject(obj, _offset, value);
-        } else {
-          _unsafe.putObject(obj, _offset, null);
-        }
-      } catch (Exception e) {
-        logDeserializeError(_field, obj, value, e);
-      }
-    }
-  }
-
-  static void logDeserializeError(Field field, Object obj, Object value,
-                                  Throwable e)
-    throws IOException
-  {
-    String fieldName = (field.getDeclaringClass().getName()
-                        + "." + field.getName());
-
-    if (e instanceof HessianFieldException)
-      throw (HessianFieldException) e;
-    else if (e instanceof IOException)
-      throw new HessianFieldException(fieldName + ": " + e.getMessage(), e);
-
-    if (value != null)
-      throw new HessianFieldException(fieldName + ": " + value.getClass().getName() + " (" + value + ")"
-                                      + " cannot be assigned to '" + field.getType().getName() + "'", e);
-    else
-       throw new HessianFieldException(fieldName + ": " + field.getType().getName() + " cannot be assigned from null", e);
-  }
-
-  static {
-    boolean isEnabled = false;
-
-    try {
-      Class<?> unsafe = Class.forName("sun.misc.Unsafe");
-      Field theUnsafe = null;
-      for (Field field : unsafe.getDeclaredFields()) {
-        if (field.getName().equals("theUnsafe"))
-          theUnsafe = field;
-      }
-
-      if (theUnsafe != null) {
-        theUnsafe.setAccessible(true);
-        _unsafe = (Unsafe) theUnsafe.get(null);
-      }
-
-      isEnabled = _unsafe != null;
-
-      String unsafeProp = System.getProperty("com.caucho.hessian.unsafe");
-
-      if ("false".equals(unsafeProp))
-        isEnabled = false;
-    } catch (Throwable e) {
-      log.log(Level.FINER, e.toString(), e);
-    }
-
-    _isEnabled = isEnabled;
-  }
 }

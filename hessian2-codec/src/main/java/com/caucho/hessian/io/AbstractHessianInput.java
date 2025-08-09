@@ -51,7 +51,6 @@ package com.caucho.hessian.io;
 import java.io.Closeable;
 import java.io.IOException;
 
-
 /**
  * Abstract base class for Hessian requests.  Hessian users should only
  * need to use the methods in this class.
@@ -210,8 +209,7 @@ public interface AbstractHessianInput extends Closeable {
      * D b64 b56 b48 b40 b32 b24 b16 b8
      * </pre>
      */
-    double readDouble()
-            throws IOException;
+    double readDouble() throws IOException;
 
     /**
      * Reads a date.

@@ -51,5 +51,4 @@ package com.caucho.hessian.io;
 /**
  * Factory for returning serialization methods.
  */
-abstract public class AbstractSerializerFactory extends io.github.wuwen5.hessian.io.AbstractSerializerFactory {
-}
+public abstract class AbstractSerializerFactory extends io.github.wuwen5.hessian.io.AbstractSerializerFactory {}

@@ -48,39 +48,34 @@
 
 package com.caucho.hessian.client;
 
-import java.net.URL;
 import java.io.IOException;
+import java.net.URL;
 
 /**
  * Internal factory for creating connections to the server.  The default
  * factory is java.net
  */
-abstract public class AbstractHessianConnectionFactory
-  implements HessianConnectionFactory
-{
-  private HessianProxyFactory _factory;
-  
-  /**
-   * The HessianProxyFactory contains some common network
-   * configuration like timeouts.
-   */
-  public void setHessianProxyFactory(HessianProxyFactory factory)
-  {
-    _factory = factory;
-  }
-  
-  /**
-   * The HessianProxyFactory contains some common network
-   * configuration like timeouts.
-   */
-  public HessianProxyFactory getHessianProxyFactory()
-  {
-    return _factory;
-  }
-  
-  /**
-   * Opens a new or recycled connection to the HTTP server.
-   */
-  abstract public HessianConnection open(URL url)
-    throws IOException;
+public abstract class AbstractHessianConnectionFactory implements HessianConnectionFactory {
+    private HessianProxyFactory _factory;
+
+    /**
+     * The HessianProxyFactory contains some common network
+     * configuration like timeouts.
+     */
+    public void setHessianProxyFactory(HessianProxyFactory factory) {
+        _factory = factory;
+    }
+
+    /**
+     * The HessianProxyFactory contains some common network
+     * configuration like timeouts.
+     */
+    public HessianProxyFactory getHessianProxyFactory() {
+        return _factory;
+    }
+
+    /**
+     * Opens a new or recycled connection to the HTTP server.
+     */
+    public abstract HessianConnection open(URL url) throws IOException;
 }

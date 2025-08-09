@@ -51,5 +51,4 @@ package io.github.wuwen5.hessian.io;
 /**
  * Marks a type as a handle
  */
-public interface HessianHandle {
-}
+public interface HessianHandle {}

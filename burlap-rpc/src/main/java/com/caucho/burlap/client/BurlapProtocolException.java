@@ -50,7 +50,6 @@ package com.caucho.burlap.client;
 
 import java.io.IOException;
 
-
 /**
  * Exception for faults when the fault doesn't return a java exception.
  * This exception is required for MicroBurlapInput.
@@ -61,8 +60,7 @@ public class BurlapProtocolException extends IOException {
     /**
      * Zero-arg constructor.
      */
-    public BurlapProtocolException() {
-    }
+    public BurlapProtocolException() {}
 
     /**
      * Create the exception.

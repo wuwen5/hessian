@@ -50,7 +50,6 @@ package com.caucho.burlap.client;
 
 import com.caucho.burlap.io.AbstractBurlapInput;
 import com.caucho.burlap.io.BurlapOutput;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,14 +62,12 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.logging.*;
 
-
 /**
  * Proxy implementation for Burlap clients.  Applications will generally
  * use BurlapProxyFactory to create proxy clients.
  */
 public class BurlapProxy implements InvocationHandler {
-    private static final Logger log
-            = Logger.getLogger(BurlapProxy.class.getName());
+    private static final Logger log = Logger.getLogger(BurlapProxy.class.getName());
 
     private final BurlapProxyFactory factory;
     private final URL url;
@@ -95,14 +92,12 @@ public class BurlapProxy implements InvocationHandler {
      * @param args   the arguments to the proxy object
      */
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args)
-            throws Throwable {
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         String methodName = method.getName();
         Class<?>[] params = method.getParameterTypes();
 
         // equals and hashCode are special cased
-        if (methodName.equals("equals") &&
-                params.length == 1 && params[0].equals(Object.class)) {
+        if (methodName.equals("equals") && params.length == 1 && params[0].equals(Object.class)) {
             Object value = args[0];
             if (value == null || !Proxy.isProxyClass(value.getClass())) {
                 return Boolean.FALSE;
@@ -113,14 +108,11 @@ public class BurlapProxy implements InvocationHandler {
             return url.equals(handler.getURL());
         } else if (methodName.equals("hashCode") && params.length == 0) {
             return Integer.valueOf(url.hashCode());
-        }
-        else if (methodName.equals("getBurlapType")) {
+        } else if (methodName.equals("getBurlapType")) {
             return proxy.getClass().getInterfaces()[0].getName();
-        }
-        else if (methodName.equals("getBurlapURL")) {
+        } else if (methodName.equals("getBurlapURL")) {
             return url.toString();
-        }
-        else if (methodName.equals("toString") && params.length == 0) {
+        } else if (methodName.equals("toString") && params.length == 0) {
             return getClass().getSimpleName() + "[" + url + "]";
         }
 

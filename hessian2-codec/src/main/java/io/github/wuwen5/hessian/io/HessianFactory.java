@@ -48,13 +48,12 @@
 
 package io.github.wuwen5.hessian.io;
 
-import java.util.logging.*;
-import java.io.*;
-
 import io.github.wuwen5.hessian.util.HessianFreeList;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.function.Consumer;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-
 
 /**
  * Factory for creating HessianInput and HessianOutput streams.
@@ -64,13 +63,12 @@ public class HessianFactory {
 
     @Setter
     private SerializerFactory serializerFactory;
+
     private final SerializerFactory defaultSerializerFactory;
 
-    private final HessianFreeList<Hessian2Output> freeHessian2Output
-            = new HessianFreeList<>(32);
+    private final HessianFreeList<Hessian2Output> freeHessian2Output = new HessianFreeList<>(32);
 
-    private final HessianFreeList<Hessian2Input> freeHessian2Input
-            = new HessianFreeList<>(32);
+    private final HessianFreeList<Hessian2Input> freeHessian2Input = new HessianFreeList<>(32);
 
     public HessianFactory() {
         defaultSerializerFactory = SerializerFactory.createDefault();
@@ -104,7 +102,6 @@ public class HessianFactory {
         getSerializerFactory().getClassFactory().allow(pattern);
     }
 
-
     /**
      * Deny a class or package based on a pattern.
      * <p>
@@ -134,8 +131,9 @@ public class HessianFactory {
      * Frees a Hessian 2.0 deserializer
      */
     public void freeHessian2Input(Hessian2Input in) {
-        if (in == null)
+        if (in == null) {
             return;
+        }
 
         in.free();
 
@@ -155,8 +153,7 @@ public class HessianFactory {
     /**
      * Frees a Hessian 2.0 deserializer
      */
-    public void freeHessian2StreamingInput(Hessian2StreamingInput in) {
-    }
+    public void freeHessian2StreamingInput(Hessian2StreamingInput in) {}
 
     /**
      * Creates a new Hessian 2.0 serializer.
@@ -188,8 +185,9 @@ public class HessianFactory {
      * Frees a Hessian 2.0 serializer
      */
     public void freeHessian2Output(Hessian2Output out) {
-        if (out == null)
+        if (out == null) {
             return;
+        }
 
         out.free();
 
@@ -209,17 +207,15 @@ public class HessianFactory {
      * Frees a Hessian 2.0 serializer
      */
     public void freeHessian2StreamingOutput(Hessian2StreamingOutput out) {
-        if (out == null)
+        if (out == null) {
             return;
+        }
 
         freeHessian2Output(out.getHessian2Output());
     }
 
-    public OutputStream createHessian2DebugOutput(OutputStream os,
-                                                  Logger log,
-                                                  Level level) {
-        HessianDebugOutputStream out
-                = new HessianDebugOutputStream(os, log, level);
+    public OutputStream createHessian2DebugOutput(OutputStream os, Consumer<String> log) {
+        HessianDebugOutputStream out = new HessianDebugOutputStream(os, log);
 
         out.startTop2();
 

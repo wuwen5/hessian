@@ -57,15 +57,6 @@ import com.caucho.hessian.io.HessianRemoteResolver;
 import com.caucho.hessian.io.SerializerFactory;
 import com.caucho.services.client.ServiceProxyFactory;
 import io.github.wuwen5.hessian.io.HessianDebugInputStream;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.naming.Context;
-import javax.naming.Name;
-import javax.naming.NamingException;
-import javax.naming.RefAddr;
-import javax.naming.Reference;
-import javax.naming.spi.ObjectFactory;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -76,7 +67,14 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Hashtable;
-
+import javax.naming.Context;
+import javax.naming.Name;
+import javax.naming.NamingException;
+import javax.naming.RefAddr;
+import javax.naming.Reference;
+import javax.naming.spi.ObjectFactory;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Factory for creating Hessian client stubs.  The returned stub will
@@ -193,7 +191,8 @@ public class HessianProxyFactory implements ServiceProxyFactory, ObjectFactory {
         if (basicAuth != null) {
             return basicAuth;
         } else if (user != null && password != null) {
-            return "Basic " + Base64.getEncoder().encodeToString((user + ":" + password).getBytes(StandardCharsets.UTF_8));
+            return "Basic "
+                    + Base64.getEncoder().encodeToString((user + ":" + password).getBytes(StandardCharsets.UTF_8));
         } else {
             return null;
         }
@@ -238,8 +237,7 @@ public class HessianProxyFactory implements ServiceProxyFactory, ObjectFactory {
     }
 
     protected HessianConnectionFactory createHessianConnectionFactory() {
-        String className
-                = System.getProperty(HessianConnectionFactory.class.getName());
+        String className = System.getProperty(HessianConnectionFactory.class.getName());
 
         HessianConnectionFactory factory;
 
@@ -267,14 +265,12 @@ public class HessianProxyFactory implements ServiceProxyFactory, ObjectFactory {
      * @param url the URL where the client object is located.
      * @return a proxy to the object with the specified interface.
      */
-    public Object create(String url)
-            throws MalformedURLException, ClassNotFoundException {
+    public Object create(String url) throws MalformedURLException, ClassNotFoundException {
         HessianMetaInfoAPI metaInfo;
 
         metaInfo = (HessianMetaInfoAPI) create(HessianMetaInfoAPI.class, url);
 
-        String apiClassName =
-                (String) metaInfo._hessian_getAttribute("java.api.class");
+        String apiClassName = (String) metaInfo._hessian_getAttribute("java.api.class");
 
         if (apiClassName == null) {
             throw new HessianRuntimeException(url + " has an unknown api.");
@@ -298,8 +294,7 @@ public class HessianProxyFactory implements ServiceProxyFactory, ObjectFactory {
      * @param urlName the URL where the client object is located.
      * @return a proxy to the object with the specified interface.
      */
-    public Object create(Class api, String urlName)
-            throws MalformedURLException {
+    public Object create(Class api, String urlName) throws MalformedURLException {
         return create(api, urlName, loader);
     }
 
@@ -316,8 +311,7 @@ public class HessianProxyFactory implements ServiceProxyFactory, ObjectFactory {
      * @param urlName the URL where the client object is located.
      * @return a proxy to the object with the specified interface.
      */
-    public Object create(Class<?> api, String urlName, ClassLoader loader)
-            throws MalformedURLException {
+    public Object create(Class<?> api, String urlName, ClassLoader loader) throws MalformedURLException {
         URL url = new URL(urlName);
 
         return create(api, url, loader);
@@ -344,16 +338,12 @@ public class HessianProxyFactory implements ServiceProxyFactory, ObjectFactory {
 
         handler = new HessianProxy(url, this, api);
 
-        return Proxy.newProxyInstance(loader,
-                new Class[]{api,
-                        HessianRemoteObject.class},
-                handler);
+        return Proxy.newProxyInstance(loader, new Class[] {api, HessianRemoteObject.class}, handler);
     }
 
     public AbstractHessianInput getHessianInput(InputStream is) {
         return getHessian2Input(is);
     }
-
 
     public AbstractHessianInput getHessian2Input(InputStream is) {
         AbstractHessianInput in;
@@ -382,8 +372,7 @@ public class HessianProxyFactory implements ServiceProxyFactory, ObjectFactory {
     /**
      * JNDI object factory so the proxy can be used as a resource.
      */
-    public Object getObjectInstance(Object obj, Name name,
-                                    Context nameCtx, Hashtable<?, ?> environment)
+    public Object getObjectInstance(Object obj, Name name, Context nameCtx, Hashtable<?, ?> environment)
             throws Exception {
         Reference ref = (Reference) obj;
 
@@ -420,4 +409,3 @@ public class HessianProxyFactory implements ServiceProxyFactory, ObjectFactory {
         return create(apiClass, url);
     }
 }
-

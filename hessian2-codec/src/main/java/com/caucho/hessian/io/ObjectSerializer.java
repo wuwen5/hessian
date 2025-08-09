@@ -52,5 +52,5 @@ package com.caucho.hessian.io;
  * Serializing an object.
  */
 public interface ObjectSerializer {
-  Serializer getObjectSerializer();
+    Serializer getObjectSerializer();
 }

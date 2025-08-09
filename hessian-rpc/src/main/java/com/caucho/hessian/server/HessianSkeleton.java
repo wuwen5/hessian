@@ -48,28 +48,25 @@
 
 package com.caucho.hessian.server;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.Writer;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Objects;
-
 import com.caucho.hessian.io.SerializerFactory;
 import com.caucho.services.server.AbstractSkeleton;
 import com.caucho.services.server.ServiceContext;
+import io.github.wuwen5.hessian.LineFlushingWriter;
 import io.github.wuwen5.hessian.io.AbstractHessianInput;
 import io.github.wuwen5.hessian.io.AbstractHessianOutput;
 import io.github.wuwen5.hessian.io.HessianDebugInputStream;
 import io.github.wuwen5.hessian.io.HessianDebugOutputStream;
 import io.github.wuwen5.hessian.io.HessianFactory;
 import io.github.wuwen5.hessian.io.HessianInputFactory;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Objects;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-
 
 /**
  * Proxy class for Hessian services.
@@ -82,6 +79,7 @@ public class HessianSkeleton extends AbstractSkeleton {
     private boolean debug;
 
     private final HessianInputFactory inputFactory = new HessianInputFactory();
+
     @Setter
     private HessianFactory hessianFactory = new HessianFactory();
 
@@ -122,8 +120,7 @@ public class HessianSkeleton extends AbstractSkeleton {
      * @param is the Hessian input stream
      * @param os the Hessian output stream
      */
-    public void invoke(InputStream is, OutputStream os)
-            throws Exception {
+    public void invoke(InputStream is, OutputStream os) throws Exception {
         invoke(is, os, null);
     }
 
@@ -133,9 +130,7 @@ public class HessianSkeleton extends AbstractSkeleton {
      * @param is the Hessian input stream
      * @param os the Hessian output stream
      */
-    public void invoke(InputStream is, OutputStream os,
-                       SerializerFactory serializerFactory)
-            throws Exception {
+    public void invoke(InputStream is, OutputStream os, SerializerFactory serializerFactory) throws Exception {
         boolean isDebug = false;
 
         if (isDebugInvoke()) {
@@ -186,8 +181,7 @@ public class HessianSkeleton extends AbstractSkeleton {
      * @param in  the Hessian input stream
      * @param out the Hessian output stream
      */
-    public void invoke(AbstractHessianInput in, AbstractHessianOutput out)
-            throws Exception {
+    public void invoke(AbstractHessianInput in, AbstractHessianOutput out) throws Exception {
         invoke(service, in, out);
     }
 
@@ -197,10 +191,7 @@ public class HessianSkeleton extends AbstractSkeleton {
      * @param in  the Hessian input stream
      * @param out the Hessian output stream
      */
-    public void invoke(Object service,
-                       AbstractHessianInput in,
-                       AbstractHessianOutput out)
-            throws Exception {
+    public void invoke(Object service, AbstractHessianInput in, AbstractHessianOutput out) throws Exception {
         ServiceContext context = ServiceContext.getContext();
 
         // backward compatibility for some frameworks that don't read
@@ -232,12 +223,13 @@ public class HessianSkeleton extends AbstractSkeleton {
 
             String value = null;
 
-            if ("java.api.class".equals(attrName))
+            if ("java.api.class".equals(attrName)) {
                 value = getAPIClassName();
-            else if ("java.home.class".equals(attrName))
+            } else if ("java.home.class".equals(attrName)) {
                 value = getHomeClassName();
-            else if ("java.object.class".equals(attrName))
+            } else if ("java.object.class".equals(attrName)) {
                 value = getObjectClassName();
+            }
 
             out.writeReply(value);
             out.close();
@@ -245,9 +237,8 @@ public class HessianSkeleton extends AbstractSkeleton {
         }
 
         if (method == null) {
-            out.writeFault("NoSuchMethodException",
-                    escapeMessage("The service has no method named: " + in.getMethod()),
-                    null);
+            out.writeFault(
+                    "NoSuchMethodException", escapeMessage("The service has no method named: " + in.getMethod()), null);
             out.close();
             return;
         }
@@ -255,7 +246,8 @@ public class HessianSkeleton extends AbstractSkeleton {
         Class<?>[] args = method.getParameterTypes();
 
         if (argLength != args.length && argLength >= 0) {
-            out.writeFault("NoSuchMethod",
+            out.writeFault(
+                    "NoSuchMethod",
                     escapeMessage("method " + method + " argument length mismatch, received length=" + argLength),
                     null);
             out.close();
@@ -281,9 +273,7 @@ public class HessianSkeleton extends AbstractSkeleton {
 
             log.debug(e1.toString(), e1);
 
-            out.writeFault("ServiceException",
-                    escapeMessage(e1.getMessage()),
-                    e1);
+            out.writeFault("ServiceException", escapeMessage(e1.getMessage()), e1);
             out.close();
             return;
         }
@@ -331,54 +321,10 @@ public class HessianSkeleton extends AbstractSkeleton {
     }
 
     protected boolean isDebugInvoke() {
-        return (log.isTraceEnabled()
-                || isDebug() && log.isDebugEnabled());
+        return (log.isTraceEnabled() || isDebug() && log.isDebugEnabled());
     }
 
     protected PrintWriter createDebugPrintWriter() {
-        return new PrintWriter(new LogWriter(log));
-    }
-
-    /**
-     * Creates the PrintWriter for debug output. The default is to
-     * write to java.util.Logging.
-     */
-    static class LogWriter extends Writer {
-        private final Logger log;
-        private final StringBuilder sb = new StringBuilder();
-
-        LogWriter(Logger log) {
-            this.log = log;
-        }
-
-        @Override
-        public void write(char[] buffer, int offset, int length) {
-            for (int i = 0; i < length; i++) {
-                char ch = buffer[offset + i];
-                if (ch == '\n' && sb.length() > 0) {
-                    if (log.isDebugEnabled()) {
-                        log.debug(sb.toString());
-                    }
-                    sb.setLength(0);
-                } else {
-                    sb.append(ch);
-                }
-            }
-        }
-
-        @Override
-        public void flush() {
-            if (sb.length() > 0) {
-                if (log.isDebugEnabled()) {
-                    log.debug(sb.toString());
-                }
-                sb.setLength(0);
-            }
-        }
-
-        @Override
-        public void close() {
-            flush();
-        }
+        return new PrintWriter(new LineFlushingWriter(log::debug));
     }
 }

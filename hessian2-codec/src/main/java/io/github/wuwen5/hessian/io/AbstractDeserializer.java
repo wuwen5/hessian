@@ -50,7 +50,6 @@ package io.github.wuwen5.hessian.io;
 
 import java.io.IOException;
 
-
 /**
  * Deserializing an object.
  */
@@ -68,8 +67,7 @@ public class AbstractDeserializer implements Deserializer {
     }
 
     @Override
-    public Object readObject(AbstractHessianInput in)
-            throws IOException {
+    public Object readObject(AbstractHessianInput in) throws IOException {
         Object obj = in.readObject();
 
         String className = getClass().getName();
@@ -82,20 +80,17 @@ public class AbstractDeserializer implements Deserializer {
     }
 
     @Override
-    public Object readList(AbstractHessianInput in, int length)
-            throws IOException {
+    public Object readList(AbstractHessianInput in, int length) throws IOException {
         throw new UnsupportedOperationException(String.valueOf(this));
     }
 
     @Override
-    public Object readLengthList(AbstractHessianInput in, int length)
-            throws IOException {
+    public Object readLengthList(AbstractHessianInput in, int length) throws IOException {
         throw new UnsupportedOperationException(String.valueOf(this));
     }
 
     @Override
-    public Object readMap(AbstractHessianInput in)
-            throws IOException {
+    public Object readMap(AbstractHessianInput in) throws IOException {
         Object obj = in.readObject();
 
         String className = getClass().getName();
@@ -132,9 +127,7 @@ public class AbstractDeserializer implements Deserializer {
     }
 
     @Override
-    public Object readObject(AbstractHessianInput in,
-                             String[] fieldNames)
-            throws IOException {
+    public Object readObject(AbstractHessianInput in, String[] fieldNames) throws IOException {
         return readObject(in, (Object[]) fieldNames);
     }
 
@@ -142,9 +135,7 @@ public class AbstractDeserializer implements Deserializer {
      * Reads an object instance from the input stream
      */
     @Override
-    public Object readObject(AbstractHessianInput in,
-                             Object[] fields)
-            throws IOException {
+    public Object readObject(AbstractHessianInput in, Object[] fields) throws IOException {
         throw new UnsupportedOperationException(toString());
     }
 
@@ -164,6 +155,5 @@ public class AbstractDeserializer implements Deserializer {
      * The NullDeserializer exists as a marker for the factory classes so
      * they save a null result.
      */
-    static final class NullDeserializer extends AbstractDeserializer {
-    }
+    static final class NullDeserializer extends AbstractDeserializer {}
 }

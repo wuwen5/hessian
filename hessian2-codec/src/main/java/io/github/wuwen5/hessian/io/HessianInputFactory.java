@@ -48,12 +48,9 @@
 
 package io.github.wuwen5.hessian.io;
 
-
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.IOException;
 import java.io.InputStream;
-
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class HessianInputFactory {
@@ -68,8 +65,7 @@ public class HessianInputFactory {
         return factory.getSerializerFactory();
     }
 
-    public HeaderType readHeader(InputStream is)
-            throws IOException {
+    public HeaderType readHeader(InputStream is) throws IOException {
         int code = is.read();
 
         int major = is.read();
@@ -83,12 +79,12 @@ public class HessianInputFactory {
             case 'H':
                 return HeaderType.HESSIAN_2;
             default:
-                throw new IOException((char) code + " 0x" + Integer.toHexString(code) + " is an unknown Hessian2 message code.");
+                throw new IOException(
+                        (char) code + " 0x" + Integer.toHexString(code) + " is an unknown Hessian2 message code.");
         }
     }
 
-    public AbstractHessianInput open(InputStream is)
-            throws IOException {
+    public AbstractHessianInput open(InputStream is) throws IOException {
         int code = is.read();
 
         int major = is.read();
@@ -103,8 +99,7 @@ public class HessianInputFactory {
                 if (major >= 2) {
                     return factory.createHessian2Input(is);
                 } else {
-                    throw new IOException("major version " + major
-                            + " is not supported for Hessian 2.0 messages");
+                    throw new IOException("major version " + major + " is not supported for Hessian 2.0 messages");
                 }
 
             default:
