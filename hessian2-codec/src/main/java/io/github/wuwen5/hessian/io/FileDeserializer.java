@@ -55,7 +55,7 @@ import java.io.File;
  */
 public class FileDeserializer extends AbstractStringValueDeserializer {
     @Override
-    public Class getType() {
+    public Class<?> getType() {
         return File.class;
     }
 

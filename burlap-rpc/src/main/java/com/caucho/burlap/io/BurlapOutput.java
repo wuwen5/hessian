@@ -109,7 +109,7 @@ public class BurlapOutput extends AbstractBurlapOutput {
 
         _refs = null;
 
-        if (_serializerFactory == null) _serializerFactory = new SerializerFactory();
+        if (serializerFactory == null) serializerFactory = new SerializerFactory();
     }
 
     /**
@@ -270,7 +270,7 @@ public class BurlapOutput extends AbstractBurlapOutput {
 
         Serializer serializer;
 
-        serializer = _serializerFactory.getSerializer(object.getClass());
+        serializer = serializerFactory.getSerializer(object.getClass());
 
         serializer.writeObject(object, this);
     }
@@ -851,4 +851,7 @@ public class BurlapOutput extends AbstractBurlapOutput {
             os.write(ch);
         }
     }
+
+    @Override
+    public void close() throws IOException {}
 }

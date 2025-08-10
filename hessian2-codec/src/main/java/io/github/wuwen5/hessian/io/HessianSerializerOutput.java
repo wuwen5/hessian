@@ -103,10 +103,10 @@ public class HessianSerializerOutput extends Hessian2Output {
     /**
      * Applications which override this can do custom serialization.
      *
-     * @param object the object to write.
+     * @param obj the object to write.
      */
     public void writeObjectImpl(Object obj) throws IOException {
-        Class cl = obj.getClass();
+        Class<?> cl = obj.getClass();
 
         try {
             Method method = cl.getMethod("writeReplace", new Class[0]);
@@ -114,17 +114,17 @@ public class HessianSerializerOutput extends Hessian2Output {
 
             writeObject(repl);
             return;
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         try {
             writeMapBegin(cl.getName());
             for (; cl != null; cl = cl.getSuperclass()) {
                 Field[] fields = cl.getDeclaredFields();
-                for (int i = 0; i < fields.length; i++) {
-                    Field field = fields[i];
-
-                    if (Modifier.isTransient(field.getModifiers()) || Modifier.isStatic(field.getModifiers())) continue;
+                for (Field field : fields) {
+                    if (Modifier.isTransient(field.getModifiers()) || Modifier.isStatic(field.getModifiers())) {
+                        continue;
+                    }
 
                     // XXX: could parameterize the handler to only deal with public
                     field.setAccessible(true);
