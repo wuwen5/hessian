@@ -4,6 +4,7 @@ import com.caucho.hessian.io.AbstractHessianInput;
 import com.caucho.hessian.io.AbstractHessianOutput;
 import com.caucho.hessian.io.Hessian2Input;
 import com.caucho.hessian.io.Hessian2Output;
+import io.vavr.control.Try;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -13,6 +14,11 @@ import java.util.function.Function;
  * @author wuwen
  */
 public abstract class SerializeTestBase {
+
+    protected <T> T baseHessian2Serialize(T data) throws IOException {
+        return hessianIO(out -> Try.run(() -> out.writeObject(data)), in -> Try.of(() -> (T) in.readObject())
+                .get());
+    }
 
     <T> T hessianIO(Function<AbstractHessianOutput, Object> outFun, Function<AbstractHessianInput, T> inFun)
             throws IOException {
