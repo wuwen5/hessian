@@ -48,9 +48,9 @@
 
 package com.caucho.hessian.security;
 
-import io.github.wuwen5.hessian.io.Hessian2Input;
-import io.github.wuwen5.hessian.io.Hessian2Output;
-import io.github.wuwen5.hessian.io.HessianEnvelope;
+import com.caucho.hessian.io.Hessian2Input;
+import com.caucho.hessian.io.Hessian2Output;
+import com.caucho.hessian.io.HessianEnvelope;
 import java.io.*;
 import java.security.*;
 import java.security.cert.*;

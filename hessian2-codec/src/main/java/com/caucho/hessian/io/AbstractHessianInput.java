@@ -48,6 +48,7 @@
 
 package com.caucho.hessian.io;
 
+import io.github.wuwen5.hessian.io.HessianProtocolException;
 import java.io.Closeable;
 import java.io.IOException;
 
@@ -67,18 +68,38 @@ import java.io.IOException;
 public interface AbstractHessianInput extends Closeable {
 
     /**
-     * Reads the call
+     * Starts reading the call
      *
      * <pre>
      * c major minor
      * </pre>
      */
-    int readCall() throws IOException;
+    default int readCall() throws IOException {
+        int tag = read();
+
+        if (tag != 'C') {
+            String message = "expected hessian call ('C') at "
+                    + (tag < 0 ? "end of file" : "0x" + Integer.toHexString(tag & 0xff) + " (" + (char) +tag + ")");
+            if (getMethod() != null) {
+                throw new HessianProtocolException(getMethod() + ": " + message);
+            } else {
+                throw new HessianProtocolException(message);
+            }
+        }
+
+        return 0;
+    }
+
+    /**
+     * Normally, shouldn't be called externally, but needed for QA, e.g.
+     * ejb/3b01.
+     */
+    int read() throws IOException;
 
     /**
      * For backward compatibility with HessianSkeleton
      */
-    void skipOptionalCall() throws IOException;
+    default void skipOptionalCall() {}
 
     /**
      * Reads a header, returning null if there are no headers.
@@ -87,7 +108,9 @@ public interface AbstractHessianInput extends Closeable {
      * H b16 b8 value
      * </pre>
      */
-    String readHeader() throws IOException;
+    default String readHeader() throws IOException {
+        return null;
+    }
 
     /**
      * Starts reading the call
@@ -105,19 +128,9 @@ public interface AbstractHessianInput extends Closeable {
      *
      * @return -1 for a variable length (hessian 1.0)
      */
-    int readMethodArgLength() throws IOException;
-
-    /**
-     * Starts reading the call, including the headers.
-     *
-     * <p>The call expects the following protocol data
-     *
-     * <pre>
-     * c major minor
-     * m b16 b8 method
-     * </pre>
-     */
-    void startCall() throws IOException;
+    default int readMethodArgLength() throws IOException {
+        return -1;
+    }
 
     /**
      * Completes reading the call
@@ -128,7 +141,8 @@ public interface AbstractHessianInput extends Closeable {
      * Z
      * </pre>
      */
-    void completeCall() throws IOException;
+    default void completeCall() throws IOException {}
+    ;
 
     /**
      * Reads a reply as an object.
@@ -152,7 +166,8 @@ public interface AbstractHessianInput extends Closeable {
      * Starts reading the body of the reply, i.e. after the 'r' has been
      * parsed.
      */
-    void startReplyBody() throws Throwable;
+    default void startReplyBody() throws Throwable {}
+    ;
 
     /**
      * Completes reading the call
@@ -163,7 +178,7 @@ public interface AbstractHessianInput extends Closeable {
      * z
      * </pre>
      */
-    void completeReply() throws IOException;
+    default void completeReply() throws IOException {}
 
     /**
      * Reads a boolean

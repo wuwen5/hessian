@@ -119,5 +119,14 @@ class HessianFactoryTest {
         assertEquals(2, list.size());
     }
 
+    @Test
+    void testSerializerFactory() {
+        com.caucho.hessian.io.SerializerFactory serializerFactory = new com.caucho.hessian.io.SerializerFactory();
+        com.caucho.hessian.io.SerializerFactory serializerFactory2 = new com.caucho.hessian.io.SerializerFactory(
+                Thread.currentThread().getContextClassLoader());
+
+        assertSame(serializerFactory.getClassLoader(), serializerFactory2.getClassLoader());
+    }
+
     static class Obj implements Serializable {}
 }

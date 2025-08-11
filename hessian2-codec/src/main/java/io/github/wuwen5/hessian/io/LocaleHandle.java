@@ -64,7 +64,9 @@ public class LocaleHandle implements java.io.Serializable, HessianHandle {
     private Object readResolve() {
         String s = this.value;
 
-        if (s == null) return null;
+        if (s == null) {
+            return null;
+        }
 
         int len = s.length();
         char ch = ' ';
@@ -103,9 +105,12 @@ public class LocaleHandle implements java.io.Serializable, HessianHandle {
 
             var = s.substring(head, i);
         }
-
-        if (var != null) return new Locale(language, country, var);
-        else if (country != null) return new Locale(language, country);
-        else return new Locale(language);
+        if (var != null) {
+            return new Locale(language, country, var);
+        } else if (country != null) {
+            return new Locale(language, country);
+        } else {
+            return new Locale(language);
+        }
     }
 }

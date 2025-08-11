@@ -48,12 +48,14 @@
 
 package com.caucho.hessian.server;
 
+import com.caucho.hessian.io.AbstractHessianInput;
+import com.caucho.hessian.io.AbstractHessianOutput;
 import com.caucho.hessian.io.SerializerFactory;
 import com.caucho.services.server.AbstractSkeleton;
 import com.caucho.services.server.ServiceContext;
 import io.github.wuwen5.hessian.LineFlushingWriter;
-import io.github.wuwen5.hessian.io.AbstractHessianInput;
-import io.github.wuwen5.hessian.io.AbstractHessianOutput;
+import io.github.wuwen5.hessian.io.Hessian2Input;
+import io.github.wuwen5.hessian.io.Hessian2Output;
 import io.github.wuwen5.hessian.io.HessianDebugInputStream;
 import io.github.wuwen5.hessian.io.HessianDebugOutputStream;
 import io.github.wuwen5.hessian.io.HessianFactory;
@@ -81,7 +83,34 @@ public class HessianSkeleton extends AbstractSkeleton {
     private final HessianInputFactory inputFactory = new HessianInputFactory();
 
     @Setter
-    private HessianFactory hessianFactory = new HessianFactory();
+    private HessianFactory hessianFactory = new HessianFactory() {
+        @Override
+        public Hessian2Input createHessian2Input(InputStream is) {
+            Hessian2Input in = freeHessian2Input.allocate();
+
+            if (in == null) {
+                in = new com.caucho.hessian.io.Hessian2Input(is);
+                in.setSerializerFactory(getSerializerFactory());
+            } else {
+                in.init(is);
+            }
+            return in;
+        }
+
+        @Override
+        public Hessian2Output createHessian2Output(OutputStream os) {
+            Hessian2Output out = freeHessian2Output.allocate();
+
+            if (out == null) {
+                out = new com.caucho.hessian.io.Hessian2Output();
+
+                out.setSerializerFactory(getSerializerFactory());
+            }
+
+            out.init(os);
+            return out;
+        }
+    };
 
     private Object service;
 
@@ -151,9 +180,9 @@ public class HessianSkeleton extends AbstractSkeleton {
         AbstractHessianOutput out;
 
         if (Objects.requireNonNull(header) == HessianInputFactory.HeaderType.HESSIAN_2) {
-            in = hessianFactory.createHessian2Input(is);
+            in = (AbstractHessianInput) hessianFactory.createHessian2Input(is);
             in.readCall();
-            out = hessianFactory.createHessian2Output(os);
+            out = (AbstractHessianOutput) hessianFactory.createHessian2Output(os);
         } else {
             throw new IllegalStateException(header + " is an unknown Hessian call");
         }

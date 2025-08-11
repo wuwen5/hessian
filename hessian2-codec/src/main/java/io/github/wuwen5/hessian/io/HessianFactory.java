@@ -66,9 +66,9 @@ public class HessianFactory {
 
     private final SerializerFactory defaultSerializerFactory;
 
-    private final HessianFreeList<Hessian2Output> freeHessian2Output = new HessianFreeList<>(32);
+    protected final HessianFreeList<Hessian2Output> freeHessian2Output = new HessianFreeList<>(32);
 
-    private final HessianFreeList<Hessian2Input> freeHessian2Input = new HessianFreeList<>(32);
+    protected final HessianFreeList<Hessian2Input> freeHessian2Input = new HessianFreeList<>(32);
 
     public HessianFactory() {
         defaultSerializerFactory = SerializerFactory.createDefault();

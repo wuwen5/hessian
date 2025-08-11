@@ -1400,7 +1400,7 @@ public class BurlapInput extends AbstractBurlapInput {
         throw new UnsupportedOperationException();
     }
 
-    int read() throws IOException {
+    public int read() throws IOException {
         if (_peek >= 0) {
             int value = _peek;
             _peek = -1;
@@ -1590,5 +1590,20 @@ public class BurlapInput extends AbstractBurlapInput {
         }
 
         return _detailMessageField;
+    }
+
+    @Override
+    public void close() {
+        if (_is != null) {
+            try {
+                _is.close();
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+
+        if (_refs != null) {
+            _refs.clear();
+        }
     }
 }

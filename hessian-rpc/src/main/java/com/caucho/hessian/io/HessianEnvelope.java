@@ -22,7 +22,7 @@
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
- * 4. The names "Burlap", "Resin", and "Caucho" must not be used to
+ * 4. The names "Hessian", "Resin", and "Caucho" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    info@caucho.com.
@@ -46,32 +46,30 @@
  * @author Scott Ferguson
  */
 
-package com.caucho.burlap.io;
+package com.caucho.hessian.io;
 
-import com.caucho.hessian.io.HessianRemoteResolver;
-import io.github.wuwen5.hessian.io.AbstractHessianInput;
+import java.io.IOException;
 
 /**
- * Abstract base class for Burlap requests.  Burlap users should only
- * need to use the methods in this class.
- *
- * <p>Note, this class is just an extension of AbstractHessianInput.
- *
- * <pre>
- * AbstractBurlapInput in = ...; // get input
- * String value;
- *
- * in.startReply();         // read reply header
- * value = in.readString(); // read string value
- * in.completeReply();      // read reply footer
- * </pre>
+ * Factory class for wrapping and unwrapping hessian streams.
  */
-public abstract class AbstractBurlapInput extends AbstractHessianInput
-        implements com.caucho.hessian.io.AbstractHessianInput {
+public abstract class HessianEnvelope {
     /**
-     * Sets the resolver used to lookup remote objects.
+     * Wrap the Hessian output stream in an envelope.
      */
-    public void setRemoteResolver(HessianRemoteResolver resolver) {
-        super.setRemoteResolver(resolver);
-    }
+    public abstract Hessian2Output wrap(Hessian2Output out) throws IOException;
+
+    /**
+     * Unwrap the Hessian input stream with this envelope.  It is an
+     * error if the actual envelope does not match the expected envelope
+     * class.
+     */
+    public abstract Hessian2Input unwrap(Hessian2Input in) throws IOException;
+
+    /**
+     * Unwrap the envelope after having read the envelope code ('E') and
+     * the envelope method.  Called by the EnvelopeFactory for dynamic
+     * reading of the envelopes.
+     */
+    public abstract Hessian2Input unwrapHeaders(Hessian2Input in) throws IOException;
 }
