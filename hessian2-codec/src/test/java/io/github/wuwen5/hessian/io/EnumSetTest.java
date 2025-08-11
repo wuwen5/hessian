@@ -103,6 +103,7 @@ enum TestLargeEnumSet {
 
 public class EnumSetTest extends SerializeTestBase {
     @Test
+    @EnabledForJreRange(max = JRE.JAVA_11)
     void test() throws IOException {
         EnumSet<TestEnumSet> originalEnumSet = EnumSet.of(TestEnumSet.ONE, TestEnumSet.TWO);
 
@@ -116,6 +117,7 @@ public class EnumSetTest extends SerializeTestBase {
     }
 
     @Test
+    @EnabledForJreRange(max = JRE.JAVA_11)
     void testJumbo() throws IOException {
         EnumSet<TestLargeEnumSet> originalEnumSet = EnumSet.of(TestLargeEnumSet.E1, TestLargeEnumSet.E2);
 

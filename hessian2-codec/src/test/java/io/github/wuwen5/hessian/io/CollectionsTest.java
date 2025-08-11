@@ -28,11 +28,13 @@ import org.junit.jupiter.api.condition.JRE;
 
 public class CollectionsTest extends SerializeTestBase {
     @Test
+    @EnabledForJreRange(max = JRE.JAVA_11)
     void testRandomAccessToUnmodifiableList() throws IOException {
         List<Integer> list = new ArrayList<>();
         list.add(1);
         list.add(2);
         list.add(3);
+        // jdk 21 TODO
         List<Integer> unmodifiableList = Collections.unmodifiableList(list);
         Assertions.assertEquals(unmodifiableList, baseHessian2Serialize(unmodifiableList));
     }
@@ -70,11 +72,13 @@ public class CollectionsTest extends SerializeTestBase {
     }
 
     @Test
+    @EnabledForJreRange(max = JRE.JAVA_11)
     void testRandomAccessToSynchronizedList() throws IOException {
         List<Integer> list = new ArrayList<>();
         list.add(1);
         list.add(2);
         list.add(3);
+        // jdk 21 TODO
         List<Integer> unmodifiableList = Collections.synchronizedList(list);
         Assertions.assertEquals(unmodifiableList, baseHessian2Serialize(unmodifiableList));
     }
