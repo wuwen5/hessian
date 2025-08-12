@@ -111,7 +111,7 @@ import lombok.Setter;
  * System.out.println("Hello: " + hello.helloWorld());
  * </pre>
  *
- * <h3>Authentication</h3>
+ * <h2>Authentication</h2>
  *
  * <p>The proxy can use HTTP basic authentication if the user and the
  * password are set.

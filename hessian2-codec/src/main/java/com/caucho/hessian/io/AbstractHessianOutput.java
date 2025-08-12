@@ -68,18 +68,21 @@ public interface AbstractHessianOutput extends Closeable {
     /**
      * Starts the method call:
      *
-     * <code><pre>
+     * <pre>
+     * <code>
      * C
-     * </pre></code>
+     * </code>
+     * </pre>
      */
     void startCall() throws IOException;
 
     /**
      * Starts the method call:
-     *
-     * <code><pre>
+     *<pre>
+     * <code>
      * C string int
-     * </pre></code>
+     * </code>
+     * </pre>
      *
      * @param method the method name to call.
      */
@@ -87,10 +90,11 @@ public interface AbstractHessianOutput extends Closeable {
 
     /**
      * Writes the method tag.
-     *
-     * <code><pre>
+     *<pre>
+     * <code>
      * string
-     * </pre></code>
+     * </code>
+     * </pre>
      *
      * @param method the method name to call.
      */
@@ -98,20 +102,18 @@ public interface AbstractHessianOutput extends Closeable {
 
     /**
      * Completes the method call:
-     *
-     * <code><pre>
-     * </pre></code>
      */
     void completeCall() throws IOException;
 
     /**
      * Writes a boolean value to the stream.  The boolean will be written
      * with the following syntax:
-     *
-     * <code><pre>
+     *<pre>
+     * <code>
      * T
      * F
-     * </pre></code>
+     * </code>
+     * </pre>
      *
      * @param value the boolean value to write.
      */
@@ -120,10 +122,11 @@ public interface AbstractHessianOutput extends Closeable {
     /**
      * Writes an integer value to the stream.  The integer will be written
      * with the following syntax:
-     *
-     * <code><pre>
+     * <pre>
+     * <code>
      * I b32 b24 b16 b8
-     * </pre></code>
+     * </code>
+     * </pre>
      *
      * @param value the integer value to write.
      */
@@ -132,11 +135,11 @@ public interface AbstractHessianOutput extends Closeable {
     /**
      * Writes a long value to the stream.  The long will be written
      * with the following syntax:
-     *
-     * <code><pre>
+     * <pre>
+     * <code>
      * L b64 b56 b48 b40 b32 b24 b16 b8
-     * </pre></code>
-     *
+     * </code>
+     *</pre>
      * @param value the long value to write.
      */
     void writeLong(long value) throws IOException;
@@ -144,9 +147,11 @@ public interface AbstractHessianOutput extends Closeable {
     /**
      * Writes a double value to the stream.  The double will be written
      * with the following syntax:
-     * <code><pre>
+     * <pre>
+     * <code>
      * D b64 b56 b48 b40 b32 b24 b16 b8
-     * </pre></code>
+     * </code>
+     * </pre>
      *
      * @param value the double value to write.
      */
@@ -154,9 +159,11 @@ public interface AbstractHessianOutput extends Closeable {
 
     /**
      * Writes a date to the stream.
-     * <code><pre>
+     * <pre>
+     * <code>
      * T  b64 b56 b48 b40 b32 b24 b16 b8
-     * </pre></code>
+     * </code>
+     * </pre>
      *
      * @param time the date in milliseconds from the epoch in UTC
      */
@@ -165,23 +172,29 @@ public interface AbstractHessianOutput extends Closeable {
     /**
      * Writes a null value to the stream.
      * The null will be written with the following syntax
-     * <code><pre>
+     * <pre>
+     * <code>
      * N
-     * </pre></code>
+     * </code>
+     * </pre>
      */
     void writeNull() throws IOException;
 
     /**
      * Writes a string value to the stream using UTF-8 encoding.
      * The string will be written with the following syntax:
-     * <code><pre>
+     * <pre>
+     * <code>
      * S b16 b8 string-value
-     * </pre></code>
+     * </code>
+     * </pre>
      * <p>
      * If the value is null, it will be written as
-     * <code><pre>
+     * <pre>
+     * <code>
      * N
-     * </pre></code>
+     * </code>
+     * </pre>
      *
      * @param value the string value to write.
      */
@@ -190,28 +203,36 @@ public interface AbstractHessianOutput extends Closeable {
     /**
      * Writes a string value to the stream using UTF-8 encoding.
      * The string will be written with the following syntax:
-     * <code><pre>
+     * <pre>
+     * <code>
      * S b16 b8 string-value
-     * </pre></code>
+     * </code>
+     * </pre>
      * <p>
      * If the value is null, it will be written as
-     * <code><pre>
+     * <pre>
+     * <code>
      * N
-     * </pre></code>
+     * </code>
+     * </pre>
      */
     void writeString(char[] buffer, int offset, int length) throws IOException;
 
     /**
      * Writes a byte array to the stream.
      * The array will be written with the following syntax:
-     * <code><pre>
+     * <pre>
+     * <code>
      * B b16 b18 bytes
-     * </pre></code>
+     * </code>
+     * </pre>
      * <p>
      * If the value is null, it will be written as
-     * <code><pre>
+     * <pre>
+     * <code>
      * N
-     * </pre></code>
+     * </code>
+     * </pre>
      *
      * @param buffer the byte array to write.
      */
@@ -220,16 +241,18 @@ public interface AbstractHessianOutput extends Closeable {
     /**
      * Writes a byte array to the stream.
      * The array will be written with the following syntax:
-     *
-     * <code><pre>
+     *<pre>
+     * <code>
      * B b16 b18 bytes
-     * </pre></code>
+     * </code>
+     * </pre>
      * <p>
      * If the value is null, it will be written as
-     *
-     * <code><pre>
+     *<pre>
+     * <code>
      * N
-     * </pre></code>
+     * </code>
+     * </pre>
      */
     void writeBytes(byte[] buffer, int offset, int length) throws IOException;
 
@@ -240,17 +263,21 @@ public interface AbstractHessianOutput extends Closeable {
 
     /**
      * Writes a byte buffer to the stream.
-     * <code><pre>
+     * <pre>
+     * <code>
      * b b16 b18 bytes
-     * </pre></code>
+     * </code>
+     * </pre>
      */
     void writeByteBufferPart(byte[] buffer, int offset, int length) throws IOException;
 
     /**
      * Writes the last chunk of a byte buffer to the stream.
-     * <code><pre>
+     * <pre>
+     * <code>
      * b b16 b18 bytes
-     * </pre></code>
+     * </code>
+     * </pre>
      */
     void writeByteBufferEnd(byte[] buffer, int offset, int length) throws IOException;
 
@@ -274,8 +301,8 @@ public interface AbstractHessianOutput extends Closeable {
     /**
      * Writes a fault.  The fault will be written
      * as a descriptive string followed by an object:
-     *
-     * <code><pre>
+     *<pre>
+     * <code>
      * f
      * &lt;string>code
      * &lt;string>the fault code
@@ -288,7 +315,8 @@ public interface AbstractHessianOutput extends Closeable {
      *     ...
      * z
      * z
-     * </pre></code>
+     * </code>
+     * </pre>
      *
      * @param code the fault code, a three digit
      */

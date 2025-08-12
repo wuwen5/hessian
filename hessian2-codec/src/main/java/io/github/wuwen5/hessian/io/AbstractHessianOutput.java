@@ -120,11 +120,10 @@ public abstract class AbstractHessianOutput implements Closeable {
     /**
      * Writes a boolean value to the stream.  The boolean will be written
      * with the following syntax:
-     *
-     * <code><pre>
+     *<pre>
      * T
      * F
-     * </pre></code>
+     * </pre>
      *
      * @throws IOException if an I/O error occurs.
      * @param value the boolean value to write.
@@ -134,10 +133,9 @@ public abstract class AbstractHessianOutput implements Closeable {
     /**
      * Writes an integer value to the stream.  The integer will be written
      * with the following syntax:
-     *
-     * <code><pre>
+     *<pre>
      * I b32 b24 b16 b8
-     * </pre></code>
+     * </pre>
      *
      * @throws IOException if an I/O error occurs.
      * @param value the integer value to write.
@@ -147,10 +145,9 @@ public abstract class AbstractHessianOutput implements Closeable {
     /**
      * Writes a long value to the stream.  The long will be written
      * with the following syntax:
-     *
-     * <code><pre>
+     *<pre>
      * L b64 b56 b48 b40 b32 b24 b16 b8
-     * </pre></code>
+     * </pre>
      *
      * @throws IOException if an I/O error occurs.
      * @param value the long value to write.
@@ -160,10 +157,9 @@ public abstract class AbstractHessianOutput implements Closeable {
     /**
      * Writes a double value to the stream.  The double will be written
      * with the following syntax:
-     *
-     * <code><pre>
+     *<pre>
      * D b64 b56 b48 b40 b32 b24 b16 b8
-     * </pre></code>
+     * </pre>
      *
      * @throws IOException if an I/O error occurs.
      * @param value the double value to write.
@@ -172,10 +168,9 @@ public abstract class AbstractHessianOutput implements Closeable {
 
     /**
      * Writes a date to the stream.
-     *
-     * <code><pre>
+     *<pre>
      * T  b64 b56 b48 b40 b32 b24 b16 b8
-     * </pre></code>
+     * </pre>
      *
      * @throws IOException if an I/O error occurs.
      * @param time the date in milliseconds from the epoch in UTC
@@ -185,10 +180,9 @@ public abstract class AbstractHessianOutput implements Closeable {
     /**
      * Writes a null value to the stream.
      * The null will be written with the following syntax
-     *
-     * <code><pre>
+     *<pre>
      * N
-     * </pre></code>
+     * </pre>
      * @throws IOException if an I/O error occurs.
      */
     public abstract void writeNull() throws IOException;
@@ -197,15 +191,15 @@ public abstract class AbstractHessianOutput implements Closeable {
      * Writes a string value to the stream using UTF-8 encoding.
      * The string will be written with the following syntax:
      * <p>
-     * <code><pre>
+     * <pre>
      * S b16 b8 string-value
-     * </pre></code>
+     * </pre>
      * <p>
      * If the value is null, it will be written as
      * <p>
-     * <code><pre>
+     * <pre>
      * N
-     * </pre></code>
+     * </pre>
      *
      * @throws IOException if an I/O error occurs
      * @param value the string value to write.
@@ -215,16 +209,14 @@ public abstract class AbstractHessianOutput implements Closeable {
     /**
      * Writes a string value to the stream using UTF-8 encoding.
      * The string will be written with the following syntax:
-     *
-     * <code><pre>
+     *<pre>
      * S b16 b8 string-value
-     * </pre></code>
+     * </pre>
      * <p>
      * If the value is null, it will be written as
-     *
-     * <code><pre>
+     *<pre>
      * N
-     * </pre></code>
+     * </pre>
      *
      * @throws IOException if an I/O error occurs
      * @param buffer the string value to write.
@@ -236,16 +228,14 @@ public abstract class AbstractHessianOutput implements Closeable {
     /**
      * Writes a byte array to the stream.
      * The array will be written with the following syntax:
-     *
-     * <code><pre>
+     *<pre>
      * B b16 b18 bytes
-     * </pre></code>
+     * </pre>
      * <p>
      * If the value is null, it will be written as
-     *
-     * <code><pre>
+     *<pre>
      * N
-     * </pre></code>
+     * </pre>
      *
      * @throws IOException if an I/O error occurs
      * @param buffer the string value to write.
@@ -255,16 +245,14 @@ public abstract class AbstractHessianOutput implements Closeable {
     /**
      * Writes a byte array to the stream.
      * The array will be written with the following syntax:
-     *
-     * <code><pre>
+     *<pre>
      * B b16 b18 bytes
-     * </pre></code>
+     * </pre>
      * <p>
      * If the value is null, it will be written as
-     *
-     * <code><pre>
+     *<pre>
      * N
-     * </pre></code>
+     * </pre>
      *
      * @throws IOException if an I/O error occurs
      * @param buffer the byte array to write.
@@ -281,10 +269,9 @@ public abstract class AbstractHessianOutput implements Closeable {
 
     /**
      * Writes a byte buffer to the stream.
-     *
-     * <code><pre>
+     *<pre>
      * b b16 b18 bytes
-     * </pre></code>
+     * </pre>
      *
      * @throws IOException if an I/O error occurs
      * @param buffer the byte buffer to write.
@@ -295,10 +282,9 @@ public abstract class AbstractHessianOutput implements Closeable {
 
     /**
      * Writes the last chunk of a byte buffer to the stream.
-     *
-     * <code><pre>
+     *<pre>
      * b b16 b18 bytes
-     * </pre></code>
+     * </pre>
      *
      * @throws IOException if an I/O error occurs
      * @param buffer the buffer to write.
@@ -340,10 +326,9 @@ public abstract class AbstractHessianOutput implements Closeable {
 
     /**
      * Writes a reference.
-     * <p>
-     * <code><pre>
+     * <p><pre>
      * Q int
-     * </pre></code>
+     * </pre>
      *
      * @throws IOException if an I/O error occurs
      * @param value the integer value to write.
@@ -371,10 +356,9 @@ public abstract class AbstractHessianOutput implements Closeable {
      * Adds an object to the reference list.  If the object already exists,
      * writes the reference, otherwise, the caller is responsible for
      * the serialization.
-     * <p>
-     * <code><pre>
+     * <p><pre>
      * R b32 b24 b16 b8
-     * </pre></code>
+     * </pre>
      *
      * @throws IOException if an I/O error occurs
      * @param object the object to add as a reference.
@@ -406,7 +390,7 @@ public abstract class AbstractHessianOutput implements Closeable {
      * <code>writeListBegin</code> followed by the list contents and then
      * call <code>writeListEnd</code>.
      * <p>
-     * <code><pre>
+     *     <pre>
      * V
      *   x13 java.util.ArrayList   # type
      *   x93                       # length=3
@@ -414,7 +398,7 @@ public abstract class AbstractHessianOutput implements Closeable {
      *   x92                       # 2
      *   x93                       # 3
      * &lt;/list>
-     * </pre></code>
+     * </pre>
      * @throws IOException if an I/O error occurs
      * @param length the length of the list
      * @param type the type of the list
@@ -433,9 +417,9 @@ public abstract class AbstractHessianOutput implements Closeable {
      * <code>writeMapBegin</code> followed by the map contents and then
      * call <code>writeMapEnd</code>.
      * <p>
-     * <code><pre>
-     * M type (<key> <value>)* Z
-     * </pre></code>
+     * <pre>
+     * M type (key value)* Z
+     * </pre>
      * @throws IOException if an I/O error occurs
      * @param type the type of the map
      */
@@ -453,10 +437,10 @@ public abstract class AbstractHessianOutput implements Closeable {
      * <code>writeObjectBegin</code> followed by the map contents and then
      * call <code>writeObjectEnd</code>.
      * <p>
-     * <code><pre>
-     * C type int <key>*
-     * C int <value>*
-     * </pre></code>
+     * <pre>
+     * C type int key*
+     * C int value*
+     * </pre>
      *
      * @return int if the object has already been defined.
      */

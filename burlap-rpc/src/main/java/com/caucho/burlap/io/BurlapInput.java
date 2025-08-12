@@ -684,10 +684,6 @@ public class BurlapInput extends AbstractBurlapInput {
 
     /**
      * Reads an XML node.
-     *
-     * <pre>
-     * &xml;xml string&lt;/xml>
-     * </pre>
      */
     public org.w3c.dom.Node readNode() throws IOException {
         int tag = read();

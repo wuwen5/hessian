@@ -55,13 +55,14 @@ import javax.servlet.ServletResponse;
 
 /**
  * Context for a service, to handle request-specific information.
- *
  * Applications can use the ServiceContext to get servlet session ids or
  * HTTP headers.
  *
- * <code><pre>
+ * <pre>
+ * <code>
  * ServletRequest req = ServiceContext.getContext().getRequest();
- * </pre></code>
+ * </code>
+ * </pre>
  */
 public class ServiceContext {
     private static final ThreadLocal<ServiceContext> _localContext = new ThreadLocal<ServiceContext>();
@@ -79,7 +80,8 @@ public class ServiceContext {
      * Sets the request object prior to calling the service's method.
      *
      * @param request the calling servlet request
-     * @param serviceId the service identifier
+     * @param response the calling servlet response
+     * @param serviceName the service name
      * @param objectId the object identifier
      */
     public static void begin(ServletRequest request, ServletResponse response, String serviceName, String objectId)

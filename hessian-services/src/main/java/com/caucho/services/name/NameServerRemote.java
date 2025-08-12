@@ -65,12 +65,12 @@ import java.rmi.RemoteException;
  * /dir-2/2 - where foo contains the string "foo-2"
  * </pre>
  *
- * <p/>The root server might have a URL like:
+ * The root server might have a URL like:
  * <pre>
  * http://www.caucho.com/hessian/hessian/name?ejbid=/
  * </pre>
  *
- * <p/>So <code>root.lookup("/dir-1/1")</code> will return the string
+ * So <code>root.lookup("/dir-1/1")</code> will return the string
  * "foo-1", and <code>root.lookup("/dir-1")</code> will return the
  * NameServer with the URL:
  * <pre>

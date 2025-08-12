@@ -63,7 +63,7 @@ import java.util.HashMap;
  * <p>HessianSerializerInput is unbuffered, so any client needs to provide
  * its own buffering.
  *
- * <h3>Serialization</h3>
+ * <h2>Serialization</h2>
  *
  * <pre>
  * InputStream is = new FileInputStream("test.xml");

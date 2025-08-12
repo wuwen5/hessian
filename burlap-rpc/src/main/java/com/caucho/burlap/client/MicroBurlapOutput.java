@@ -110,7 +110,9 @@ public class MicroBurlapOutput {
         startCall(method);
 
         if (args != null) {
-            for (int i = 0; i < args.length; i++) writeObject(args[i]);
+            for (Object arg : args) {
+                writeObject(arg);
+            }
         }
 
         completeCall();
@@ -118,12 +120,10 @@ public class MicroBurlapOutput {
 
     /**
      * Writes the method call:
-     *
-     * <code><pre>
+     *<pre>
      * &lt;burlap:request>
      *   &lt;method>add&lt;/method>
-     * </pre></code>
-     *
+     * </pre>
      * @param method the method name to call.
      */
     public void startCall(String method) throws IOException {
@@ -134,10 +134,9 @@ public class MicroBurlapOutput {
 
     /**
      * Writes the method call:
-     *
-     * <code><pre>
+     *<pre>
      * &lt;/burlap:request>
-     * </pre></code>
+     * </pre>
      */
     public void completeCall() throws IOException {
         print("</burlap:call>");
@@ -146,11 +145,9 @@ public class MicroBurlapOutput {
     /**
      * Writes a boolean value to the stream.  The boolean will be written
      * with the following syntax:
-     *
-     * <code><pre>
+     *<pre>
      * &lt;boolean>1&lt;/boolean>
-     * </pre></code>
-     *
+     * </pre>
      * @param value the boolean value to write.
      */
     public void writeBoolean(boolean value) throws IOException {
@@ -162,11 +159,9 @@ public class MicroBurlapOutput {
     /**
      * Writes an integer value to the stream.  The integer will be written
      * with the following syntax:
-     *
-     * <code><pre>
+     *<pre>
      * &lt;int>123&lt;/int>
-     * </pre></code>
-     *
+     * </pre>
      * @param value the integer value to write.
      */
     public void writeInt(int value) throws IOException {
@@ -178,11 +173,9 @@ public class MicroBurlapOutput {
     /**
      * Writes a long value to the stream.  The long will be written
      * with the following syntax:
-     *
-     * <code><pre>
+     *<pre>
      * &lt;long>123&lt;/long>
-     * </pre></code>
-     *
+     * </pre>
      * @param value the long value to write.
      */
     public void writeLong(long value) throws IOException {
@@ -194,12 +187,9 @@ public class MicroBurlapOutput {
     /**
      * Writes a null value to the stream.
      * The null will be written with the following syntax
-     *
-     * <code><pre>
+     *<pre>
      * &lt;null>&lt;/null>
-     * </pre></code>
-     *
-     * @param value the string value to write.
+     * </pre>
      */
     public void writeNull() throws IOException {
         print("<null></null>");
@@ -208,16 +198,13 @@ public class MicroBurlapOutput {
     /**
      * Writes a string value to the stream using UTF-8 encoding.
      * The string will be written with the following syntax:
-     *
-     * <code><pre>
+     *<pre>
      * &lt;string>12.3e10&lt;/string>
-     * </pre></code>
-     *
+     * </pre>
      * If the value is null, it will be written as
-     *
-     * <code><pre>
+     *<pre>
      * &lt;null>&lt;/null>
-     * </pre></code>
+     * </pre>
      *
      * @param value the string value to write.
      */
@@ -234,18 +221,13 @@ public class MicroBurlapOutput {
     /**
      * Writes a byte array to the stream using base64 encoding.
      * The array will be written with the following syntax:
-     *
-     * <code><pre>
+     *<pre>
      * &lt;base64>dJmO==&lt;/base64>
-     * </pre></code>
-     *
+     * </pre>
      * If the value is null, it will be written as
-     *
-     * <code><pre>
+     *<pre>
      * &lt;null>&lt;/null>
-     * </pre></code>
-     *
-     * @param value the string value to write.
+     * </pre>
      */
     public void writeBytes(byte[] buffer, int offset, int length) throws IOException {
         if (buffer == null) {
@@ -259,12 +241,10 @@ public class MicroBurlapOutput {
 
     /**
      * Writes a date to the stream using ISO8609.
-     *
-     * <code><pre>
+     *<pre>
      * &lt;date>19980508T095131Z&lt;/date>
-     * </pre></code>
-     *
-     * @param value the date in milliseconds from the epoch in UTC
+     * </pre>
+     * @param time the date in milliseconds from the epoch in UTC timezone
      */
     public void writeUTCDate(long time) throws IOException {
         print("<date>");
@@ -282,12 +262,9 @@ public class MicroBurlapOutput {
 
     /**
      * Writes a date to the stream using ISO8609.
-     *
-     * <code><pre>
+     *<pre>
      * &lt;date>19980508T095131Z&lt;/date>
-     * </pre></code>
-     *
-     * @param value the date in milliseconds from the epoch in local timezone
+     * </pre>
      */
     public void writeLocalDate(long time) throws IOException {
         print("<date>");
@@ -305,11 +282,9 @@ public class MicroBurlapOutput {
 
     /**
      * Writes a reference.
-     *
-     * <code><pre>
+     *<pre>
      * &lt;ref>123&lt;/ref>
-     * </pre></code>
-     *
+     * </pre>
      * @param value the integer value to write.
      */
     public void writeRef(int value) throws IOException {
@@ -336,13 +311,19 @@ public class MicroBurlapOutput {
      * Unknown objects will call <code>writeCustomObject</code>.
      */
     public void writeObject(Object object) throws IOException {
-        if (object == null) writeNull();
-        else if (object instanceof String) writeString((String) object);
-        else if (object instanceof Boolean) writeBoolean(((Boolean) object).booleanValue());
-        else if (object instanceof Integer) writeInt(((Integer) object).intValue());
-        else if (object instanceof Long) writeLong(((Long) object).longValue());
-        else if (object instanceof Date) writeUTCDate(((Date) object).getTime());
-        else if (object instanceof byte[]) {
+        if (object == null) {
+            writeNull();
+        } else if (object instanceof String) {
+            writeString((String) object);
+        } else if (object instanceof Boolean) {
+            writeBoolean(((Boolean) object).booleanValue());
+        } else if (object instanceof Integer) {
+            writeInt(((Integer) object).intValue());
+        } else if (object instanceof Long) {
+            writeLong(((Long) object).longValue());
+        } else if (object instanceof Date) {
+            writeUTCDate(((Date) object).getTime());
+        } else if (object instanceof byte[]) {
             byte[] data = (byte[]) object;
             writeBytes(data, 0, data.length);
         } else if (object instanceof Vector) {
@@ -350,7 +331,9 @@ public class MicroBurlapOutput {
 
             int size = vector.size();
             writeListBegin(size, null);
-            for (int i = 0; i < size; i++) writeObject(vector.elementAt(i));
+            for (int i = 0; i < size; i++) {
+                writeObject(vector.elementAt(i));
+            }
 
             writeListEnd();
         } else if (object instanceof Hashtable) {
@@ -366,7 +349,9 @@ public class MicroBurlapOutput {
                 writeObject(value);
             }
             writeMapEnd();
-        } else writeCustomObject(object);
+        } else {
+            writeCustomObject(object);
+        }
     }
 
     /**
@@ -382,8 +367,7 @@ public class MicroBurlapOutput {
      * Writes the list header to the stream.  List writers will call
      * <code>writeListBegin</code> followed by the list contents and then
      * call <code>writeListEnd</code>.
-     *
-     * <code><pre>
+     *<pre>
      * &lt;list>
      *   &lt;type>java.util.ArrayList&lt;/type>
      *   &lt;length>3&lt;/length>
@@ -391,11 +375,13 @@ public class MicroBurlapOutput {
      *   &lt;int>2&lt;/int>
      *   &lt;int>3&lt;/int>
      * &lt;/list>
-     * </pre></code>
+     * </pre>
      */
     public void writeListBegin(int length, String type) throws IOException {
         print("<list><type>");
-        if (type != null) print(type);
+        if (type != null) {
+            print(type);
+        }
         print("</type><length>");
         printInt(length);
         print("</length>");
@@ -412,19 +398,20 @@ public class MicroBurlapOutput {
      * Writes the map header to the stream.  Map writers will call
      * <code>writeMapBegin</code> followed by the map contents and then
      * call <code>writeMapEnd</code>.
-     *
-     * <code><pre>
+     *<pre>
      * &lt;map>
      *   &lt;type>java.util.Hashtable&lt;/type>
      *   &lt;string>a&lt;/string;&lt;int>1&lt;/int>
      *   &lt;string>b&lt;/string;&lt;int>2&lt;/int>
      *   &lt;string>c&lt;/string;&lt;int>3&lt;/int>
      * &lt;/map>
-     * </pre></code>
+     * </pre>
      */
     public void writeMapBegin(String type) throws IOException {
         print("<map><type>");
-        if (type != null) print(type);
+        if (type != null) {
+            print(type);
+        }
         print("</type>");
     }
 
@@ -438,17 +425,18 @@ public class MicroBurlapOutput {
     /**
      * Writes a remote object reference to the stream.  The type is the
      * type of the remote interface.
-     *
-     * <code><pre>
+     *<pre>
      * &lt;remote>
      *   &lt;type>test.account.Account&lt;/type>
      *   &lt;string>http://caucho.com/foo;ejbid=bar&lt;/string>
      * &lt;/remote>
-     * </pre></code>
+     * </pre>
      */
     public void writeRemote(String type, String url) throws IOException {
         print("<remote><type>");
-        if (type != null) print(type);
+        if (type != null) {
+            print(type);
+        }
         print("</type><string>");
         print(url);
         print("</string></remote>");
@@ -551,17 +539,22 @@ public class MicroBurlapOutput {
      */
     public static char base64encode(int d) {
         d &= 0x3f;
-        if (d < 26) return (char) (d + 'A');
-        else if (d < 52) return (char) (d + 'a' - 26);
-        else if (d < 62) return (char) (d + '0' - 52);
-        else if (d == 62) return '+';
-        else return '/';
+        if (d < 26) {
+            return (char) (d + 'A');
+        } else if (d < 52) {
+            return (char) (d + 'a' - 26);
+        } else if (d < 62) {
+            return (char) (d + '0' - 52);
+        } else if (d == 62) {
+            return '+';
+        } else {
+            return '/';
+        }
     }
 
     /**
      * Prints a date.
      *
-     * @param date the date to print.
      */
     public void printDate(Calendar calendar) throws IOException {
         int year = calendar.get(Calendar.YEAR);

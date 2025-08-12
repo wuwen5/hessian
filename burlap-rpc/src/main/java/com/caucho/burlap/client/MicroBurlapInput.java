@@ -304,8 +304,7 @@ public class MicroBurlapInput {
      *
      * <p>The two valid possibilities are either a &lt;null>
      * or a &lt;string>.  The string value is encoded in utf-8, and
-     * understands the basic XML escapes: "&123;", "&lt;", "&gt;",
-     * "&apos;", "&quot;".
+     * understands the basic XML escapes.
      *
      * <pre>
      * &lt;null>&lt;/null>

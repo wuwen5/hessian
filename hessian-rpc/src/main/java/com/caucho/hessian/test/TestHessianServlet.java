@@ -38,7 +38,6 @@ public class TestHessianServlet extends HessianServlet implements Test {
 
     /**
      * Echos the object to the server.
-     * <pre>
      */
     public Object echo(Object value) {
         return value;

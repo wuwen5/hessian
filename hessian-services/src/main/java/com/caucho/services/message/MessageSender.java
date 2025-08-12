@@ -64,9 +64,9 @@ import java.util.HashMap;
  *
  * <pre>
  * http://www.caucho.com/hessian/hessian/message?ejbid=topic-a
- * <pre>
+ * </pre>
  *
- * <p>More complicated messaging topologies, including configurations
+ * More complicated messaging topologies, including configurations
  * with routing mesaging servers, will use the headers to define the
  * final destination.  The headers have the same functional purpose as
  * RFC-822 mail headers.
