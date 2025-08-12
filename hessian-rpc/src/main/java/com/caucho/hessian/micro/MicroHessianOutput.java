@@ -100,12 +100,10 @@ public class MicroHessianOutput {
 
     /**
      * Writes the method call:
-     *
-     * <code><pre>
+     *<pre>
      * c major minor
      * m b16 b8 method-namek
-     * </pre></code>
-     *
+     * </pre>
      * @param method the method name to call.
      */
     public void startCall(String method) throws IOException {
@@ -122,10 +120,9 @@ public class MicroHessianOutput {
 
     /**
      * Writes the method call:
-     *
-     * <code><pre>
+     *<pre>
      * z
-     * </pre></code>
+     * </pre>
      */
     public void completeCall() throws IOException {
         os.write('z');
@@ -134,27 +131,27 @@ public class MicroHessianOutput {
     /**
      * Writes a boolean value to the stream.  The boolean will be written
      * with the following syntax:
-     *
-     * <code><pre>
+     *<pre>
      * T
      * F
-     * </pre></code>
+     * </pre>
      *
      * @param value the boolean value to write.
      */
     public void writeBoolean(boolean value) throws IOException {
-        if (value) os.write('T');
-        else os.write('F');
+        if (value) {
+            os.write('T');
+        } else {
+            os.write('F');
+        }
     }
 
     /**
      * Writes an integer value to the stream.  The integer will be written
      * with the following syntax:
-     *
-     * <code><pre>
+     *<pre>
      * I b32 b24 b16 b8
-     * </pre></code>
-     *
+     * </pre>
      * @param value the integer value to write.
      */
     public void writeInt(int value) throws IOException {
@@ -168,11 +165,9 @@ public class MicroHessianOutput {
     /**
      * Writes a long value to the stream.  The long will be written
      * with the following syntax:
-     *
-     * <code><pre>
+     *<pre>
      * L b64 b56 b48 b40 b32 b24 b16 b8
-     * </pre></code>
-     *
+     * </pre>
      * @param value the long value to write.
      */
     public void writeLong(long value) throws IOException {
@@ -189,11 +184,9 @@ public class MicroHessianOutput {
 
     /**
      * Writes a date to the stream.
-     *
-     * <code><pre>
+     *<pre>
      * T  b64 b56 b48 b40 b32 b24 b16 b8
-     * </pre></code>
-     *
+     * </pre>
      * @param time the date in milliseconds from the epoch in UTC
      */
     public void writeUTCDate(long time) throws IOException {
@@ -211,12 +204,9 @@ public class MicroHessianOutput {
     /**
      * Writes a null value to the stream.
      * The null will be written with the following syntax
-     *
-     * <code><pre>
+     *<pre>
      * N
-     * </pre></code>
-     *
-     * @param value the string value to write.
+     * </pre>
      */
     public void writeNull() throws IOException {
         os.write('N');
@@ -225,17 +215,13 @@ public class MicroHessianOutput {
     /**
      * Writes a string value to the stream using UTF-8 encoding.
      * The string will be written with the following syntax:
-     *
-     * <code><pre>
+     *<pre>
      * S b16 b8 string-value
-     * </pre></code>
-     *
+     * </pre>
      * If the value is null, it will be written as
-     *
-     * <code><pre>
+     *<pre>
      * N
-     * </pre></code>
-     *
+     * </pre>
      * @param value the string value to write.
      */
     public void writeString(String value) throws IOException {
@@ -255,38 +241,31 @@ public class MicroHessianOutput {
     /**
      * Writes a byte array to the stream.
      * The array will be written with the following syntax:
-     *
-     * <code><pre>
+     *<pre>
      * B b16 b18 bytes
-     * </pre></code>
-     *
+     * </pre>
      * If the value is null, it will be written as
-     *
-     * <code><pre>
+     *<pre>
      * N
-     * </pre></code>
-     *
-     * @param value the string value to write.
+     * </pre>
      */
     public void writeBytes(byte[] buffer) throws IOException {
-        if (buffer == null) os.write('N');
-        else writeBytes(buffer, 0, buffer.length);
+        if (buffer == null) {
+            os.write('N');
+        } else {
+            writeBytes(buffer, 0, buffer.length);
+        }
     }
     /**
      * Writes a byte array to the stream.
      * The array will be written with the following syntax:
-     *
-     * <code><pre>
+     *<pre>
      * B b16 b18 bytes
-     * </pre></code>
-     *
+     * </pre>
      * If the value is null, it will be written as
-     *
-     * <code><pre>
+     *<pre>
      * N
-     * </pre></code>
-     *
-     * @param value the string value to write.
+     * </pre>
      */
     public void writeBytes(byte[] buffer, int offset, int length) throws IOException {
         if (buffer == null) {
@@ -301,11 +280,9 @@ public class MicroHessianOutput {
 
     /**
      * Writes a reference.
-     *
-     * <code><pre>
+     *<pre>
      * R b32 b24 b16 b8
-     * </pre></code>
-     *
+     * </pre>
      * @param value the integer value to write.
      */
     public void writeRef(int value) throws IOException {
@@ -320,13 +297,19 @@ public class MicroHessianOutput {
      * Writes a generic object to the output stream.
      */
     public void writeObject(Object object) throws IOException {
-        if (object == null) writeNull();
-        else if (object instanceof String) writeString((String) object);
-        else if (object instanceof Boolean) writeBoolean(((Boolean) object).booleanValue());
-        else if (object instanceof Integer) writeInt(((Integer) object).intValue());
-        else if (object instanceof Long) writeLong(((Long) object).longValue());
-        else if (object instanceof Date) writeUTCDate(((Date) object).getTime());
-        else if (object instanceof byte[]) {
+        if (object == null) {
+            writeNull();
+        } else if (object instanceof String) {
+            writeString((String) object);
+        } else if (object instanceof Boolean) {
+            writeBoolean(((Boolean) object).booleanValue());
+        } else if (object instanceof Integer) {
+            writeInt(((Integer) object).intValue());
+        } else if (object instanceof Long) {
+            writeLong(((Long) object).longValue());
+        } else if (object instanceof Date) {
+            writeUTCDate(((Date) object).getTime());
+        } else if (object instanceof byte[]) {
             byte[] data = (byte[]) object;
             writeBytes(data, 0, data.length);
         } else if (object instanceof Vector) {
@@ -334,7 +317,9 @@ public class MicroHessianOutput {
 
             int size = vector.size();
             writeListBegin(size, null);
-            for (int i = 0; i < size; i++) writeObject(vector.elementAt(i));
+            for (int i = 0; i < size; i++) {
+                writeObject(vector.elementAt(i));
+            }
 
             writeListEnd();
         } else if (object instanceof Hashtable) {
@@ -350,7 +335,9 @@ public class MicroHessianOutput {
                 writeObject(value);
             }
             writeMapEnd();
-        } else writeCustomObject(object);
+        } else {
+            writeCustomObject(object);
+        }
     }
 
     /**
@@ -366,8 +353,7 @@ public class MicroHessianOutput {
      * Writes the list header to the stream.  List writers will call
      * <code>writeListBegin</code> followed by the list contents and then
      * call <code>writeListEnd</code>.
-     *
-     * <code><pre>
+     *<pre>
      * &lt;list>
      *   &lt;type>java.util.ArrayList&lt;/type>
      *   &lt;length>3&lt;/length>
@@ -375,7 +361,7 @@ public class MicroHessianOutput {
      *   &lt;int>2&lt;/int>
      *   &lt;int>3&lt;/int>
      * &lt;/list>
-     * </pre></code>
+     * </pre>
      */
     public void writeListBegin(int length, String type) throws IOException {
         os.write('V');
@@ -400,10 +386,9 @@ public class MicroHessianOutput {
      * Writes the map header to the stream.  Map writers will call
      * <code>writeMapBegin</code> followed by the map contents and then
      * call <code>writeMapEnd</code>.
-     *
-     * <code><pre>
-     * Mt b16 b8 type (<key> <value>)z
-     * </pre></code>
+     *<pre>
+     * Mt b16 b8 type (key value)z
+     * </pre>
      */
     public void writeMapBegin(String type) throws IOException {
         os.write('M');
@@ -421,10 +406,9 @@ public class MicroHessianOutput {
     /**
      * Writes a remote object reference to the stream.  The type is the
      * type of the remote interface.
-     *
-     * <code><pre>
+     *<pre>
      * 'r' 't' b16 b8 type url
-     * </pre></code>
+     * </pre>
      */
     public void writeRemote(String type, String url) throws IOException {
         os.write('r');

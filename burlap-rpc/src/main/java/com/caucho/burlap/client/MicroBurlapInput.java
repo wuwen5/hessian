@@ -130,8 +130,8 @@ public class MicroBurlapInput {
      * <p>A successful completion will have a single value:
      *
      * <pre>
-     * &lt;burlap:call>
-     * &lt;method>method&lt;/method>
+     * &lt;burlap:call&gt;
+     * &lt;method&gt;method&lt;/method&gt;
      * </pre>
      */
     public void startCall() throws IOException {
@@ -146,7 +146,7 @@ public class MicroBurlapInput {
      * Completes reading the call.
      *
      * <pre>
-     * &lt;/burlap:call>
+     * &lt;/burlap:call&gt;
      * </pre>
      */
     public void completeCall() throws IOException {
@@ -183,7 +183,7 @@ public class MicroBurlapInput {
      * one will have a fault:
      *
      * <pre>
-     * &lt;burlap:reply>
+     * &lt;burlap:reply&gt;
      * </pre>
      *
      * @return true if success, false for fault.
@@ -209,7 +209,7 @@ public class MicroBurlapInput {
      * Completes reading the reply.
      *
      * <pre>
-     * &lt;/burlap:reply>
+     * &lt;/burlap:reply&gt;
      * </pre>
      */
     public void completeReply() throws IOException {
@@ -304,16 +304,17 @@ public class MicroBurlapInput {
      *
      * <p>The two valid possibilities are either a &lt;null>
      * or a &lt;string>.  The string value is encoded in utf-8, and
-     * understands the basic XML escapes: "&123;", "&lt;", "&gt;",
-     * "&apos;", "&quot;".
+     * understands the basic XML escapes.
      *
      * <pre>
-     * &lt;null>&lt;/null>
-     * &lt;string>a utf-8 encoded string&lt;/string>
+     * &lt;null&gt;&lt;/null&gt;
+     * &lt;string&gt;a utf-8 encoded string&lt;/string&gt;
      * </pre>
      */
     public String readString() throws IOException {
-        if (!parseTag()) throw new BurlapProtocolException("expected <string>");
+        if (!parseTag()) {
+            throw new BurlapProtocolException("expected <string>");
+        }
 
         String tag = sbuf.toString();
         if (tag.equals("null")) {
@@ -325,7 +326,9 @@ public class MicroBurlapInput {
             String value = sbuf.toString();
             expectEndTag("string");
             return value;
-        } else throw expectBeginTag("string", tag);
+        } else {
+            throw expectBeginTag("string", tag);
+        }
     }
 
     /**
@@ -346,14 +349,18 @@ public class MicroBurlapInput {
             byte[] value = parseBytes();
             expectEndTag("base64");
             return value;
-        } else throw expectBeginTag("base64", tag);
+        } else {
+            throw expectBeginTag("base64", tag);
+        }
     }
 
     /**
      * Reads an arbitrary object the input stream.
      */
     public Object readObject(Class expectedClass) throws IOException {
-        if (!parseTag()) throw new BurlapProtocolException("expected <tag>");
+        if (!parseTag()) {
+            throw new BurlapProtocolException("expected <tag>");
+        }
 
         String tag = sbuf.toString();
         if (tag.equals("null")) {
@@ -411,14 +418,16 @@ public class MicroBurlapInput {
             expectEndTag("remote");
 
             return resolveRemote(type, url);
-        } else return readExtensionObject(expectedClass, tag);
+        } else {
+            return readExtensionObject(expectedClass, tag);
+        }
     }
 
     /**
      * Reads a type value from the input stream.
      *
      * <pre>
-     * &lt;type>a utf-8 encoded string&lt;/type>
+     * &lt;type&gt;a utf-8 encoded string&lt;/type&gt;
      * </pre>
      */
     public String readType() throws IOException {
@@ -440,7 +449,7 @@ public class MicroBurlapInput {
      * specified, returns -1.
      *
      * <pre>
-     * &lt;length>integer&lt;/length>
+     * &lt;length&gt;integer&lt;/length&gt;
      * </pre>
      */
     public int readLength() throws IOException {
@@ -529,7 +538,9 @@ public class MicroBurlapInput {
      */
     public Object readList(Class expectedClass, String type, int length) throws IOException {
         Vector list = new Vector();
-        if (refs == null) refs = new Vector();
+        if (refs == null) {
+            refs = new Vector();
+        }
         refs.addElement(list);
 
         while (parseTag()) {
@@ -539,7 +550,9 @@ public class MicroBurlapInput {
             list.addElement(value);
         }
 
-        if (!sbuf.toString().equals("list")) throw new BurlapProtocolException("expected </list>");
+        if (!sbuf.toString().equals("list")) {
+            throw new BurlapProtocolException("expected </list>");
+        }
 
         return list;
     }
@@ -552,13 +565,16 @@ public class MicroBurlapInput {
         int value = 0;
 
         int ch = skipWhitespace();
-        if (ch == '+') ch = read();
-        else if (ch == '-') {
+        if (ch == '+') {
+            ch = read();
+        } else if (ch == '-') {
             sign = -1;
             ch = read();
         }
 
-        for (; ch >= '0' && ch <= '9'; ch = read()) value = 10 * value + ch - '0';
+        for (; ch >= '0' && ch <= '9'; ch = read()) {
+            value = 10 * value + ch - '0';
+        }
 
         peek = ch;
 
@@ -573,8 +589,9 @@ public class MicroBurlapInput {
         long value = 0;
 
         int ch = skipWhitespace();
-        if (ch == '+') ch = read();
-        else if (ch == '-') {
+        if (ch == '+') {
+            ch = read();
+        } else if (ch == '-') {
             sign = -1;
             ch = read();
         }
@@ -596,52 +613,72 @@ public class MicroBurlapInput {
 
         int year = 0;
         for (int i = 0; i < 4; i++) {
-            if (ch >= '0' && ch <= '9') year = 10 * year + ch - '0';
-            else throw expectedChar("year", ch);
+            if (ch >= '0' && ch <= '9') {
+                year = 10 * year + ch - '0';
+            } else {
+                throw expectedChar("year", ch);
+            }
 
             ch = read();
         }
 
         int month = 0;
         for (int i = 0; i < 2; i++) {
-            if (ch >= '0' && ch <= '9') month = 10 * month + ch - '0';
-            else throw expectedChar("month", ch);
+            if (ch >= '0' && ch <= '9') {
+                month = 10 * month + ch - '0';
+            } else {
+                throw expectedChar("month", ch);
+            }
 
             ch = read();
         }
 
         int day = 0;
         for (int i = 0; i < 2; i++) {
-            if (ch >= '0' && ch <= '9') day = 10 * day + ch - '0';
-            else throw expectedChar("day", ch);
+            if (ch >= '0' && ch <= '9') {
+                day = 10 * day + ch - '0';
+            } else {
+                throw expectedChar("day", ch);
+            }
 
             ch = read();
         }
 
-        if (ch != 'T') throw expectedChar("`T'", ch);
+        if (ch != 'T') {
+            throw expectedChar("`T'", ch);
+        }
 
         ch = read();
 
         int hour = 0;
         for (int i = 0; i < 2; i++) {
-            if (ch >= '0' && ch <= '9') hour = 10 * hour + ch - '0';
-            else throw expectedChar("hour", ch);
+            if (ch >= '0' && ch <= '9') {
+                hour = 10 * hour + ch - '0';
+            } else {
+                throw expectedChar("hour", ch);
+            }
 
             ch = read();
         }
 
         int minute = 0;
         for (int i = 0; i < 2; i++) {
-            if (ch >= '0' && ch <= '9') minute = 10 * minute + ch - '0';
-            else throw expectedChar("minute", ch);
+            if (ch >= '0' && ch <= '9') {
+                minute = 10 * minute + ch - '0';
+            } else {
+                throw expectedChar("minute", ch);
+            }
 
             ch = read();
         }
 
         int second = 0;
         for (int i = 0; i < 2; i++) {
-            if (ch >= '0' && ch <= '9') second = 10 * second + ch - '0';
-            else throw expectedChar("second", ch);
+            if (ch >= '0' && ch <= '9') {
+                second = 10 * second + ch - '0';
+            } else {
+                throw expectedChar("second", ch);
+            }
 
             ch = read();
         }
@@ -699,18 +736,27 @@ public class MicroBurlapInput {
                     for (; ch >= 'a' && ch <= 'z'; ch = read()) entityBuffer.append((char) ch);
 
                     String entity = entityBuffer.toString();
-                    if (entity.equals("amp")) sbuf.append('&');
-                    else if (entity.equals("apos")) sbuf.append('\'');
-                    else if (entity.equals("quot")) sbuf.append('"');
-                    else if (entity.equals("lt")) sbuf.append('<');
-                    else if (entity.equals("gt")) sbuf.append('>');
-                    else
+                    if (entity.equals("amp")) {
+                        sbuf.append('&');
+                    } else if (entity.equals("apos")) {
+                        sbuf.append('\'');
+                    } else if (entity.equals("quot")) {
+                        sbuf.append('"');
+                    } else if (entity.equals("lt")) {
+                        sbuf.append('<');
+                    } else if (entity.equals("gt")) {
+                        sbuf.append('>');
+                    } else {
                         throw new BurlapProtocolException("unknown XML entity &" + entity + "; at `" + (char) ch + "'");
+                    }
                 }
 
-                if (ch != ';') throw expectedChar("';'", ch);
-            } else if (ch < 0x80) sbuf.append((char) ch);
-            else if ((ch & 0xe0) == 0xc0) {
+                if (ch != ';') {
+                    throw expectedChar("';'", ch);
+                }
+            } else if (ch < 0x80) {
+                sbuf.append((char) ch);
+            } else if ((ch & 0xe0) == 0xc0) {
                 int ch1 = read();
                 int v = ((ch & 0x1f) << 6) + (ch1 & 0x3f);
 
@@ -721,7 +767,9 @@ public class MicroBurlapInput {
                 int v = ((ch & 0x0f) << 12) + ((ch1 & 0x3f) << 6) + (ch2 & 0x3f);
 
                 sbuf.append((char) v);
-            } else throw new BurlapProtocolException("bad utf-8 encoding");
+            } else {
+                throw new BurlapProtocolException("bad utf-8 encoding");
+            }
         }
 
         peek = ch;
@@ -772,22 +820,31 @@ public class MicroBurlapInput {
             }
         }
 
-        if (ch == '<') peek = ch;
+        if (ch == '<') {
+            peek = ch;
+        }
 
         return bos;
     }
 
     protected void expectStartTag(String tag) throws IOException {
-        if (!parseTag()) throw new BurlapProtocolException("expected <" + tag + ">");
+        if (!parseTag()) {
+            throw new BurlapProtocolException("expected <" + tag + ">");
+        }
 
-        if (!sbuf.toString().equals(tag)) throw new BurlapProtocolException("expected <" + tag + "> at <" + sbuf + ">");
+        if (!sbuf.toString().equals(tag)) {
+            throw new BurlapProtocolException("expected <" + tag + "> at <" + sbuf + ">");
+        }
     }
 
     protected void expectEndTag(String tag) throws IOException {
-        if (parseTag()) throw new BurlapProtocolException("expected </" + tag + ">");
+        if (parseTag()) {
+            throw new BurlapProtocolException("expected </" + tag + ">");
+        }
 
-        if (!sbuf.toString().equals(tag))
+        if (!sbuf.toString().equals(tag)) {
             throw new BurlapProtocolException("expected </" + tag + "> at </" + sbuf + ">");
+        }
     }
 
     /**
@@ -802,7 +859,9 @@ public class MicroBurlapInput {
         int ch = skipWhitespace();
         boolean isStartTag = true;
 
-        if (ch != '<') throw expectedChar("'<'", ch);
+        if (ch != '<') {
+            throw expectedChar("'<'", ch);
+        }
 
         ch = read();
         if (ch == '/') {
@@ -810,12 +869,18 @@ public class MicroBurlapInput {
             ch = is.read();
         }
 
-        if (!isTagChar(ch)) throw expectedChar("tag", ch);
+        if (!isTagChar(ch)) {
+            throw expectedChar("tag", ch);
+        }
 
         sbuf.setLength(0);
-        for (; isTagChar(ch); ch = read()) sbuf.append((char) ch);
+        for (; isTagChar(ch); ch = read()) {
+            sbuf.append((char) ch);
+        }
 
-        if (ch != '>') throw expectedChar("'>'", ch);
+        if (ch != '>') {
+            throw expectedChar("'>'", ch);
+        }
 
         return isStartTag;
     }
@@ -856,9 +921,15 @@ public class MicroBurlapInput {
 
     static {
         base64Decode = new int[256];
-        for (int i = 'A'; i <= 'Z'; i++) base64Decode[i] = i - 'A';
-        for (int i = 'a'; i <= 'z'; i++) base64Decode[i] = i - 'a' + 26;
-        for (int i = '0'; i <= '9'; i++) base64Decode[i] = i - '0' + 52;
+        for (int i = 'A'; i <= 'Z'; i++) {
+            base64Decode[i] = i - 'A';
+        }
+        for (int i = 'a'; i <= 'z'; i++) {
+            base64Decode[i] = i - 'a' + 26;
+        }
+        for (int i = '0'; i <= '9'; i++) {
+            base64Decode[i] = i - '0' + 52;
+        }
         base64Decode['+'] = 62;
         base64Decode['/'] = 63;
     }

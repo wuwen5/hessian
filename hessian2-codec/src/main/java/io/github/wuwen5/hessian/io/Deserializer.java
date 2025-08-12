@@ -92,7 +92,7 @@ public interface Deserializer {
      * @param in the input stream
      * @param fields the deserializer's own field marshal
      * @return the new object
-     * @throws IOException
+     * @throws IOException if an I/O error occurs
      */
     public Object readObject(AbstractHessianInput in, Object[] fields) throws IOException;
 

@@ -78,9 +78,13 @@ import java.util.TimeZone;
  * </pre>
  */
 public class BurlapOutput extends AbstractBurlapOutput {
-    // the output stream
+    /**
+     * the output stream
+     */
     protected OutputStream os;
-    // map of references
+    /**
+     * map of references
+     */
     private IdentityHashMap _refs;
 
     private Date date;
@@ -104,22 +108,28 @@ public class BurlapOutput extends AbstractBurlapOutput {
     /**
      * Initializes the output
      */
+    @Override
     public void init(OutputStream os) {
         this.os = os;
 
         _refs = null;
 
-        if (serializerFactory == null) serializerFactory = new SerializerFactory();
+        if (serializerFactory == null) {
+            serializerFactory = new SerializerFactory();
+        }
     }
 
     /**
      * Writes a complete method call.
      */
+    @Override
     public void call(String method, Object[] args) throws IOException {
         startCall(method);
 
         if (args != null) {
-            for (int i = 0; i < args.length; i++) writeObject(args[i]);
+            for (Object arg : args) {
+                writeObject(arg);
+            }
         }
 
         completeCall();
@@ -129,14 +139,13 @@ public class BurlapOutput extends AbstractBurlapOutput {
      * Starts the method call.  Clients would use <code>startCall</code>
      * instead of <code>call</code> if they wanted finer control over
      * writing the arguments, or needed to write headers.
-     *
-     * <code><pre>
-     * &lt;burlap:call>
-     * &lt;method>method-name&lt;/method>
-     * </pre></code>
-     *
+     *<pre>
+     * &lt;burlap:call&gt;
+     * &lt;method&gt;method-name&lt;/method&gt;
+     * </pre>
      * @param method the method name to call.
      */
+    @Override
     public void startCall(String method) throws IOException {
         print("<burlap:call><method>");
         print(method);
@@ -147,26 +156,23 @@ public class BurlapOutput extends AbstractBurlapOutput {
      * Starts the method call.  Clients would use <code>startCall</code>
      * instead of <code>call</code> if they wanted finer control over
      * writing the arguments, or needed to write headers.
-     *
-     * <code><pre>
-     * &lt;method>method-name&lt;/method>
-     * </pre></code>
-     *
-     * @param method the method name to call.
+     *<pre>
+     * &lt;method&gt;method-name&lt;/method&gt;
+     * </pre>
      */
+    @Override
     public void startCall() throws IOException {
         print("<burlap:call>");
     }
 
     /**
      * Writes the method for a call.
-     *
-     * <code><pre>
-     * &lt;method>value&lt;/method>
-     * </pre></code>
-     *
+     *<pre>
+     * &lt;method&gt;value&lt;/method&gt;
+     * </pre>
      * @param method the method name to call.
      */
+    @Override
     public void writeMethod(String method) throws IOException {
         print("<method>");
         print(method);
@@ -175,11 +181,11 @@ public class BurlapOutput extends AbstractBurlapOutput {
 
     /**
      * Completes.
-     *
-     * <code><pre>
-     * &lt;/burlap:call>
-     * </pre></code>
+     *<pre>
+     * &lt;/burlap:call&gt;
+     * </pre>
      */
+    @Override
     public void completeCall() throws IOException {
         print("</burlap:call>");
     }
@@ -193,6 +199,7 @@ public class BurlapOutput extends AbstractBurlapOutput {
      * r
      * </pre>
      */
+    @Override
     public void startReply() throws IOException {
         print("<burlap:reply>");
     }
@@ -203,19 +210,19 @@ public class BurlapOutput extends AbstractBurlapOutput {
      * <p>A successful completion will have a single value:
      *
      * <pre>
-     * &lt;/burlap:reply>
+     * &lt;/burlap:reply&gt;
      * </pre>
      */
+    @Override
     public void completeReply() throws IOException {
         print("</burlap:reply>");
     }
 
     /**
      * Writes a header name.  The header value must immediately follow.
-     *
-     * <code><pre>
-     * &lt;header>foo&lt;/header>&lt;int>value&lt;/int>
-     * </pre></code>
+     *<pre>
+     * &lt;header&gt;foo&lt;/header&gt;&lt;int&gt;value&lt;/int&gt;
+     * </pre>
      */
     public void writeHeader(String name) throws IOException {
         print("<header>");
@@ -226,24 +233,23 @@ public class BurlapOutput extends AbstractBurlapOutput {
     /**
      * Writes a fault.  The fault will be written
      * as a descriptive string followed by an object:
+     *<pre>
+     * &lt;fault&gt;
+     * &lt;string&gt;code
+     * &lt;string&gt;the fault code
      *
-     * <code><pre>
-     * &lt;fault>
-     * &lt;string>code
-     * &lt;string>the fault code
+     * &lt;string&gt;message
+     * &lt;string&gt;the fault mesage
      *
-     * &lt;string>message
-     * &lt;string>the fault mesage
-     *
-     * &lt;string>detail
-     * &lt;map>t\x00\xnnjavax.ejb.FinderException
+     * &lt;string&gt;detail
+     * &lt;map&gt;t\x00\xnnjavax.ejb.FinderException
      *     ...
-     * &lt;/map>
-     * &lt;/fault>
-     * </pre></code>
-     *
+     * &lt;/map&gt;
+     * &lt;/fault&gt;
+     * </pre>
      * @param code the fault code, a three digit
      */
+    @Override
     public void writeFault(String code, String message, Object detail) throws IOException {
         print("<fault>");
         writeString("code");
@@ -262,6 +268,7 @@ public class BurlapOutput extends AbstractBurlapOutput {
     /**
      * Writes any object to the output stream.
      */
+    @Override
     public void writeObject(Object object) throws IOException {
         if (object == null) {
             writeNull();
@@ -279,21 +286,23 @@ public class BurlapOutput extends AbstractBurlapOutput {
      * Writes the list header to the stream.  List writers will call
      * <code>writeListBegin</code> followed by the list contents and then
      * call <code>writeListEnd</code>.
-     *
-     * <code><pre>
-     * &lt;list>
-     *   &lt;type>java.util.ArrayList&lt;/type>
-     *   &lt;length>3&lt;/length>
-     *   &lt;int>1&lt;/int>
-     *   &lt;int>2&lt;/int>
-     *   &lt;int>3&lt;/int>
-     * &lt;/list>
-     * </pre></code>
+     *<pre>
+     * &lt;list&gt;
+     *   &lt;type&gt;java.util.ArrayList&lt;/type&gt;
+     *   &lt;length>3&lt;/length&gt;
+     *   &lt;int&gt;1&lt;/int&gt;
+     *   &lt;int&gt;2&lt;/int&gt;
+     *   &lt;int&gt;3&lt;/int&gt;
+     * &lt;/list&gt;
+     * </pre>
      */
+    @Override
     public boolean writeListBegin(int length, String type) throws IOException {
         print("<list><type>");
 
-        if (type != null) print(type);
+        if (type != null) {
+            print(type);
+        }
 
         print("</type><length>");
         print(length);
@@ -305,6 +314,7 @@ public class BurlapOutput extends AbstractBurlapOutput {
     /**
      * Writes the tail of the list to the stream.
      */
+    @Override
     public void writeListEnd() throws IOException {
         print("</list>");
     }
@@ -313,14 +323,14 @@ public class BurlapOutput extends AbstractBurlapOutput {
      * Writes the map header to the stream.  Map writers will call
      * <code>writeMapBegin</code> followed by the map contents and then
      * call <code>writeMapEnd</code>.
-     *
-     * <code><pre>
-     * &lt;map>
-     *   &lt;type>type&lt;/type>
-     *   (&lt;key> &lt;value>)*
-     * &lt;/map>
-     * </pre></code>
+     *<pre>
+     * &lt;map&gt;
+     *   &lt;type&gt;type&lt;/type&gt;
+     *   (&lt;key&gt; &lt;value&gt;)*
+     * &lt;/map&gt;
+     * </pre>
      */
+    @Override
     public void writeMapBegin(String type) throws IOException {
         print("<map><type>");
         if (type != null) print(type);
@@ -331,6 +341,7 @@ public class BurlapOutput extends AbstractBurlapOutput {
     /**
      * Writes the tail of the map to the stream.
      */
+    @Override
     public void writeMapEnd() throws IOException {
         print("</map>");
     }
@@ -338,13 +349,12 @@ public class BurlapOutput extends AbstractBurlapOutput {
     /**
      * Writes a remote object reference to the stream.  The type is the
      * type of the remote interface.
-     *
-     * <code><pre>
-     * &lt;remote>
-     *   &lt;type>test.account.Account&lt;/type>
-     *   &lt;string>http://caucho.com/foo;ejbid=bar&lt;/string>
-     * &lt;/remote>
-     * </pre></code>
+     *<pre>
+     * &lt;remote&gt;
+     *   &lt;type&gt;test.account.Account&lt;/type&gt;
+     *   &lt;string&gt;http://caucho.com/foo;ejbid=bar&lt;/string&gt;
+     * &lt;/remote&gt;
+     * </pre>
      */
     public void writeRemote(String type, String url) throws IOException {
         print("<remote><type>");
@@ -357,29 +367,32 @@ public class BurlapOutput extends AbstractBurlapOutput {
     /**
      * Writes a boolean value to the stream.  The boolean will be written
      * with the following syntax:
-     *
-     * <code><pre>
-     * &lt;boolean>0&lt;/boolean>
-     * &lt;boolean>1&lt;/boolean>
-     * </pre></code>
+     *<pre>
+     * &lt;boolean&gt;0&lt;/boolean&gt;
+     * &lt;boolean&gt;1&lt;/boolean&gt;
+     * </pre>
      *
      * @param value the boolean value to write.
      */
+    @Override
     public void writeBoolean(boolean value) throws IOException {
-        if (value) print("<boolean>1</boolean>");
-        else print("<boolean>0</boolean>");
+        if (value) {
+            print("<boolean>1</boolean>");
+        } else {
+            print("<boolean>0</boolean>");
+        }
     }
 
     /**
      * Writes an integer value to the stream.  The integer will be written
      * with the following syntax:
-     *
-     * <code><pre>
-     * &lt;int>int value&lt;/int>
-     * </pre></code>
+     *<pre>
+     * &lt;int&gt;int value&lt;/int&gt;
+     * </pre>
      *
      * @param value the integer value to write.
      */
+    @Override
     public void writeInt(int value) throws IOException {
         print("<int>");
         print(value);
@@ -389,13 +402,12 @@ public class BurlapOutput extends AbstractBurlapOutput {
     /**
      * Writes a long value to the stream.  The long will be written
      * with the following syntax:
-     *
-     * <code><pre>
-     * &lt;long>int value&lt;/long>
-     * </pre></code>
-     *
+     *<pre>
+     * &lt;long&gt;int value&lt;/long&gt;
+     * </pre>
      * @param value the long value to write.
      */
+    @Override
     public void writeLong(long value) throws IOException {
         print("<long>");
         print(value);
@@ -405,13 +417,12 @@ public class BurlapOutput extends AbstractBurlapOutput {
     /**
      * Writes a double value to the stream.  The double will be written
      * with the following syntax:
-     *
-     * <code><pre>
-     * &lt;double>value&lt;/double>
-     * </pre></code>
-     *
+     *<pre>
+     * &lt;double&gt;value&lt;/double&gt;
+     * </pre>
      * @param value the double value to write.
      */
+    @Override
     public void writeDouble(double value) throws IOException {
         print("<double>");
         print(value);
@@ -420,13 +431,12 @@ public class BurlapOutput extends AbstractBurlapOutput {
 
     /**
      * Writes a date to the stream.
-     *
-     * <code><pre>
-     * &lt;date>iso8901&lt;/date>
-     * </pre></code>
-     *
+     *<pre>
+     * &lt;date&gt;iso8901&lt;/date&gt;
+     * </pre>
      * @param time the date in milliseconds from the epoch in UTC
      */
+    @Override
     public void writeUTCDate(long time) throws IOException {
         print("<date>");
         if (utcCalendar == null) {
@@ -444,13 +454,11 @@ public class BurlapOutput extends AbstractBurlapOutput {
     /**
      * Writes a null value to the stream.
      * The null will be written with the following syntax
-     *
-     * <code><pre>
-     * &lt;null>&lt;/null>
-     * </pre></code>
-     *
-     * @param value the string value to write.
+     *<pre>
+     * &lt;null&gt;&lt;/null&gt;
+     * </pre>
      */
+    @Override
     public void writeNull() throws IOException {
         print("<null></null>");
     }
@@ -458,19 +466,16 @@ public class BurlapOutput extends AbstractBurlapOutput {
     /**
      * Writes a string value to the stream using UTF-8 encoding.
      * The string will be written with the following syntax:
-     *
-     * <code><pre>
-     * &lt;string>string-value&lt;/string>
-     * </pre></code>
-     *
+     *<pre>
+     * &lt;string&gt;string-value&lt;/string&gt;
+     * </pre>
      * If the value is null, it will be written as
-     *
-     * <code><pre>
-     * &lt;null>&lt;/null>
-     * </pre></code>
-     *
+     *<pre>
+     * &lt;null&gt;&lt;/null&gt;
+     * </pre>
      * @param value the string value to write.
      */
+    @Override
     public void writeString(String value) throws IOException {
         if (value == null) {
             print("<null></null>");
@@ -484,19 +489,15 @@ public class BurlapOutput extends AbstractBurlapOutput {
     /**
      * Writes a string value to the stream using UTF-8 encoding.
      * The string will be written with the following syntax:
-     *
-     * <code><pre>
+     *<pre>
      * S b16 b8 string-value
-     * </pre></code>
-     *
+     * </pre>
      * If the value is null, it will be written as
-     *
-     * <code><pre>
+     *<pre>
      * N
-     * </pre></code>
-     *
-     * @param value the string value to write.
+     * </pre>
      */
+    @Override
     public void writeString(char[] buffer, int offset, int length) throws IOException {
         if (buffer == null) {
             print("<null></null>");
@@ -510,39 +511,35 @@ public class BurlapOutput extends AbstractBurlapOutput {
     /**
      * Writes a byte array to the stream.
      * The array will be written with the following syntax:
-     *
-     * <code><pre>
-     * &lt;base64>bytes&lt;/base64>
-     * </pre></code>
-     *
+     *<pre>
+     * &lt;base64&gt;bytes&lt;/base64&gt;
+     * </pre>
      * If the value is null, it will be written as
-     *
-     * <code><pre>
-     * &lt;null>&lt;/null>
-     * </pre></code>
-     *
-     * @param value the string value to write.
+     *<pre>
+     * &lt;null&gt;&lt;/null&gt;
+     * </pre>
+     * @param buffer the byte array to write.
      */
+    @Override
     public void writeBytes(byte[] buffer) throws IOException {
-        if (buffer == null) print("<null></null>");
-        else writeBytes(buffer, 0, buffer.length);
+        if (buffer == null) {
+            print("<null></null>");
+        } else {
+            writeBytes(buffer, 0, buffer.length);
+        }
     }
     /**
      * Writes a byte array to the stream.
      * The array will be written with the following syntax:
-     *
-     * <code><pre>
-     * &lt;base64>bytes&lt;/base64>
-     * </pre></code>
-     *
+     *<pre>
+     * &lt;base64&gt;bytes&lt;/base64&gt;
+     * </pre>
      * If the value is null, it will be written as
-     *
-     * <code><pre>
-     * &lt;null>&lt;/null>
-     * </pre></code>
-     *
-     * @param value the string value to write.
+     *<pre>
+     * &lt;null&gt;&lt;/null&gt;
+     * </pre>
      */
+    @Override
     public void writeBytes(byte[] buffer, int offset, int length) throws IOException {
         if (buffer == null) {
             print("<null></null>");
@@ -586,28 +583,29 @@ public class BurlapOutput extends AbstractBurlapOutput {
     /**
      * Writes a byte buffer to the stream.
      */
-    public void writeByteBufferStart() throws IOException {
+    @Override
+    public void writeByteBufferStart() {
         throw new UnsupportedOperationException();
     }
 
     /**
      * Writes a byte buffer to the stream.
-     *
-     * <code><pre>
+     *<pre>
      * b b16 b18 bytes
-     * </pre></code>
+     * </pre>
      */
+    @Override
     public void writeByteBufferPart(byte[] buffer, int offset, int length) throws IOException {
         throw new UnsupportedOperationException();
     }
 
     /**
      * Writes a byte buffer to the stream.
-     *
-     * <code><pre>
+     *<pre>
      * b b16 b18 bytes
-     * </pre></code>
+     * </pre>
      */
+    @Override
     public void writeByteBufferEnd(byte[] buffer, int offset, int length) throws IOException {
         throw new UnsupportedOperationException();
     }
@@ -617,22 +615,27 @@ public class BurlapOutput extends AbstractBurlapOutput {
      */
     private char encode(int d) {
         d &= 0x3f;
-        if (d < 26) return (char) (d + 'A');
-        else if (d < 52) return (char) (d + 'a' - 26);
-        else if (d < 62) return (char) (d + '0' - 52);
-        else if (d == 62) return '+';
-        else return '/';
+        if (d < 26) {
+            return (char) (d + 'A');
+        } else if (d < 52) {
+            return (char) (d + 'a' - 26);
+        } else if (d < 62) {
+            return (char) (d + '0' - 52);
+        } else if (d == 62) {
+            return '+';
+        } else {
+            return '/';
+        }
     }
 
     /**
      * Writes a reference.
-     *
-     * <code><pre>
-     * &lt;ref>int&lt;/ref>
-     * </pre></code>
-     *
+     *<pre>
+     * &lt;ref&gt;int&lt;/ref&gt;
+     * </pre>
      * @param value the integer value to write.
      */
+    @Override
     public void writeRef(int value) throws IOException {
         print("<ref>");
         print(value);
@@ -644,8 +647,11 @@ public class BurlapOutput extends AbstractBurlapOutput {
      *
      * @return true if we're writing a ref.
      */
+    @Override
     public boolean addRef(Object object) throws IOException {
-        if (_refs == null) _refs = new IdentityHashMap();
+        if (_refs == null) {
+            _refs = new IdentityHashMap();
+        }
 
         Integer ref = (Integer) _refs.get(object);
 
@@ -663,35 +669,46 @@ public class BurlapOutput extends AbstractBurlapOutput {
 
     @Override
     public int getRef(Object obj) {
-        if (_refs == null) return -1;
+        if (_refs == null) {
+            return -1;
+        }
 
         Integer ref = (Integer) _refs.get(obj);
 
-        if (ref != null) return ref;
-        else return -1;
+        if (ref != null) {
+            return ref;
+        } else {
+            return -1;
+        }
     }
 
     /**
      * Removes a reference.
      */
-    public boolean removeRef(Object obj) throws IOException {
+    @Override
+    public boolean removeRef(Object obj) {
         if (_refs != null) {
             _refs.remove(obj);
 
             return true;
-        } else return false;
+        } else {
+            return false;
+        }
     }
 
     /**
      * Replaces a reference from one object to another.
      */
+    @Override
     public boolean replaceRef(Object oldRef, Object newRef) throws IOException {
         Integer value = (Integer) _refs.remove(oldRef);
 
         if (value != null) {
             _refs.put(newRef, value);
             return true;
-        } else return false;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -760,7 +777,7 @@ public class BurlapOutput extends AbstractBurlapOutput {
     /**
      * Prints a date.
      *
-     * @param date the date to print.
+     * @param calendar the calendar to print.
      */
     public void printDate(Calendar calendar) throws IOException {
         int year = calendar.get(Calendar.YEAR);

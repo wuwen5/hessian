@@ -89,12 +89,12 @@ import javax.naming.spi.ObjectFactory;
  *
  * In Resin 3.0, the above example would be configured as:
  * <pre>
- * &lt;reference>
- *   &lt;name>hessian/hello&lt;/name>
- *   &lt;factory>com.caucho.hessian.client.HessianProxyFactory&lt;/factory>
- *   &lt;init url="http://localhost:8080/ejb/hello"/>
- *         type="test.HelloHome"/>
- * &lt;/reference>
+ * &lt;reference&gt;
+ *   &lt;name&gt;hessian/hello&lt;/name&gt;
+ *   &lt;factory&gt;com.caucho.hessian.client.HessianProxyFactory&lt;/factory&gt;
+ *   &lt;init url="http://localhost:8080/ejb/hello"/&gt;
+ *         type="test.HelloHome"/&gt;
+ * &lt;/reference&gt;
  * </pre>
  *
  * To get the above resource, use JNDI as follows:
@@ -105,7 +105,7 @@ import javax.naming.spi.ObjectFactory;
  * System.out.println("Hello: " + hello.helloWorld());
  * </pre>
  *
- * <h3>Authentication</h3>
+ * <h2>Authentication</h2>
  *
  * <p>The proxy can use HTTP basic authentication if the user and the
  * password are set.
@@ -172,8 +172,9 @@ public class BurlapProxyFactory implements ServiceProxyFactory, ObjectFactory {
 
         conn.setDoOutput(true);
 
-        if (_basicAuth != null) conn.setRequestProperty("Authorization", _basicAuth);
-        else if (_user != null && _password != null) {
+        if (_basicAuth != null) {
+            conn.setRequestProperty("Authorization", _basicAuth);
+        } else if (_user != null && _password != null) {
             _basicAuth = "Basic " + base64(_user + ":" + _password);
             conn.setRequestProperty("Authorization", _basicAuth);
         }
@@ -196,7 +197,9 @@ public class BurlapProxyFactory implements ServiceProxyFactory, ObjectFactory {
 
         String apiClassName = (String) metaInfo._burlap_getAttribute("java.api.class");
 
-        if (apiClassName == null) throw new BurlapRuntimeException(url + " has an unknown api.");
+        if (apiClassName == null) {
+            throw new BurlapRuntimeException(url + " has an unknown api.");
+        }
 
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
@@ -215,12 +218,13 @@ public class BurlapProxyFactory implements ServiceProxyFactory, ObjectFactory {
      * </pre>
      *
      * @param api the interface the proxy class needs to implement
-     * @param url the URL where the client object is located.
-     *
      * @return a proxy to the object with the specified interface.
      */
+    @Override
     public Object create(Class api, String urlName) throws MalformedURLException {
-        if (api == null) throw new NullPointerException();
+        if (api == null) {
+            throw new NullPointerException();
+        }
 
         URL url = new URL(urlName);
 
@@ -238,7 +242,7 @@ public class BurlapProxyFactory implements ServiceProxyFactory, ObjectFactory {
             is.close();
 
             conn.disconnect();
-        } catch (IOException e) {
+        } catch (IOException ignored) {
         }
 
         BurlapProxy handler = new BurlapProxy(this, url);
@@ -254,14 +258,14 @@ public class BurlapProxyFactory implements ServiceProxyFactory, ObjectFactory {
     }
 
     public BurlapOutput getBurlapOutput(OutputStream os) {
-        BurlapOutput out = new BurlapOutput(os);
 
-        return out;
+        return new BurlapOutput(os);
     }
 
     /**
      * JNDI object factory so the proxy can be used as a resource.
      */
+    @Override
     public Object getObjectInstance(Object obj, Name name, Context nameCtx, Hashtable<?, ?> environment)
             throws Exception {
         Reference ref = (Reference) obj;
@@ -277,15 +281,24 @@ public class BurlapProxyFactory implements ServiceProxyFactory, ObjectFactory {
             String type = addr.getType();
             String value = (String) addr.getContent();
 
-            if (type.equals("type")) api = value;
-            else if (type.equals("url")) url = value;
-            else if (type.equals("user")) setUser(value);
-            else if (type.equals("password")) setPassword(value);
+            if (type.equals("type")) {
+                api = value;
+            } else if (type.equals("url")) {
+                url = value;
+            } else if (type.equals("user")) {
+                setUser(value);
+            } else if (type.equals("password")) {
+                setPassword(value);
+            }
         }
 
-        if (url == null) throw new NamingException("`url' must be configured for BurlapProxyFactory.");
+        if (url == null) {
+            throw new NamingException("`url' must be configured for BurlapProxyFactory.");
+        }
         // XXX: could use meta protocol to grab this
-        if (api == null) throw new NamingException("`type' must be configured for BurlapProxyFactory.");
+        if (api == null) {
+            throw new NamingException("`type' must be configured for BurlapProxyFactory.");
+        }
 
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         Class apiClass = Class.forName(api, false, loader);

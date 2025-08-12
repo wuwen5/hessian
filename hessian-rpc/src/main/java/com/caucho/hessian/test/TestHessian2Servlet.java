@@ -917,9 +917,9 @@ public class TestHessian2Servlet extends HessianServlet implements TestHessian2 
     /**
      * double 0.0
      *
-     * <code><pre>
+     * <pre>
      * x5b
-     * </pre></code>
+     * </pre>
      */
     public Object argDouble_0_0(Object v) {
         if (v.equals(replyDouble_0_0())) return true;
@@ -930,9 +930,9 @@ public class TestHessian2Servlet extends HessianServlet implements TestHessian2 
     /**
      * double 1.0
      *
-     * <code><pre>
+     * <pre>
      * x5c
-     * </pre></code>
+     * </pre>
      */
     public Object argDouble_1_0(Object v) {
         if (v.equals(replyDouble_1_0())) return true;
@@ -943,9 +943,9 @@ public class TestHessian2Servlet extends HessianServlet implements TestHessian2 
     /**
      * double 2.0
      *
-     * <code><pre>
+     * <pre>
      * x5d x02
-     * </pre></code>
+     * </pre>
      */
     public Object argDouble_2_0(Object v) {
         if (v.equals(replyDouble_2_0())) return true;
@@ -956,9 +956,9 @@ public class TestHessian2Servlet extends HessianServlet implements TestHessian2 
     /**
      * double 127.0
      *
-     * <code><pre>
+     * <pre>
      * x5d x7f
-     * </pre></code>
+     * </pre>
      */
     public Object argDouble_127_0(Object v) {
         if (v.equals(replyDouble_127_0())) return true;
@@ -969,9 +969,9 @@ public class TestHessian2Servlet extends HessianServlet implements TestHessian2 
     /**
      * double -128.0
      *
-     * <code><pre>
+     * <pre>
      * x5d x80
-     * </pre></code>
+     * </pre>
      */
     public Object argDouble_m128_0(Object v) {
         if (v.equals(replyDouble_m128_0())) return true;
@@ -982,9 +982,9 @@ public class TestHessian2Servlet extends HessianServlet implements TestHessian2 
     /**
      * double 128.0
      *
-     * <code><pre>
+     * <pre>
      * x5e x00 x80
-     * </pre></code>
+     * </pre>
      */
     public Object argDouble_128_0(Object v) {
         if (v.equals(replyDouble_128_0())) return true;
@@ -995,9 +995,9 @@ public class TestHessian2Servlet extends HessianServlet implements TestHessian2 
     /**
      * double -129.0
      *
-     * <code><pre>
+     * <pre>
      * x5e xff x7f
-     * </pre></code>
+     * </pre>
      */
     public Object argDouble_m129_0(Object v) {
         if (v.equals(replyDouble_m129_0())) return true;
@@ -1008,9 +1008,9 @@ public class TestHessian2Servlet extends HessianServlet implements TestHessian2 
     /**
      * double 32767.0
      *
-     * <code><pre>
+     * <pre>
      * x5e x7f xff
-     * </pre></code>
+     * </pre>
      */
     public Object argDouble_32767_0(Object v) {
         if (v.equals(replyDouble_32767_0())) return true;
@@ -1021,9 +1021,9 @@ public class TestHessian2Servlet extends HessianServlet implements TestHessian2 
     /**
      * Double -32768.0
      *
-     * <code><pre>
+     * <pre>
      * x5e x80 x80
-     * </pre></code>
+     * </pre>
      */
     public Object argDouble_m32768_0(Object v) {
         if (v.equals(replyDouble_m32768_0())) return true;
@@ -1034,9 +1034,9 @@ public class TestHessian2Servlet extends HessianServlet implements TestHessian2 
     /**
      * double 0.001
      *
-     * <code><pre>
+     * <pre>
      * x5f x00 x00 x00 x01
-     * </pre></code>
+     * </pre>
      */
     public Object argDouble_0_001(Object v) {
         if (v.equals(replyDouble_0_001())) return true;
@@ -1047,9 +1047,9 @@ public class TestHessian2Servlet extends HessianServlet implements TestHessian2 
     /**
      * double -0.001
      *
-     * <code><pre>
+     * <pre>
      * x5f xff xff xff xff
-     * </pre></code>
+     * </pre>
      */
     public Object argDouble_m0_001(Object v) {
         if (v.equals(replyDouble_m0_001())) return true;
@@ -1060,9 +1060,9 @@ public class TestHessian2Servlet extends HessianServlet implements TestHessian2 
     /**
      * double 65.536
      *
-     * <code><pre>
+     * <pre>
      * x5f x00 x01 x00 x00
-     * </pre></code>
+     * </pre>
      */
     public Object argDouble_65_536(Object v) {
         if (v.equals(replyDouble_65_536())) return true;
@@ -1073,9 +1073,9 @@ public class TestHessian2Servlet extends HessianServlet implements TestHessian2 
     /**
      * Result of double 3.14159
      *
-     * <code><pre>
+     * <pre>
      * D x00 x01 x00 x00 x00 x00 x00 x00
-     * </pre></code>
+     * </pre>
      */
     public Object argDouble_3_14159(Object v) {
         if (v.equals(replyDouble_3_14159())) return true;
@@ -1524,8 +1524,8 @@ public class TestHessian2Servlet extends HessianServlet implements TestHessian2 
     /**
      * Invoke the object with the request from the input stream.
      *
-     * @param in the Hessian input stream
-     * @param out the Hessian output stream
+     * @param is the Hessian input stream
+     * @param os the Hessian output stream
      */
     @Override
     public void invoke(InputStream is, OutputStream os, String objectId, SerializerFactory serializerFactory)

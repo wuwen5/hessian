@@ -113,10 +113,9 @@ public class Hessian2Output extends io.github.wuwen5.hessian.io.Hessian2Output i
     /**
      * Writes the call tag.  This would be followed by the
      * method and the arguments
-     *
-     * <code><pre>
+     *<pre>
      * C
-     * </pre></code>
+     * </pre>
      */
     @Override
     public void startCall() throws IOException {
@@ -129,13 +128,11 @@ public class Hessian2Output extends io.github.wuwen5.hessian.io.Hessian2Output i
      * Starts the method call.  Clients would use <code>startCall</code>
      * instead of <code>call</code> if they wanted finer control over
      * writing the arguments, or needed to write headers.
-     *
-     * <code><pre>
+     *<pre>
      * C
      * string # method name
      * int    # arg count
-     * </pre></code>
-     *
+     * </pre>
      * @param method the method name to call.
      */
     @Override
@@ -157,11 +154,9 @@ public class Hessian2Output extends io.github.wuwen5.hessian.io.Hessian2Output i
 
     /**
      * Writes the method tag.
-     *
-     * <code><pre>
+     *<pre>
      * string
-     * </pre></code>
-     *
+     * </pre>
      * @param method the method name to call.
      */
     @Override
@@ -171,10 +166,9 @@ public class Hessian2Output extends io.github.wuwen5.hessian.io.Hessian2Output i
 
     /**
      * Completes.
-     *
-     * <code><pre>
+     *<pre>
      * z
-     * </pre></code>
+     * </pre>
      */
     @Override
     public void completeCall() throws IOException {
@@ -205,10 +199,10 @@ public class Hessian2Output extends io.github.wuwen5.hessian.io.Hessian2Output i
 
     /**
      * Starts an envelope.
-     * <code><pre>
+     * <pre>
      * E major minor
      * m b16 b8 method-name
-     * </pre></code>
+     * </pre>
      *
      * @param method the method name to call.
      */

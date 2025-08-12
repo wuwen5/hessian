@@ -57,9 +57,6 @@ import java.io.Reader;
 /**
  * Abstract base class for Hessian requests.  Hessian users should only
  * need to use the methods in this class.
- *
- * <pre>
- * </pre>
  */
 public abstract class AbstractHessianInput implements Closeable {
     private HessianRemoteResolver resolver;
@@ -255,10 +252,11 @@ public abstract class AbstractHessianInput implements Closeable {
     /**
      * Reads a remote object reference to the stream.  The type is the
      * type of the remote interface.
-     *
-     * <code><pre>
+     *<pre>
+     * <code>
      * 'r' 't' b16 b8 type url
-     * </pre></code>
+     * </code>
+     * </pre>
      * @throws IOException if an I/O error occurs
      * @return the remote object read from the stream
      */

@@ -29,7 +29,7 @@ Since the Hessian protocol serializes Java objects to XML, the
 HessianSerializerOutput and HessianSerializerInput
 can be used for serialization.
 
-<h4>Serialization</h4>
+<h2>Serialization</h2>
 <pre>
 OutputStream os = new FileOutputStream("test.xml");
 HessianOutput out = new HessianSerializerOutput(os);
@@ -38,7 +38,7 @@ out.writeObject(obj);
 os.close();
 </pre>
 
-<h4>Deserialization</h4>
+<h2>Deserialization</h2>
 <pre>
 InputStream is = new FileInputStream("test.xml");
 HessianInput in = new HessianSerializerInput(in);

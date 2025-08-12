@@ -60,7 +60,7 @@ import java.lang.reflect.Modifier;
  * <p>HessianOutput is unbuffered, so any client needs to provide
  * its own buffering.
  *
- * <h3>Serialization</h3>
+ * <h2>Serialization</h2>
  *
  * <pre>
  * OutputStream os = new FileOutputStream("test.xml");
@@ -70,7 +70,7 @@ import java.lang.reflect.Modifier;
  * os.close();
  * </pre>
  *
- * <h3>Writing an RPC Call</h3>
+ * <h2>Writing an RPC Call</h2>
  *
  * <pre>
  * OutputStream os = ...; // from http connection
