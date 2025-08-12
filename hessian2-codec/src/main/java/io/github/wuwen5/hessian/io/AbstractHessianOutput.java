@@ -397,7 +397,7 @@ public abstract class AbstractHessianOutput implements Closeable {
      *   x91                       # 1
      *   x92                       # 2
      *   x93                       # 3
-     * &lt;/list>
+     * &lt;/list&gt;
      * </pre>
      * @throws IOException if an I/O error occurs
      * @param length the length of the list

@@ -304,13 +304,13 @@ public interface AbstractHessianOutput extends Closeable {
      *<pre>
      * <code>
      * f
-     * &lt;string>code
-     * &lt;string>the fault code
+     * &lt;string&gt;code
+     * &lt;string&gt;the fault code
      *
-     * &lt;string>message
-     * &lt;string>the fault mesage
+     * &lt;string&gt;message
+     * &lt;string&gt;the fault mesage
      *
-     * &lt;string>detail
+     * &lt;string&gt;detail
      * mt\x00\xnnjavax.ejb.FinderException
      *     ...
      * z

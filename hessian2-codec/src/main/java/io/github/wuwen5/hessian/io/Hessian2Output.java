@@ -367,7 +367,7 @@ public class Hessian2Output extends AbstractHessianOutput implements Hessian2Con
      * Writes the object definition
      *<pre>
      * <code>
-     * C &lt;string> &lt;int> &lt;string>*
+     * C &lt;string&gt; &lt;int&gt; &lt;string&gt;*
      * </code>
      * </pre>
      */
@@ -1055,7 +1055,7 @@ public class Hessian2Output extends AbstractHessianOutput implements Hessian2Con
     /**
      * Writes a reference.
      * <pre>
-     * x51 &lt;int>
+     * x51 &lt;int&gt;
      * </pre>
      *
      * @param value the integer value to write.
