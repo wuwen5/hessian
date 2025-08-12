@@ -121,8 +121,8 @@ public class MicroBurlapOutput {
     /**
      * Writes the method call:
      *<pre>
-     * &lt;burlap:request>
-     *   &lt;method>add&lt;/method>
+     * &lt;burlap:request&gt;
+     *   &lt;method&gt;add&lt;/method&gt;
      * </pre>
      * @param method the method name to call.
      */
@@ -135,7 +135,7 @@ public class MicroBurlapOutput {
     /**
      * Writes the method call:
      *<pre>
-     * &lt;/burlap:request>
+     * &lt;/burlap:request&gt;
      * </pre>
      */
     public void completeCall() throws IOException {
@@ -146,7 +146,7 @@ public class MicroBurlapOutput {
      * Writes a boolean value to the stream.  The boolean will be written
      * with the following syntax:
      *<pre>
-     * &lt;boolean>1&lt;/boolean>
+     * &lt;boolean&gt;1&lt;/boolean&gt;
      * </pre>
      * @param value the boolean value to write.
      */
@@ -160,7 +160,7 @@ public class MicroBurlapOutput {
      * Writes an integer value to the stream.  The integer will be written
      * with the following syntax:
      *<pre>
-     * &lt;int>123&lt;/int>
+     * &lt;int&gt;123&lt;/int&gt;
      * </pre>
      * @param value the integer value to write.
      */
@@ -174,7 +174,7 @@ public class MicroBurlapOutput {
      * Writes a long value to the stream.  The long will be written
      * with the following syntax:
      *<pre>
-     * &lt;long>123&lt;/long>
+     * &lt;long&gt;123&lt;/long&gt;
      * </pre>
      * @param value the long value to write.
      */
@@ -188,7 +188,7 @@ public class MicroBurlapOutput {
      * Writes a null value to the stream.
      * The null will be written with the following syntax
      *<pre>
-     * &lt;null>&lt;/null>
+     * &lt;null&gt;&lt;/null&gt;
      * </pre>
      */
     public void writeNull() throws IOException {
@@ -199,11 +199,11 @@ public class MicroBurlapOutput {
      * Writes a string value to the stream using UTF-8 encoding.
      * The string will be written with the following syntax:
      *<pre>
-     * &lt;string>12.3e10&lt;/string>
+     * &lt;string&gt;12.3e10&lt;/string&gt;
      * </pre>
      * If the value is null, it will be written as
      *<pre>
-     * &lt;null>&lt;/null>
+     * &lt;null&gt;&lt;/null&gt;
      * </pre>
      *
      * @param value the string value to write.
@@ -222,11 +222,11 @@ public class MicroBurlapOutput {
      * Writes a byte array to the stream using base64 encoding.
      * The array will be written with the following syntax:
      *<pre>
-     * &lt;base64>dJmO==&lt;/base64>
+     * &lt;base64&gt;dJmO==&lt;/base64&gt;
      * </pre>
      * If the value is null, it will be written as
      *<pre>
-     * &lt;null>&lt;/null>
+     * &lt;null&gt;&lt;/null&gt;
      * </pre>
      */
     public void writeBytes(byte[] buffer, int offset, int length) throws IOException {
@@ -242,7 +242,7 @@ public class MicroBurlapOutput {
     /**
      * Writes a date to the stream using ISO8609.
      *<pre>
-     * &lt;date>19980508T095131Z&lt;/date>
+     * &lt;date&gt;19980508T095131Z&lt;/date&gt;
      * </pre>
      * @param time the date in milliseconds from the epoch in UTC timezone
      */
@@ -263,7 +263,7 @@ public class MicroBurlapOutput {
     /**
      * Writes a date to the stream using ISO8609.
      *<pre>
-     * &lt;date>19980508T095131Z&lt;/date>
+     * &lt;date&gt;19980508T095131Z&lt;/date&gt;
      * </pre>
      */
     public void writeLocalDate(long time) throws IOException {
@@ -283,7 +283,7 @@ public class MicroBurlapOutput {
     /**
      * Writes a reference.
      *<pre>
-     * &lt;ref>123&lt;/ref>
+     * &lt;ref&gt;123&lt;/ref&gt;
      * </pre>
      * @param value the integer value to write.
      */
@@ -368,13 +368,13 @@ public class MicroBurlapOutput {
      * <code>writeListBegin</code> followed by the list contents and then
      * call <code>writeListEnd</code>.
      *<pre>
-     * &lt;list>
-     *   &lt;type>java.util.ArrayList&lt;/type>
-     *   &lt;length>3&lt;/length>
-     *   &lt;int>1&lt;/int>
-     *   &lt;int>2&lt;/int>
-     *   &lt;int>3&lt;/int>
-     * &lt;/list>
+     * &lt;list&gt;
+     *   &lt;type&gt;java.util.ArrayList&lt;/type&gt;
+     *   &lt;length&gt;3&lt;/length&gt;
+     *   &lt;int&gt;1&lt;/int&gt;
+     *   &lt;int&gt;2&lt;/int&gt;
+     *   &lt;int&gt;3&lt;/int&gt;
+     * &lt;/list&gt;
      * </pre>
      */
     public void writeListBegin(int length, String type) throws IOException {
@@ -399,12 +399,12 @@ public class MicroBurlapOutput {
      * <code>writeMapBegin</code> followed by the map contents and then
      * call <code>writeMapEnd</code>.
      *<pre>
-     * &lt;map>
-     *   &lt;type>java.util.Hashtable&lt;/type>
-     *   &lt;string>a&lt;/string;&lt;int>1&lt;/int>
-     *   &lt;string>b&lt;/string;&lt;int>2&lt;/int>
-     *   &lt;string>c&lt;/string;&lt;int>3&lt;/int>
-     * &lt;/map>
+     * &lt;map&gt;
+     *   &lt;type&gt;java.util.Hashtable&lt;/type&gt;
+     *   &lt;string&gt;a&lt;/string;&lt;int&gt;1&lt;/int&gt;
+     *   &lt;string&gt;b&lt;/string;&lt;int&gt;2&lt;/int&gt;
+     *   &lt;string&gt;c&lt;/string;&lt;int&gt;3&lt;/int&gt;
+     * &lt;/map&gt;
      * </pre>
      */
     public void writeMapBegin(String type) throws IOException {
@@ -426,10 +426,10 @@ public class MicroBurlapOutput {
      * Writes a remote object reference to the stream.  The type is the
      * type of the remote interface.
      *<pre>
-     * &lt;remote>
-     *   &lt;type>test.account.Account&lt;/type>
-     *   &lt;string>http://caucho.com/foo;ejbid=bar&lt;/string>
-     * &lt;/remote>
+     * &lt;remote&gt;
+     *   &lt;type&gt;test.account.Account&lt;/type&gt;
+     *   &lt;string&gt;http://caucho.com/foo;ejbid=bar&lt;/string&gt;
+     * &lt;/remote&gt;
      * </pre>
      */
     public void writeRemote(String type, String url) throws IOException {

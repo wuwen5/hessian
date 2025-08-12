@@ -89,12 +89,12 @@ import javax.naming.spi.ObjectFactory;
  *
  * In Resin 3.0, the above example would be configured as:
  * <pre>
- * &lt;reference>
- *   &lt;name>hessian/hello&lt;/name>
- *   &lt;factory>com.caucho.hessian.client.HessianProxyFactory&lt;/factory>
- *   &lt;init url="http://localhost:8080/ejb/hello"/>
- *         type="test.HelloHome"/>
- * &lt;/reference>
+ * &lt;reference&gt;
+ *   &lt;name&gt;hessian/hello&lt;/name&gt;
+ *   &lt;factory&gt;com.caucho.hessian.client.HessianProxyFactory&lt;/factory&gt;
+ *   &lt;init url="http://localhost:8080/ejb/hello"/&gt;
+ *         type="test.HelloHome"/&gt;
+ * &lt;/reference&gt;
  * </pre>
  *
  * To get the above resource, use JNDI as follows:

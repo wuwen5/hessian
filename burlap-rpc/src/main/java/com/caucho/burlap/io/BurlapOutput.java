@@ -140,8 +140,8 @@ public class BurlapOutput extends AbstractBurlapOutput {
      * instead of <code>call</code> if they wanted finer control over
      * writing the arguments, or needed to write headers.
      *<pre>
-     * &lt;burlap:call>
-     * &lt;method>method-name&lt;/method>
+     * &lt;burlap:call&gt;
+     * &lt;method&gt;method-name&lt;/method&gt;
      * </pre>
      * @param method the method name to call.
      */
@@ -157,7 +157,7 @@ public class BurlapOutput extends AbstractBurlapOutput {
      * instead of <code>call</code> if they wanted finer control over
      * writing the arguments, or needed to write headers.
      *<pre>
-     * &lt;method>method-name&lt;/method>
+     * &lt;method&gt;method-name&lt;/method&gt;
      * </pre>
      */
     @Override
@@ -168,7 +168,7 @@ public class BurlapOutput extends AbstractBurlapOutput {
     /**
      * Writes the method for a call.
      *<pre>
-     * &lt;method>value&lt;/method>
+     * &lt;method&gt;value&lt;/method&gt;
      * </pre>
      * @param method the method name to call.
      */
@@ -182,7 +182,7 @@ public class BurlapOutput extends AbstractBurlapOutput {
     /**
      * Completes.
      *<pre>
-     * &lt;/burlap:call>
+     * &lt;/burlap:call&gt;
      * </pre>
      */
     @Override
@@ -210,7 +210,7 @@ public class BurlapOutput extends AbstractBurlapOutput {
      * <p>A successful completion will have a single value:
      *
      * <pre>
-     * &lt;/burlap:reply>
+     * &lt;/burlap:reply&gt;
      * </pre>
      */
     @Override
@@ -221,7 +221,7 @@ public class BurlapOutput extends AbstractBurlapOutput {
     /**
      * Writes a header name.  The header value must immediately follow.
      *<pre>
-     * &lt;header>foo&lt;/header>&lt;int>value&lt;/int>
+     * &lt;header&gt;foo&lt;/header&gt;&lt;int&gt;value&lt;/int&gt;
      * </pre>
      */
     public void writeHeader(String name) throws IOException {
@@ -234,18 +234,18 @@ public class BurlapOutput extends AbstractBurlapOutput {
      * Writes a fault.  The fault will be written
      * as a descriptive string followed by an object:
      *<pre>
-     * &lt;fault>
-     * &lt;string>code
-     * &lt;string>the fault code
+     * &lt;fault&gt;
+     * &lt;string&gt;code
+     * &lt;string&gt;the fault code
      *
-     * &lt;string>message
-     * &lt;string>the fault mesage
+     * &lt;string&gt;message
+     * &lt;string&gt;the fault mesage
      *
-     * &lt;string>detail
-     * &lt;map>t\x00\xnnjavax.ejb.FinderException
+     * &lt;string&gt;detail
+     * &lt;map&gt;t\x00\xnnjavax.ejb.FinderException
      *     ...
-     * &lt;/map>
-     * &lt;/fault>
+     * &lt;/map&gt;
+     * &lt;/fault&gt;
      * </pre>
      * @param code the fault code, a three digit
      */
@@ -287,13 +287,13 @@ public class BurlapOutput extends AbstractBurlapOutput {
      * <code>writeListBegin</code> followed by the list contents and then
      * call <code>writeListEnd</code>.
      *<pre>
-     * &lt;list>
-     *   &lt;type>java.util.ArrayList&lt;/type>
-     *   &lt;length>3&lt;/length>
-     *   &lt;int>1&lt;/int>
-     *   &lt;int>2&lt;/int>
-     *   &lt;int>3&lt;/int>
-     * &lt;/list>
+     * &lt;list&gt;
+     *   &lt;type&gt;java.util.ArrayList&lt;/type&gt;
+     *   &lt;length>3&lt;/length&gt;
+     *   &lt;int&gt;1&lt;/int&gt;
+     *   &lt;int&gt;2&lt;/int&gt;
+     *   &lt;int&gt;3&lt;/int&gt;
+     * &lt;/list&gt;
      * </pre>
      */
     @Override
@@ -324,10 +324,10 @@ public class BurlapOutput extends AbstractBurlapOutput {
      * <code>writeMapBegin</code> followed by the map contents and then
      * call <code>writeMapEnd</code>.
      *<pre>
-     * &lt;map>
-     *   &lt;type>type&lt;/type>
-     *   (&lt;key> &lt;value>)*
-     * &lt;/map>
+     * &lt;map&gt;
+     *   &lt;type&gt;type&lt;/type&gt;
+     *   (&lt;key&gt; &lt;value&gt;)*
+     * &lt;/map&gt;
      * </pre>
      */
     @Override
@@ -350,10 +350,10 @@ public class BurlapOutput extends AbstractBurlapOutput {
      * Writes a remote object reference to the stream.  The type is the
      * type of the remote interface.
      *<pre>
-     * &lt;remote>
-     *   &lt;type>test.account.Account&lt;/type>
-     *   &lt;string>http://caucho.com/foo;ejbid=bar&lt;/string>
-     * &lt;/remote>
+     * &lt;remote&gt;
+     *   &lt;type&gt;test.account.Account&lt;/type&gt;
+     *   &lt;string&gt;http://caucho.com/foo;ejbid=bar&lt;/string&gt;
+     * &lt;/remote&gt;
      * </pre>
      */
     public void writeRemote(String type, String url) throws IOException {
@@ -368,8 +368,8 @@ public class BurlapOutput extends AbstractBurlapOutput {
      * Writes a boolean value to the stream.  The boolean will be written
      * with the following syntax:
      *<pre>
-     * &lt;boolean>0&lt;/boolean>
-     * &lt;boolean>1&lt;/boolean>
+     * &lt;boolean&gt;0&lt;/boolean&gt;
+     * &lt;boolean&gt;1&lt;/boolean&gt;
      * </pre>
      *
      * @param value the boolean value to write.
@@ -387,7 +387,7 @@ public class BurlapOutput extends AbstractBurlapOutput {
      * Writes an integer value to the stream.  The integer will be written
      * with the following syntax:
      *<pre>
-     * &lt;int>int value&lt;/int>
+     * &lt;int&gt;int value&lt;/int&gt;
      * </pre>
      *
      * @param value the integer value to write.
@@ -403,7 +403,7 @@ public class BurlapOutput extends AbstractBurlapOutput {
      * Writes a long value to the stream.  The long will be written
      * with the following syntax:
      *<pre>
-     * &lt;long>int value&lt;/long>
+     * &lt;long&gt;int value&lt;/long&gt;
      * </pre>
      * @param value the long value to write.
      */
@@ -418,7 +418,7 @@ public class BurlapOutput extends AbstractBurlapOutput {
      * Writes a double value to the stream.  The double will be written
      * with the following syntax:
      *<pre>
-     * &lt;double>value&lt;/double>
+     * &lt;double&gt;value&lt;/double&gt;
      * </pre>
      * @param value the double value to write.
      */
@@ -432,7 +432,7 @@ public class BurlapOutput extends AbstractBurlapOutput {
     /**
      * Writes a date to the stream.
      *<pre>
-     * &lt;date>iso8901&lt;/date>
+     * &lt;date&gt;iso8901&lt;/date&gt;
      * </pre>
      * @param time the date in milliseconds from the epoch in UTC
      */
@@ -455,7 +455,7 @@ public class BurlapOutput extends AbstractBurlapOutput {
      * Writes a null value to the stream.
      * The null will be written with the following syntax
      *<pre>
-     * &lt;null>&lt;/null>
+     * &lt;null&gt;&lt;/null&gt;
      * </pre>
      */
     @Override
@@ -467,11 +467,11 @@ public class BurlapOutput extends AbstractBurlapOutput {
      * Writes a string value to the stream using UTF-8 encoding.
      * The string will be written with the following syntax:
      *<pre>
-     * &lt;string>string-value&lt;/string>
+     * &lt;string&gt;string-value&lt;/string&gt;
      * </pre>
      * If the value is null, it will be written as
      *<pre>
-     * &lt;null>&lt;/null>
+     * &lt;null&gt;&lt;/null&gt;
      * </pre>
      * @param value the string value to write.
      */
@@ -512,11 +512,11 @@ public class BurlapOutput extends AbstractBurlapOutput {
      * Writes a byte array to the stream.
      * The array will be written with the following syntax:
      *<pre>
-     * &lt;base64>bytes&lt;/base64>
+     * &lt;base64&gt;bytes&lt;/base64&gt;
      * </pre>
      * If the value is null, it will be written as
      *<pre>
-     * &lt;null>&lt;/null>
+     * &lt;null&gt;&lt;/null&gt;
      * </pre>
      * @param buffer the byte array to write.
      */
@@ -532,11 +532,11 @@ public class BurlapOutput extends AbstractBurlapOutput {
      * Writes a byte array to the stream.
      * The array will be written with the following syntax:
      *<pre>
-     * &lt;base64>bytes&lt;/base64>
+     * &lt;base64&gt;bytes&lt;/base64&gt;
      * </pre>
      * If the value is null, it will be written as
      *<pre>
-     * &lt;null>&lt;/null>
+     * &lt;null&gt;&lt;/null&gt;
      * </pre>
      */
     @Override
@@ -631,7 +631,7 @@ public class BurlapOutput extends AbstractBurlapOutput {
     /**
      * Writes a reference.
      *<pre>
-     * &lt;ref>int&lt;/ref>
+     * &lt;ref&gt;int&lt;/ref&gt;
      * </pre>
      * @param value the integer value to write.
      */

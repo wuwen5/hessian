@@ -216,8 +216,8 @@ public class BurlapInput extends AbstractBurlapInput {
      * Starts reading the call
      *
      * <pre>
-     * &lt;burlap:call>
-     * &lt;method>method&lt;/method>
+     * &lt;burlap:call&gt;
+     * &lt;method&gt;method&lt;/method&gt;
      * </pre>
      */
     public void startCall() throws IOException {
@@ -234,7 +234,7 @@ public class BurlapInput extends AbstractBurlapInput {
      * <p>A successful completion will have a single value:
      *
      * <pre>
-     * &lt;burlap:call>
+     * &lt;burlap:call&gt;
      * </pre>
      */
     public int readCall() throws IOException {
@@ -250,7 +250,7 @@ public class BurlapInput extends AbstractBurlapInput {
      * Reads the method
      *
      * <pre>
-     * &lt;method>method&lt;/method>
+     * &lt;method&gt;method&lt;/method&gt;
      * </pre>
      */
     public String readMethod() throws IOException {
@@ -269,7 +269,7 @@ public class BurlapInput extends AbstractBurlapInput {
      * <p>A successful completion will have a single value:
      *
      * <pre>
-     * &lt;/burlap:call>
+     * &lt;/burlap:call&gt;
      * </pre>
      */
     public void completeCall() throws IOException {
@@ -302,8 +302,8 @@ public class BurlapInput extends AbstractBurlapInput {
      * <p>A successful completion will have a single value:
      *
      * <pre>
-     * &lt;burlap:reply>
-     * &lt;value>
+     * &lt;burlap:reply&gt;
+     * &lt;value&gt;
      * </pre>
      */
     public void startReply() throws Throwable {
@@ -351,9 +351,10 @@ public class BurlapInput extends AbstractBurlapInput {
      * <p>A successful completion will have a single value:
      *
      * <pre>
-     * &lt;/burlap:reply>
+     * &lt;/burlap:reply&gt;
      * </pre>
      */
+    @Override
     public void completeReply() throws IOException {
         expectTag(TAG_REPLY_END);
     }
@@ -362,9 +363,10 @@ public class BurlapInput extends AbstractBurlapInput {
      * Reads a header, returning null if there are no headers.
      *
      * <pre>
-     * &lt;header>value&lt;/header>
+     * &lt;header&gt;value&lt;/header&gt;
      * </pre>
      */
+    @Override
     public String readHeader() throws IOException {
         int tag = parseTag();
 
@@ -384,9 +386,10 @@ public class BurlapInput extends AbstractBurlapInput {
      * Reads a null
      *
      * <pre>
-     * &lt;null>&lt;/null>
+     * &lt;null&gt;&lt;/null&gt;
      * </pre>
      */
+    @Override
     public void readNull() throws IOException {
         int tag = parseTag();
 
@@ -404,10 +407,11 @@ public class BurlapInput extends AbstractBurlapInput {
      * Reads a boolean
      *
      * <pre>
-     * &lt;boolean>0&lt;/boolean>
-     * &lt;boolean>1&lt;/boolean>
+     * &lt;boolean&gt;0&lt;/boolean&gt;
+     * &lt;boolean&gt;1&lt;/boolean&gt;
      * </pre>
      */
+    @Override
     public boolean readBoolean() throws IOException {
         int tag = parseTag();
 
@@ -448,7 +452,7 @@ public class BurlapInput extends AbstractBurlapInput {
      * Reads a byte
      *
      * <pre>
-     * &lt;int>value&lt;/int>
+     * &lt;int&gt;value&lt;/int&gt;
      * </pre>
      */
     public byte readByte() throws IOException {
@@ -459,7 +463,7 @@ public class BurlapInput extends AbstractBurlapInput {
      * Reads a short
      *
      * <pre>
-     * &lt;int>value&lt;/int>
+     * &lt;int&gt;value&lt;/int&gt;
      * </pre>
      */
     public short readShort() throws IOException {
@@ -470,9 +474,10 @@ public class BurlapInput extends AbstractBurlapInput {
      * Reads an integer
      *
      * <pre>
-     * &lt;int>value&lt;/int>
+     * &lt;int&gt;value&lt;/int&gt;
      * </pre>
      */
+    @Override
     public int readInt() throws IOException {
         int tag = parseTag();
 
@@ -513,9 +518,10 @@ public class BurlapInput extends AbstractBurlapInput {
      * Reads a long
      *
      * <pre>
-     * &lt;long>value&lt;/long>
+     * &lt;long&gt;value&lt;/long&gt;
      * </pre>
      */
+    @Override
     public long readLong() throws IOException {
         int tag = parseTag();
 
@@ -556,7 +562,7 @@ public class BurlapInput extends AbstractBurlapInput {
      * Reads a float
      *
      * <pre>
-     * &lt;double>value&lt;/double>
+     * &lt;double&gt;value&lt;/double&gt;
      * </pre>
      */
     public float readFloat() throws IOException {
@@ -567,9 +573,10 @@ public class BurlapInput extends AbstractBurlapInput {
      * Reads a double
      *
      * <pre>
-     * &lt;double>value&lt;/double>
+     * &lt;double&gt;value&lt;/double&gt;
      * </pre>
      */
+    @Override
     public double readDouble() throws IOException {
         int tag = parseTag();
 
@@ -610,9 +617,10 @@ public class BurlapInput extends AbstractBurlapInput {
      * Reads a date.
      *
      * <pre>
-     * &lt;date>ISO-8609 date&lt;/date>
+     * &lt;date&gt;ISO-8609 date&lt;/date&gt;
      * </pre>
      */
+    @Override
     public long readUTCDate() throws IOException {
         int tag = parseTag();
 
@@ -631,7 +639,7 @@ public class BurlapInput extends AbstractBurlapInput {
      * Reads a date.
      *
      * <pre>
-     * &lt;date>ISO-8609 date&lt;/date>
+     * &lt;date&gt;ISO-8609 date&lt;/date&gt;
      * </pre>
      */
     public long readLocalDate() throws IOException {
@@ -652,9 +660,10 @@ public class BurlapInput extends AbstractBurlapInput {
      * Reads a string
      *
      * <pre>
-     * &lt;string>value&lt;/string>
+     * &lt;string&gt;value&lt;/string&gt;
      * </pre>
      */
+    @Override
     public String readString() throws IOException {
         int tag = parseTag();
 
@@ -707,9 +716,10 @@ public class BurlapInput extends AbstractBurlapInput {
      * Reads a byte array
      *
      * <pre>
-     * &lt;base64>...&lt;/base64>
+     * &lt;base64&gt;...&lt;/base64&gt;
      * </pre>
      */
+    @Override
     public byte[] readBytes() throws IOException {
         int tag = parseTag();
 
@@ -733,9 +743,10 @@ public class BurlapInput extends AbstractBurlapInput {
      * Reads a length
      *
      * <pre>
-     * &lt;length>value&lt;/length>
+     * &lt;length&gt;value&lt;/length&gt;
      * </pre>
      */
+    @Override
     public int readLength() throws IOException {
         int tag = parseTag();
 
@@ -775,6 +786,7 @@ public class BurlapInput extends AbstractBurlapInput {
     /**
      * Reads an object from the input stream with an expected type.
      */
+    @Override
     public Object readObject(Class cl) throws IOException {
         if (cl == null || cl.equals(Object.class)) return readObject();
 
@@ -835,6 +847,7 @@ public class BurlapInput extends AbstractBurlapInput {
      * Reads an arbitrary object from the input stream when the type
      * is unknown.
      */
+    @Override
     public Object readObject() throws IOException {
         int tag = parseTag();
 
@@ -935,6 +948,7 @@ public class BurlapInput extends AbstractBurlapInput {
     /**
      * Reads a remote object.
      */
+    @Override
     public Object readRemote() throws IOException {
         String type = readType();
         String url = readString();
@@ -945,6 +959,7 @@ public class BurlapInput extends AbstractBurlapInput {
     /**
      * Reads a reference.
      */
+    @Override
     public Object readRef() throws IOException {
         return _refs.get(parseInt());
     }
@@ -952,6 +967,7 @@ public class BurlapInput extends AbstractBurlapInput {
     /**
      * Reads the start of a list.
      */
+    @Override
     public int readListStart() throws IOException {
         return parseTag();
     }
@@ -959,6 +975,7 @@ public class BurlapInput extends AbstractBurlapInput {
     /**
      * Reads the start of a map.
      */
+    @Override
     public int readMapStart() throws IOException {
         return parseTag();
     }
@@ -966,6 +983,7 @@ public class BurlapInput extends AbstractBurlapInput {
     /**
      * Returns true if this is the end of a list or a map.
      */
+    @Override
     public boolean isEnd() throws IOException {
         int code = parseTag();
 
@@ -977,6 +995,7 @@ public class BurlapInput extends AbstractBurlapInput {
     /**
      * Reads the end byte.
      */
+    @Override
     public void readEnd() throws IOException {
         int code = parseTag();
 
@@ -986,6 +1005,7 @@ public class BurlapInput extends AbstractBurlapInput {
     /**
      * Reads the end of the map
      */
+    @Override
     public void readMapEnd() throws IOException {
         expectTag(TAG_MAP_END);
     }
@@ -993,6 +1013,7 @@ public class BurlapInput extends AbstractBurlapInput {
     /**
      * Reads the end of the map
      */
+    @Override
     public void readListEnd() throws IOException {
         expectTag(TAG_LIST_END);
     }
@@ -1000,8 +1021,11 @@ public class BurlapInput extends AbstractBurlapInput {
     /**
      * Adds a list/map reference.
      */
+    @Override
     public int addRef(Object ref) {
-        if (_refs == null) _refs = new ArrayList();
+        if (_refs == null) {
+            _refs = new ArrayList();
+        }
 
         _refs.add(ref);
 
@@ -1011,6 +1035,7 @@ public class BurlapInput extends AbstractBurlapInput {
     /**
      * Adds a list/map reference.
      */
+    @Override
     public void setRef(int i, Object ref) {
         _refs.set(i, ref);
     }
@@ -1021,17 +1046,21 @@ public class BurlapInput extends AbstractBurlapInput {
     public Object resolveRemote(String type, String url) throws IOException {
         HessianRemoteResolver resolver = getRemoteResolver();
 
-        if (resolver != null) return resolver.lookup(type, url);
-        else return new BurlapRemote(type, url);
+        if (resolver != null) {
+            return resolver.lookup(type, url);
+        } else {
+            return new BurlapRemote(type, url);
+        }
     }
 
     /**
      * Parses a type from the stream.
      *
      * <pre>
-     * &lt;type>type&lt;/type>
+     * &lt;type&gt;type&lt;/type&gt;
      * </pre>
      */
+    @Override
     public String readType() throws IOException {
         int code = parseTag();
 
@@ -1042,7 +1071,9 @@ public class BurlapInput extends AbstractBurlapInput {
 
         _sbuf.setLength(0);
         int ch;
-        while ((ch = readChar()) >= 0) _sbuf.append((char) ch);
+        while ((ch = readChar()) >= 0) {
+            _sbuf.append((char) ch);
+        }
         String type = _sbuf.toString();
 
         expectTag(TAG_TYPE_END);
@@ -1083,7 +1114,9 @@ public class BurlapInput extends AbstractBurlapInput {
         }
 
         long value = 0;
-        for (; ch >= '0' && ch <= '9'; ch = read()) value = 10 * value + ch - '0';
+        for (; ch >= '0' && ch <= '9'; ch = read()) {
+            value = 10 * value + ch - '0';
+        }
 
         _peek = ch;
 
@@ -1102,7 +1135,9 @@ public class BurlapInput extends AbstractBurlapInput {
 
         _sbuf.setLength(0);
 
-        for (; !isWhitespace(ch) && ch != '<'; ch = read()) _sbuf.append((char) ch);
+        for (; !isWhitespace(ch) && ch != '<'; ch = read()) {
+            _sbuf.append((char) ch);
+        }
 
         _peek = ch;
 
@@ -1113,7 +1148,9 @@ public class BurlapInput extends AbstractBurlapInput {
      * Parses a date value from the stream.
      */
     protected long parseDate() throws IOException {
-        if (_utcCalendar == null) _utcCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        if (_utcCalendar == null) {
+            _utcCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        }
 
         return parseDate(_utcCalendar);
     }
@@ -1148,30 +1185,41 @@ public class BurlapInput extends AbstractBurlapInput {
             ch = read();
         }
 
-        if (ch != 'T') throw expectedChar("`T'", ch);
+        if (ch != 'T') {
+            throw expectedChar("`T'", ch);
+        }
 
         ch = read();
 
         int hour = 0;
         for (int i = 0; i < 2; i++) {
-            if (ch >= '0' && ch <= '9') hour = 10 * hour + ch - '0';
-            else throw expectedChar("hour", ch);
+            if (ch >= '0' && ch <= '9') {
+                hour = 10 * hour + ch - '0';
+            } else {
+                throw expectedChar("hour", ch);
+            }
 
             ch = read();
         }
 
         int minute = 0;
         for (int i = 0; i < 2; i++) {
-            if (ch >= '0' && ch <= '9') minute = 10 * minute + ch - '0';
-            else throw expectedChar("minute", ch);
+            if (ch >= '0' && ch <= '9') {
+                minute = 10 * minute + ch - '0';
+            } else {
+                throw expectedChar("minute", ch);
+            }
 
             ch = read();
         }
 
         int second = 0;
         for (int i = 0; i < 2; i++) {
-            if (ch >= '0' && ch <= '9') second = 10 * second + ch - '0';
-            else throw expectedChar("second", ch);
+            if (ch >= '0' && ch <= '9') {
+                second = 10 * second + ch - '0';
+            } else {
+                throw expectedChar("second", ch);
+            }
 
             ch = read();
         }
@@ -1215,7 +1263,9 @@ public class BurlapInput extends AbstractBurlapInput {
     protected StringBuffer parseString(StringBuffer sbuf) throws IOException {
         int ch;
 
-        while ((ch = readChar()) >= 0) sbuf.append((char) ch);
+        while ((ch = readChar()) >= 0) {
+            sbuf.append((char) ch);
+        }
 
         return sbuf;
     }
@@ -1267,8 +1317,9 @@ public class BurlapInput extends AbstractBurlapInput {
                 else if (entity.equals("gt")) return '>';
                 else throw new BurlapProtocolException("unknown XML entity &" + entity + "; at `" + (char) ch + "'");
             }
-        } else if (ch < 0x80) return (char) ch;
-        else if ((ch & 0xe0) == 0xc0) {
+        } else if (ch < 0x80) {
+            return (char) ch;
+        } else if ((ch & 0xe0) == 0xc0) {
             int ch1 = read();
             int v = ((ch & 0x1f) << 6) + (ch1 & 0x3f);
 
@@ -1325,7 +1376,9 @@ public class BurlapInput extends AbstractBurlapInput {
             }
         }
 
-        if (ch == '<') _peek = ch;
+        if (ch == '<') {
+            _peek = ch;
+        }
 
         return bos;
     }
@@ -1333,7 +1386,9 @@ public class BurlapInput extends AbstractBurlapInput {
     public void expectTag(int expectTag) throws IOException {
         int tag = parseTag();
 
-        if (tag != expectTag) throw error("expected " + tagName(expectTag) + " at " + tagName(tag));
+        if (tag != expectTag) {
+            throw error("expected " + tagName(expectTag) + " at " + tagName(tag));
+        }
     }
 
     /**
@@ -1349,7 +1404,9 @@ public class BurlapInput extends AbstractBurlapInput {
         int ch = skipWhitespace();
         int endTagDelta = 0;
 
-        if (ch != '<') throw expectedChar("'<'", ch);
+        if (ch != '<') {
+            throw expectedChar("'<'", ch);
+        }
 
         ch = read();
         if (ch == '/') {
@@ -1357,15 +1414,23 @@ public class BurlapInput extends AbstractBurlapInput {
             ch = _is.read();
         }
 
-        if (!isTagChar(ch)) throw expectedChar("tag", ch);
+        if (!isTagChar(ch)) {
+            throw expectedChar("tag", ch);
+        }
 
         _sbuf.setLength(0);
-        for (; isTagChar(ch); ch = read()) _sbuf.append((char) ch);
+        for (; isTagChar(ch); ch = read()) {
+            _sbuf.append((char) ch);
+        }
 
-        if (ch != '>') throw expectedChar("'>'", ch);
+        if (ch != '>') {
+            throw expectedChar("'>'", ch);
+        }
 
         Integer value = (Integer) _tagMap.get(_sbuf.toString());
-        if (value == null) throw error("Unknown tag <" + _sbuf + ">");
+        if (value == null) {
+            throw error("Unknown tag <" + _sbuf + ">");
+        }
 
         return value.intValue() + endTagDelta;
     }
@@ -1396,6 +1461,7 @@ public class BurlapInput extends AbstractBurlapInput {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public int read() throws IOException {
         if (_peek >= 0) {
             int value = _peek;
@@ -1407,10 +1473,12 @@ public class BurlapInput extends AbstractBurlapInput {
         return ch;
     }
 
+    @Override
     public Reader getReader() {
         return null;
     }
 
+    @Override
     public InputStream readInputStream() {
         return null;
     }
@@ -1424,8 +1492,11 @@ public class BurlapInput extends AbstractBurlapInput {
     }
 
     protected IOException expectedChar(String expect, int ch) {
-        if (ch < 0) return error("expected " + expect + " at end of file");
-        else return error("expected " + expect + " at " + (char) ch);
+        if (ch < 0) {
+            return error("expected " + expect + " at end of file");
+        } else {
+            return error("expected " + expect + " at " + (char) ch);
+        }
     }
 
     protected IOException expectedTag(String expect, int tag) {
@@ -1569,9 +1640,15 @@ public class BurlapInput extends AbstractBurlapInput {
 
     static {
         base64Decode = new int[256];
-        for (int i = 'A'; i <= 'Z'; i++) base64Decode[i] = i - 'A';
-        for (int i = 'a'; i <= 'z'; i++) base64Decode[i] = i - 'a' + 26;
-        for (int i = '0'; i <= '9'; i++) base64Decode[i] = i - '0' + 52;
+        for (int i = 'A'; i <= 'Z'; i++) {
+            base64Decode[i] = i - 'A';
+        }
+        for (int i = 'a'; i <= 'z'; i++) {
+            base64Decode[i] = i - 'a' + 26;
+        }
+        for (int i = '0'; i <= '9'; i++) {
+            base64Decode[i] = i - '0' + 52;
+        }
         base64Decode['+'] = 62;
         base64Decode['/'] = 63;
     }

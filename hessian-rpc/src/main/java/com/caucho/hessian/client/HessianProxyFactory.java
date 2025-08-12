@@ -95,12 +95,12 @@ import lombok.Setter;
  * <p>
  * In Resin 3.0, the above example would be configured as:
  * <pre>
- * &lt;reference>
- *   &lt;jndi-name>hessian/hello&lt;/jndi-name>
- *   &lt;factory>com.caucho.hessian.client.HessianProxyFactory&lt;/factory>
- *   &lt;init-param url="http://localhost:8080/ejb/hello"/>
- *   &lt;init-param type="test.HelloHome"/>
- * &lt;/reference>
+ * &lt;reference&gt;
+ *   &lt;jndi-name&gt;hessian/hello&lt;/jndi-name&gt;
+ *   &lt;factory&gt;com.caucho.hessian.client.HessianProxyFactory&lt;/factory&gt;
+ *   &lt;init-param url="http://localhost:8080/ejb/hello"/&gt;
+ *   &lt;init-param type="test.HelloHome"/&gt;
+ * &lt;/reference&gt;
  * </pre>
  * <p>
  * To get the above resource, use JNDI as follows:
