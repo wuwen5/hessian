@@ -148,7 +148,7 @@ public class UnsafeSerializer extends AbstractSerializer {
     }
 
     @Override
-    public void writeObject(Object obj, AbstractHessianOutput out) throws IOException {
+    public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
         if (out.addRef(obj)) {
             return;
         }
@@ -168,7 +168,7 @@ public class UnsafeSerializer extends AbstractSerializer {
         }
     }
 
-    protected void writeObject10(Object obj, AbstractHessianOutput out) throws IOException {
+    protected void writeObject10(Object obj, AbstractHessianEncoder out) throws IOException {
         for (int i = 0; i < _fields.length; i++) {
             Field field = _fields[i];
 
@@ -180,7 +180,7 @@ public class UnsafeSerializer extends AbstractSerializer {
         out.writeMapEnd();
     }
 
-    private void writeDefinition20(AbstractHessianOutput out) throws IOException {
+    private void writeDefinition20(AbstractHessianEncoder out) throws IOException {
         out.writeClassFieldLength(_fields.length);
 
         for (int i = 0; i < _fields.length; i++) {
@@ -190,7 +190,7 @@ public class UnsafeSerializer extends AbstractSerializer {
         }
     }
 
-    public final void writeInstance(Object obj, AbstractHessianOutput out) throws IOException {
+    public final void writeInstance(Object obj, AbstractHessianEncoder out) throws IOException {
         try {
             FieldSerializer[] fieldSerializers = _fieldSerializers;
             int length = fieldSerializers.length;
@@ -237,7 +237,7 @@ public class UnsafeSerializer extends AbstractSerializer {
     }
 
     abstract static class FieldSerializer {
-        abstract void serialize(AbstractHessianOutput out, Object obj) throws IOException;
+        abstract void serialize(AbstractHessianEncoder out, Object obj) throws IOException;
     }
 
     static final class ObjectFieldSerializer extends FieldSerializer {
@@ -252,7 +252,7 @@ public class UnsafeSerializer extends AbstractSerializer {
         }
 
         @Override
-        final void serialize(AbstractHessianOutput out, Object obj) throws IOException {
+        final void serialize(AbstractHessianEncoder out, Object obj) throws IOException {
             try {
                 Object value = _unsafe.getObject(obj, _offset);
 
@@ -284,7 +284,7 @@ public class UnsafeSerializer extends AbstractSerializer {
             if (_offset == Unsafe.INVALID_FIELD_OFFSET) throw new IllegalStateException();
         }
 
-        void serialize(AbstractHessianOutput out, Object obj) throws IOException {
+        void serialize(AbstractHessianEncoder out, Object obj) throws IOException {
             boolean value = _unsafe.getBoolean(obj, _offset);
 
             out.writeBoolean(value);
@@ -302,7 +302,7 @@ public class UnsafeSerializer extends AbstractSerializer {
             if (_offset == Unsafe.INVALID_FIELD_OFFSET) throw new IllegalStateException();
         }
 
-        final void serialize(AbstractHessianOutput out, Object obj) throws IOException {
+        final void serialize(AbstractHessianEncoder out, Object obj) throws IOException {
             int value = _unsafe.getByte(obj, _offset);
 
             out.writeInt(value);
@@ -320,7 +320,7 @@ public class UnsafeSerializer extends AbstractSerializer {
             if (_offset == Unsafe.INVALID_FIELD_OFFSET) throw new IllegalStateException();
         }
 
-        final void serialize(AbstractHessianOutput out, Object obj) throws IOException {
+        final void serialize(AbstractHessianEncoder out, Object obj) throws IOException {
             char value = _unsafe.getChar(obj, _offset);
 
             out.writeString(String.valueOf(value));
@@ -338,7 +338,7 @@ public class UnsafeSerializer extends AbstractSerializer {
             if (_offset == Unsafe.INVALID_FIELD_OFFSET) throw new IllegalStateException();
         }
 
-        final void serialize(AbstractHessianOutput out, Object obj) throws IOException {
+        final void serialize(AbstractHessianEncoder out, Object obj) throws IOException {
             int value = _unsafe.getShort(obj, _offset);
 
             out.writeInt(value);
@@ -356,7 +356,7 @@ public class UnsafeSerializer extends AbstractSerializer {
             if (_offset == Unsafe.INVALID_FIELD_OFFSET) throw new IllegalStateException();
         }
 
-        final void serialize(AbstractHessianOutput out, Object obj) throws IOException {
+        final void serialize(AbstractHessianEncoder out, Object obj) throws IOException {
             int value = _unsafe.getInt(obj, _offset);
 
             out.writeInt(value);
@@ -374,7 +374,7 @@ public class UnsafeSerializer extends AbstractSerializer {
             if (_offset == Unsafe.INVALID_FIELD_OFFSET) throw new IllegalStateException();
         }
 
-        final void serialize(AbstractHessianOutput out, Object obj) throws IOException {
+        final void serialize(AbstractHessianEncoder out, Object obj) throws IOException {
             long value = _unsafe.getLong(obj, _offset);
 
             out.writeLong(value);
@@ -392,7 +392,7 @@ public class UnsafeSerializer extends AbstractSerializer {
             if (_offset == Unsafe.INVALID_FIELD_OFFSET) throw new IllegalStateException();
         }
 
-        final void serialize(AbstractHessianOutput out, Object obj) throws IOException {
+        final void serialize(AbstractHessianEncoder out, Object obj) throws IOException {
             double value = _unsafe.getFloat(obj, _offset);
 
             out.writeDouble(value);
@@ -410,7 +410,7 @@ public class UnsafeSerializer extends AbstractSerializer {
             if (_offset == Unsafe.INVALID_FIELD_OFFSET) throw new IllegalStateException();
         }
 
-        final void serialize(AbstractHessianOutput out, Object obj) throws IOException {
+        final void serialize(AbstractHessianEncoder out, Object obj) throws IOException {
             double value = _unsafe.getDouble(obj, _offset);
 
             out.writeDouble(value);
@@ -429,7 +429,7 @@ public class UnsafeSerializer extends AbstractSerializer {
         }
 
         @Override
-        final void serialize(AbstractHessianOutput out, Object obj) throws IOException {
+        final void serialize(AbstractHessianEncoder out, Object obj) throws IOException {
             String value = (String) _unsafe.getObject(obj, _offset);
 
             out.writeString(value);
@@ -448,7 +448,7 @@ public class UnsafeSerializer extends AbstractSerializer {
         }
 
         @Override
-        void serialize(AbstractHessianOutput out, Object obj) throws IOException {
+        void serialize(AbstractHessianEncoder out, Object obj) throws IOException {
             java.util.Date value = (java.util.Date) _unsafe.getObject(obj, _offset);
 
             if (value == null) out.writeNull();

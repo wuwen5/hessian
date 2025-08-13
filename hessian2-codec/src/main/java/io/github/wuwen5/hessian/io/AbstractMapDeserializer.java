@@ -60,7 +60,7 @@ public class AbstractMapDeserializer extends AbstractDeserializer {
         return HashMap.class;
     }
 
-    public Object readObject(AbstractHessianInput in) throws IOException {
+    public Object readObject(AbstractHessianDecoder in) throws IOException {
         Object obj = in.readObject();
 
         if (obj != null) throw error("expected map/object at " + obj.getClass().getName() + " (" + obj + ")");

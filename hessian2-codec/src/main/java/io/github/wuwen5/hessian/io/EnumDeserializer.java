@@ -75,7 +75,7 @@ public class EnumDeserializer extends AbstractDeserializer {
         return _enumType;
     }
 
-    public Object readMap(AbstractHessianInput in) throws IOException {
+    public Object readMap(AbstractHessianDecoder in) throws IOException {
         String name = null;
 
         while (!in.isEnd()) {
@@ -95,7 +95,7 @@ public class EnumDeserializer extends AbstractDeserializer {
     }
 
     @Override
-    public Object readObject(AbstractHessianInput in, Object[] fields) throws IOException {
+    public Object readObject(AbstractHessianDecoder in, Object[] fields) throws IOException {
         String[] fieldNames = (String[]) fields;
         String name = null;
 

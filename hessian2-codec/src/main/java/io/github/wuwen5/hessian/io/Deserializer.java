@@ -56,17 +56,17 @@ import java.io.IOException;
  * changes.
  */
 public interface Deserializer {
-    public Class<?> getType();
+    Class<?> getType();
 
-    public boolean isReadResolve();
+    boolean isReadResolve();
 
-    public Object readObject(AbstractHessianInput in) throws IOException;
+    Object readObject(AbstractHessianDecoder in) throws IOException;
 
-    public Object readList(AbstractHessianInput in, int length) throws IOException;
+    Object readList(AbstractHessianDecoder in, int length) throws IOException;
 
-    public Object readLengthList(AbstractHessianInput in, int length) throws IOException;
+    Object readLengthList(AbstractHessianDecoder in, int length) throws IOException;
 
-    public Object readMap(AbstractHessianInput in) throws IOException;
+    Object readMap(AbstractHessianDecoder in) throws IOException;
 
     /**
      * Creates an empty array for the deserializers field
@@ -75,7 +75,7 @@ public interface Deserializer {
      * @param len number of fields to be read
      * @return empty array of the proper field type.
      */
-    public Object[] createFields(int len);
+    Object[] createFields(int len);
 
     /**
      * Returns the deserializer's field reader for the given name.
@@ -83,7 +83,7 @@ public interface Deserializer {
      * @param name the field name
      * @return the deserializer's internal field reader
      */
-    public Object createField(String name);
+    Object createField(String name);
 
     /**
      * Reads the object from the input stream, given the field
@@ -94,7 +94,7 @@ public interface Deserializer {
      * @return the new object
      * @throws IOException if an I/O error occurs
      */
-    public Object readObject(AbstractHessianInput in, Object[] fields) throws IOException;
+    Object readObject(AbstractHessianDecoder in, Object[] fields) throws IOException;
 
-    public Object readObject(AbstractHessianInput in, String[] fieldNames) throws IOException;
+    Object readObject(AbstractHessianDecoder in, String[] fieldNames) throws IOException;
 }

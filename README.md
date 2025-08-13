@@ -14,7 +14,7 @@ This project is a refactored and modularized version of the original [Hessian](h
 
 > The new commits are copied from the source code of `hessian-4.0.xx-sources.jar` in [https://repo1.maven.org/maven2/com/caucho/hessian/](https://repo1.maven.org/maven2/com/caucho/hessian/)
 
-While the **Hessian RPC framework** is considered outdated today, its **binary serialization protocol** remains valuable due to the following key advantages:
+The Hessian serialization protocol remains widely used in practice due to the following advantages:
 
 * ⚡ **High Performance**: Fast (de)serialization
 * 📦 **Compact Size**: Efficient binary encoding
@@ -71,6 +71,6 @@ Community contributions are welcome. We are committed to keeping a clean, modula
 <dependency>
     <groupId>io.github.wuwen5.hessian</groupId>
     <artifactId>hessian2-codec</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
 </dependency>
 ```

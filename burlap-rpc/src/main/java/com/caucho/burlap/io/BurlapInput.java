@@ -280,6 +280,7 @@ public class BurlapInput extends AbstractBurlapInput {
      * Reads a reply as an object.
      * If the reply has a fault, throws the exception.
      */
+    @Override
     public Object readReply(Class expectedClass) throws Throwable {
         expectTag(TAG_REPLY);
 
@@ -354,7 +355,6 @@ public class BurlapInput extends AbstractBurlapInput {
      * &lt;/burlap:reply&gt;
      * </pre>
      */
-    @Override
     public void completeReply() throws IOException {
         expectTag(TAG_REPLY_END);
     }
@@ -1461,7 +1461,6 @@ public class BurlapInput extends AbstractBurlapInput {
         throw new UnsupportedOperationException();
     }
 
-    @Override
     public int read() throws IOException {
         if (_peek >= 0) {
             int value = _peek;

@@ -54,5 +54,5 @@ import java.io.IOException;
  * Serializing an object.
  */
 public interface Serializer {
-    public void writeObject(Object obj, AbstractHessianOutput out) throws IOException;
+    void writeObject(Object obj, AbstractHessianEncoder out) throws IOException;
 }

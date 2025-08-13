@@ -62,7 +62,7 @@ public class InetAddressSerializer extends AbstractSerializer {
     }
 
     @Override
-    public void writeObject(Object obj, AbstractHessianOutput out) throws IOException {
+    public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
         if (obj == null) out.writeNull();
         else {
             InetAddress addr = (InetAddress) obj;

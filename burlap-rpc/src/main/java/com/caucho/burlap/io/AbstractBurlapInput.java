@@ -49,7 +49,8 @@
 package com.caucho.burlap.io;
 
 import com.caucho.hessian.io.HessianRemoteResolver;
-import io.github.wuwen5.hessian.io.AbstractHessianInput;
+import io.github.wuwen5.hessian.io.AbstractHessianDecoder;
+import java.io.IOException;
 
 /**
  * Abstract base class for Burlap requests.  Burlap users should only
@@ -66,12 +67,26 @@ import io.github.wuwen5.hessian.io.AbstractHessianInput;
  * in.completeReply();      // read reply footer
  * </pre>
  */
-public abstract class AbstractBurlapInput extends AbstractHessianInput
-        implements com.caucho.hessian.io.AbstractHessianInput {
+public abstract class AbstractBurlapInput extends AbstractHessianDecoder {
     /**
      * Sets the resolver used to lookup remote objects.
      */
     public void setRemoteResolver(HessianRemoteResolver resolver) {
         super.setRemoteResolver(resolver);
+    }
+
+    /**
+     * Reads a header, returning null if there are no headers.
+     *
+     * <pre>
+     * H b16 b8 value
+     * </pre>
+     */
+    public String readHeader() throws IOException {
+        return null;
+    }
+
+    public Object readReply(Class expectedClass) throws Throwable {
+        return null;
     }
 }

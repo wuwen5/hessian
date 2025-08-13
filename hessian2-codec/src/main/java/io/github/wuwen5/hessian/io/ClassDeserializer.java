@@ -67,7 +67,7 @@ public class ClassDeserializer extends AbstractMapDeserializer {
         return Class.class;
     }
 
-    public Object readMap(AbstractHessianInput in) throws IOException {
+    public Object readMap(AbstractHessianDecoder in) throws IOException {
         int ref = in.addRef(null);
 
         String name = null;
@@ -88,7 +88,7 @@ public class ClassDeserializer extends AbstractMapDeserializer {
         return value;
     }
 
-    public Object readObject(AbstractHessianInput in, Object[] fields) throws IOException {
+    public Object readObject(AbstractHessianDecoder in, Object[] fields) throws IOException {
         String[] fieldNames = (String[]) fields;
 
         int ref = in.addRef(null);

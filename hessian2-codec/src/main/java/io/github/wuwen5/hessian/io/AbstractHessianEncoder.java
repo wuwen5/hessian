@@ -63,7 +63,7 @@ import lombok.Setter;
  * String value;
  * </pre>
  */
-public abstract class AbstractHessianOutput implements Closeable {
+public abstract class AbstractHessianEncoder implements Closeable {
     /**
      * serializer factory
      */

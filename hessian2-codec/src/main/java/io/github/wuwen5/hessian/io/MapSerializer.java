@@ -73,7 +73,7 @@ public class MapSerializer extends AbstractSerializer {
         return _isSendJavaType;
     }
 
-    public void writeObject(Object obj, AbstractHessianOutput out) throws IOException {
+    public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
         if (out.addRef(obj)) return;
 
         Map map = (Map) obj;

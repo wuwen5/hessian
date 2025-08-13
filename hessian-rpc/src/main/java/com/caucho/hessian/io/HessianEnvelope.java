@@ -57,19 +57,19 @@ public abstract class HessianEnvelope {
     /**
      * Wrap the Hessian output stream in an envelope.
      */
-    public abstract Hessian2Output wrap(Hessian2Output out) throws IOException;
+    public abstract HessianRpcOutput wrap(HessianRpcOutput out) throws IOException;
 
     /**
      * Unwrap the Hessian input stream with this envelope.  It is an
      * error if the actual envelope does not match the expected envelope
      * class.
      */
-    public abstract Hessian2Input unwrap(Hessian2Input in) throws IOException;
+    public abstract HessianRpcInput unwrap(HessianRpcInput in) throws IOException;
 
     /**
      * Unwrap the envelope after having read the envelope code ('E') and
      * the envelope method.  Called by the EnvelopeFactory for dynamic
      * reading of the envelopes.
      */
-    public abstract Hessian2Input unwrapHeaders(Hessian2Input in) throws IOException;
+    public abstract HessianRpcInput unwrapHeaders(HessianRpcInput in) throws IOException;
 }

@@ -76,7 +76,7 @@ public class AnnotationSerializer extends AbstractSerializer {
         }
     }
 
-    public void writeObject(Object obj, AbstractHessianOutput out) throws IOException {
+    public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
         if (out.addRef(obj)) {
             return;
         }
@@ -97,7 +97,7 @@ public class AnnotationSerializer extends AbstractSerializer {
         }
     }
 
-    protected void writeObject10(Object obj, AbstractHessianOutput out) throws IOException {
+    protected void writeObject10(Object obj, AbstractHessianEncoder out) throws IOException {
         for (int i = 0; i < _methods.length; i++) {
             Method method = _methods[i];
 
@@ -109,7 +109,7 @@ public class AnnotationSerializer extends AbstractSerializer {
         out.writeMapEnd();
     }
 
-    private void writeDefinition20(AbstractHessianOutput out) throws IOException {
+    private void writeDefinition20(AbstractHessianEncoder out) throws IOException {
         out.writeClassFieldLength(_methods.length);
 
         for (int i = 0; i < _methods.length; i++) {
@@ -119,7 +119,7 @@ public class AnnotationSerializer extends AbstractSerializer {
         }
     }
 
-    public void writeInstance(Object obj, AbstractHessianOutput out) throws IOException {
+    public void writeInstance(Object obj, AbstractHessianEncoder out) throws IOException {
         for (int i = 0; i < _methods.length; i++) {
             Method method = _methods[i];
 
@@ -212,7 +212,7 @@ public class AnnotationSerializer extends AbstractSerializer {
     static class MethodSerializer {
         static final MethodSerializer SER = new MethodSerializer();
 
-        void serialize(AbstractHessianOutput out, Object obj, Method method) throws IOException {
+        void serialize(AbstractHessianEncoder out, Object obj, Method method) throws IOException {
             Object value = null;
 
             try {
@@ -234,7 +234,7 @@ public class AnnotationSerializer extends AbstractSerializer {
     static class BooleanMethodSerializer extends MethodSerializer {
         static final MethodSerializer SER = new BooleanMethodSerializer();
 
-        void serialize(AbstractHessianOutput out, Object obj, Method method) throws IOException {
+        void serialize(AbstractHessianEncoder out, Object obj, Method method) throws IOException {
             boolean value = false;
 
             try {
@@ -252,7 +252,7 @@ public class AnnotationSerializer extends AbstractSerializer {
     static class IntMethodSerializer extends MethodSerializer {
         static final MethodSerializer SER = new IntMethodSerializer();
 
-        void serialize(AbstractHessianOutput out, Object obj, Method method) throws IOException {
+        void serialize(AbstractHessianEncoder out, Object obj, Method method) throws IOException {
             int value = 0;
 
             try {
@@ -270,7 +270,7 @@ public class AnnotationSerializer extends AbstractSerializer {
     static class LongMethodSerializer extends MethodSerializer {
         static final MethodSerializer SER = new LongMethodSerializer();
 
-        void serialize(AbstractHessianOutput out, Object obj, Method method) throws IOException {
+        void serialize(AbstractHessianEncoder out, Object obj, Method method) throws IOException {
             long value = 0;
 
             try {
@@ -288,7 +288,7 @@ public class AnnotationSerializer extends AbstractSerializer {
     static class DoubleMethodSerializer extends MethodSerializer {
         static final MethodSerializer SER = new DoubleMethodSerializer();
 
-        void serialize(AbstractHessianOutput out, Object obj, Method method) throws IOException {
+        void serialize(AbstractHessianEncoder out, Object obj, Method method) throws IOException {
             double value = 0;
 
             try {
@@ -306,7 +306,7 @@ public class AnnotationSerializer extends AbstractSerializer {
     static class StringMethodSerializer extends MethodSerializer {
         static final MethodSerializer SER = new StringMethodSerializer();
 
-        void serialize(AbstractHessianOutput out, Object obj, Method method) throws IOException {
+        void serialize(AbstractHessianEncoder out, Object obj, Method method) throws IOException {
             String value = null;
 
             try {
@@ -324,7 +324,7 @@ public class AnnotationSerializer extends AbstractSerializer {
     static class DateMethodSerializer extends MethodSerializer {
         static final MethodSerializer SER = new DateMethodSerializer();
 
-        void serialize(AbstractHessianOutput out, Object obj, Method method) throws IOException {
+        void serialize(AbstractHessianEncoder out, Object obj, Method method) throws IOException {
             java.util.Date value = null;
 
             try {

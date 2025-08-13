@@ -83,7 +83,7 @@ public class MapDeserializer extends AbstractMapDeserializer {
         else return HashMap.class;
     }
 
-    public Object readMap(AbstractHessianInput in) throws IOException {
+    public Object readMap(AbstractHessianDecoder in) throws IOException {
         Map map;
 
         if (_type == null) map = new HashMap();
@@ -109,7 +109,7 @@ public class MapDeserializer extends AbstractMapDeserializer {
     }
 
     @Override
-    public Object readObject(AbstractHessianInput in, Object[] fields) throws IOException {
+    public Object readObject(AbstractHessianDecoder in, Object[] fields) throws IOException {
         String[] fieldNames = (String[]) fields;
         Map<Object, Object> map = createMap();
 

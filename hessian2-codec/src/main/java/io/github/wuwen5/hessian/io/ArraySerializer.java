@@ -54,7 +54,7 @@ import java.io.IOException;
  * Serializing a Java array.
  */
 public class ArraySerializer extends AbstractSerializer {
-    public void writeObject(Object obj, AbstractHessianOutput out) throws IOException {
+    public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
         if (out.addRef(obj)) return;
 
         Object[] array = (Object[]) obj;

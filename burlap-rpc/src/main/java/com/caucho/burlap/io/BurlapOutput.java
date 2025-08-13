@@ -122,7 +122,6 @@ public class BurlapOutput extends AbstractBurlapOutput {
     /**
      * Writes a complete method call.
      */
-    @Override
     public void call(String method, Object[] args) throws IOException {
         startCall(method);
 
@@ -160,7 +159,6 @@ public class BurlapOutput extends AbstractBurlapOutput {
      * &lt;method&gt;method-name&lt;/method&gt;
      * </pre>
      */
-    @Override
     public void startCall() throws IOException {
         print("<burlap:call>");
     }
@@ -172,7 +170,6 @@ public class BurlapOutput extends AbstractBurlapOutput {
      * </pre>
      * @param method the method name to call.
      */
-    @Override
     public void writeMethod(String method) throws IOException {
         print("<method>");
         print(method);
@@ -185,7 +182,6 @@ public class BurlapOutput extends AbstractBurlapOutput {
      * &lt;/burlap:call&gt;
      * </pre>
      */
-    @Override
     public void completeCall() throws IOException {
         print("</burlap:call>");
     }
@@ -199,7 +195,6 @@ public class BurlapOutput extends AbstractBurlapOutput {
      * r
      * </pre>
      */
-    @Override
     public void startReply() throws IOException {
         print("<burlap:reply>");
     }
@@ -213,7 +208,6 @@ public class BurlapOutput extends AbstractBurlapOutput {
      * &lt;/burlap:reply&gt;
      * </pre>
      */
-    @Override
     public void completeReply() throws IOException {
         print("</burlap:reply>");
     }
@@ -249,7 +243,6 @@ public class BurlapOutput extends AbstractBurlapOutput {
      * </pre>
      * @param code the fault code, a three digit
      */
-    @Override
     public void writeFault(String code, String message, Object detail) throws IOException {
         print("<fault>");
         writeString("code");

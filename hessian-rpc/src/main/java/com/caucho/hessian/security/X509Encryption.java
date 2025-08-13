@@ -49,8 +49,9 @@
 package com.caucho.hessian.security;
 
 import com.caucho.hessian.io.Hessian2Input;
-import com.caucho.hessian.io.Hessian2Output;
 import com.caucho.hessian.io.HessianEnvelope;
+import com.caucho.hessian.io.HessianRpcInput;
+import com.caucho.hessian.io.HessianRpcOutput;
 import java.io.*;
 import java.security.*;
 import java.security.cert.*;
@@ -127,19 +128,19 @@ public class X509Encryption extends HessianEnvelope {
         _secureRandom = random;
     }
 
-    public Hessian2Output wrap(Hessian2Output out) throws IOException {
+    public HessianRpcOutput wrap(HessianRpcOutput out) throws IOException {
         if (_cert == null) throw new IOException("X509Encryption.wrap requires a certificate");
 
         OutputStream os = new EncryptOutputStream(out);
 
-        Hessian2Output filterOut = new Hessian2Output(os);
+        HessianRpcOutput filterOut = new HessianRpcOutput(os);
 
         filterOut.setCloseStreamOnClose(true);
 
         return filterOut;
     }
 
-    public Hessian2Input unwrap(Hessian2Input in) throws IOException {
+    public HessianRpcInput unwrap(HessianRpcInput in) throws IOException {
         if (_privateKey == null) throw new IOException("X509Encryption.unwrap requires a private key");
 
         if (_cert == null) throw new IOException("X509Encryption.unwrap requires a certificate");
@@ -155,14 +156,14 @@ public class X509Encryption extends HessianEnvelope {
         return unwrapHeaders(in);
     }
 
-    public Hessian2Input unwrapHeaders(Hessian2Input in) throws IOException {
+    public HessianRpcInput unwrapHeaders(HessianRpcInput in) throws IOException {
         if (_privateKey == null) throw new IOException("X509Encryption.unwrap requires a private key");
 
         if (_cert == null) throw new IOException("X509Encryption.unwrap requires a certificate");
 
         InputStream is = new EncryptInputStream(in);
 
-        Hessian2Input filter = new Hessian2Input(is);
+        HessianRpcInput filter = new HessianRpcInput(is);
 
         filter.setCloseStreamOnClose(true);
 
@@ -170,13 +171,13 @@ public class X509Encryption extends HessianEnvelope {
     }
 
     class EncryptOutputStream extends OutputStream {
-        private Hessian2Output _out;
+        private HessianRpcOutput _out;
 
         private Cipher _cipher;
         private OutputStream _bodyOut;
         private CipherOutputStream _cipherOut;
 
-        EncryptOutputStream(Hessian2Output out) throws IOException {
+        EncryptOutputStream(HessianRpcOutput out) throws IOException {
             try {
                 _out = out;
 
@@ -240,7 +241,7 @@ public class X509Encryption extends HessianEnvelope {
         }
 
         public void close() throws IOException {
-            Hessian2Output out = _out;
+            HessianRpcOutput out = _out;
             _out = null;
 
             if (out != null) {

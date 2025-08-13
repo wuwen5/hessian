@@ -111,7 +111,7 @@ public class BasicSerializer extends AbstractSerializer implements ObjectSeriali
         }
     }
 
-    public void writeObject(Object obj, AbstractHessianOutput out) throws IOException {
+    public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
         switch (_code) {
             case BOOLEAN:
                 out.writeBoolean(((Boolean) obj).booleanValue());

@@ -95,7 +95,7 @@ public class BeanDeserializer extends AbstractMapDeserializer {
         return _type;
     }
 
-    public Object readMap(AbstractHessianInput in) throws IOException {
+    public Object readMap(AbstractHessianDecoder in) throws IOException {
         try {
             Object obj = instantiate();
 
@@ -107,7 +107,7 @@ public class BeanDeserializer extends AbstractMapDeserializer {
         }
     }
 
-    public Object readMap(AbstractHessianInput in, Object obj) throws IOException {
+    public Object readMap(AbstractHessianDecoder in, Object obj) throws IOException {
         try {
             int ref = in.addRef(obj);
 

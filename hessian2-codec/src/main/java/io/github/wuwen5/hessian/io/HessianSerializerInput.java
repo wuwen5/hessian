@@ -85,7 +85,7 @@ import java.util.HashMap;
  * in.completeReply();      // read reply footer
  * </pre>
  */
-public class HessianSerializerInput extends Hessian2Input {
+public class HessianSerializerInput extends HessianDecoder {
     /**
      * Creates a new Hessian input stream, initialized with an
      * underlying input stream.
@@ -107,7 +107,7 @@ public class HessianSerializerInput extends Hessian2Input {
      * Reads an object from the input stream.  cl is known not to be
      * a Map.
      */
-    protected Object readObjectImpl(Class cl) throws IOException {
+    public Object readObjectImpl(Class cl) throws IOException {
         try {
             Object obj = cl.newInstance();
 

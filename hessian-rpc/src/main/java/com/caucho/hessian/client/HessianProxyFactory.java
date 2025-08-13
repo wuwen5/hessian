@@ -50,10 +50,10 @@ package com.caucho.hessian.client;
 
 import com.caucho.hessian.io.AbstractHessianInput;
 import com.caucho.hessian.io.AbstractHessianOutput;
-import com.caucho.hessian.io.Hessian2Input;
-import com.caucho.hessian.io.Hessian2Output;
 import com.caucho.hessian.io.HessianRemoteObject;
 import com.caucho.hessian.io.HessianRemoteResolver;
+import com.caucho.hessian.io.HessianRpcInput;
+import com.caucho.hessian.io.HessianRpcOutput;
 import com.caucho.hessian.io.SerializerFactory;
 import com.caucho.services.client.ServiceProxyFactory;
 import io.github.wuwen5.hessian.io.HessianDebugInputStream;
@@ -352,7 +352,7 @@ public class HessianProxyFactory implements ServiceProxyFactory, ObjectFactory {
             is = new HessianDebugInputStream(is, new PrintWriter(System.out));
         }
 
-        in = new Hessian2Input(is);
+        in = new HessianRpcInput(is);
 
         in.setRemoteResolver(getRemoteResolver());
 
@@ -362,7 +362,7 @@ public class HessianProxyFactory implements ServiceProxyFactory, ObjectFactory {
     }
 
     public AbstractHessianOutput getHessianOutput(OutputStream os) {
-        AbstractHessianOutput out = new Hessian2Output(os);
+        AbstractHessianOutput out = new HessianRpcOutput(os);
 
         out.setSerializerFactory(getSerializerFactory());
 

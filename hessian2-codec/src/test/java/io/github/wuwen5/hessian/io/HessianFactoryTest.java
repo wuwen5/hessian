@@ -2,15 +2,16 @@ package io.github.wuwen5.hessian.io;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
+import io.github.wuwen5.hessian.io.beans.BasicTypeBean;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,7 +24,7 @@ class HessianFactoryTest {
 
     private HessianFactory hessianFactory;
     private InputStream inputStream;
-    private OutputStream outputStream;
+    private ByteArrayOutputStream outputStream;
 
     @BeforeEach
     void setUp() {
@@ -79,11 +80,11 @@ class HessianFactoryTest {
     @Test
     void testCreateHessian2Input() throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        Hessian2Output hessian2Output = hessianFactory.createHessian2Output(outputStream);
+        HessianEncoder hessian2Output = hessianFactory.createHessian2Output(outputStream);
         hessian2Output.writeObject(new Obj());
         hessian2Output.flush();
 
-        Hessian2Input input = hessianFactory.createHessian2Input(new ByteArrayInputStream(outputStream.toByteArray()));
+        HessianDecoder input = hessianFactory.createHessian2Input(new ByteArrayInputStream(outputStream.toByteArray()));
 
         Object o = input.readObject();
         assertNotNull(o);
@@ -91,9 +92,9 @@ class HessianFactoryTest {
 
         hessianFactory.freeHessian2Input(input);
         hessianFactory.freeHessian2Output(hessian2Output);
-        Hessian2Input hessian2Input =
+        HessianDecoder hessian2Input =
                 hessianFactory.createHessian2Input(new ByteArrayInputStream(outputStream.toByteArray()));
-        Hessian2Output hessian2Output2 = hessianFactory.createHessian2Output(outputStream);
+        HessianEncoder hessian2Output2 = hessianFactory.createHessian2Output(outputStream);
         assertSame(input, hessian2Input);
         assertSame(hessian2Output, hessian2Output2);
     }
@@ -112,11 +113,20 @@ class HessianFactoryTest {
         HessianDebugOutputStream debugOutput =
                 (HessianDebugOutputStream) hessianFactory.createHessian2DebugOutput(outputStream, logConsumer);
 
-        debugOutput.write('T');
-        debugOutput.write('F');
-        debugOutput.close();
+        BasicTypeBean testBean = BasicTypeBean.create();
+        try (HessianEncoder output = hessianFactory.createHessian2Output(debugOutput)) {
+            output.writeObject(testBean);
+        }
 
-        assertEquals(2, list.size());
+        HessianDebugInputStream debugInputStream =
+                new HessianDebugInputStream(new ByteArrayInputStream(outputStream.toByteArray()), System.out::println);
+
+        HessianDecoder hessian2Input = hessianFactory.createHessian2Input(debugInputStream);
+        Object o = hessian2Input.readObject();
+
+        assertEquals(BasicTypeBean.class, o.getClass());
+        assertEquals(testBean, o);
+        assertFalse(list.isEmpty());
     }
 
     @Test

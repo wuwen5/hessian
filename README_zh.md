@@ -14,7 +14,7 @@
 
 > 本项目的初始提交来源于 [https://repo1.maven.org/maven2/com/caucho/hessian/](https://repo1.maven.org/maven2/com/caucho/hessian/) 中的 `hessian-4.0.xx-sources.jar` 源码。
 
-虽然 Hessian 作为 RPC 协议已逐渐过时，但其序列化协议因以下优点，仍具有广泛的实际应用价值：
+Hessian 其序列化协议因以下优点，仍具有广泛的实际应用：
 
 * ⚡ **高性能**：序列化与反序列化速度快
 * 📦 **体积小**：编码紧凑，适合网络传输
@@ -71,6 +71,6 @@ Hessian2 是 Hessian 协议的升级版本，主要特性包括：
 <dependency>
     <groupId>io.github.wuwen5.hessian</groupId>
     <artifactId>hessian2-codec</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
 </dependency>
 ```

@@ -68,7 +68,7 @@ public class EnumSerializer extends AbstractSerializer {
         }
     }
 
-    public void writeObject(Object obj, AbstractHessianOutput out) throws IOException {
+    public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
         if (out.addRef(obj)) return;
 
         Class<?> cl = obj.getClass();

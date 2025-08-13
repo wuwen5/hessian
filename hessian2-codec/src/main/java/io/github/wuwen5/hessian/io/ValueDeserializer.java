@@ -54,7 +54,7 @@ import java.io.IOException;
  * Deserializing a string valued object
  */
 public abstract class ValueDeserializer extends AbstractDeserializer {
-    public Object readMap(AbstractHessianInput in) throws IOException {
+    public Object readMap(AbstractHessianDecoder in) throws IOException {
         String initValue = null;
 
         while (!in.isEnd()) {
@@ -69,7 +69,7 @@ public abstract class ValueDeserializer extends AbstractDeserializer {
         return create(initValue);
     }
 
-    public Object readObject(AbstractHessianInput in, String[] fieldNames) throws IOException {
+    public Object readObject(AbstractHessianDecoder in, String[] fieldNames) throws IOException {
         String initValue = null;
 
         for (int i = 0; i < fieldNames.length; i++) {

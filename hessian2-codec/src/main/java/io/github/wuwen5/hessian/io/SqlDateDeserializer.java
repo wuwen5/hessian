@@ -72,7 +72,7 @@ public class SqlDateDeserializer extends AbstractDeserializer {
         return _cl;
     }
 
-    public Object readMap(AbstractHessianInput in) throws IOException {
+    public Object readMap(AbstractHessianDecoder in) throws IOException {
         int ref = in.addRef(null);
 
         long initValue = Long.MIN_VALUE;
@@ -93,7 +93,7 @@ public class SqlDateDeserializer extends AbstractDeserializer {
         return value;
     }
 
-    public Object readObject(AbstractHessianInput in, Object[] fields) throws IOException {
+    public Object readObject(AbstractHessianDecoder in, Object[] fields) throws IOException {
         String[] fieldNames = (String[]) fields;
 
         int ref = in.addRef(null);

@@ -68,7 +68,7 @@ public class RemoteDeserializer extends JavaDeserializer {
     }
 
     @Override
-    protected Object resolve(AbstractHessianInput in, Object obj) throws Exception {
+    protected Object resolve(AbstractHessianDecoder in, Object obj) throws Exception {
         HessianRemote remote = (HessianRemote) obj;
         HessianRemoteResolver resolver = in.getRemoteResolver();
 

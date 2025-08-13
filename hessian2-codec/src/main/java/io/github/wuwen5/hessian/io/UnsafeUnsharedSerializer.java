@@ -62,7 +62,7 @@ public class UnsafeUnsharedSerializer extends UnsafeSerializer {
     }
 
     @Override
-    public void writeObject(Object obj, AbstractHessianOutput out) throws IOException {
+    public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
         boolean oldUnshared = out.setUnshared(true);
 
         try {

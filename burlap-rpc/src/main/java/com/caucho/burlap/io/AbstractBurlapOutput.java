@@ -49,7 +49,7 @@
 package com.caucho.burlap.io;
 
 import com.caucho.hessian.io.SerializerFactory;
-import io.github.wuwen5.hessian.io.AbstractHessianOutput;
+import io.github.wuwen5.hessian.io.AbstractHessianEncoder;
 import java.io.IOException;
 
 /**
@@ -65,16 +65,13 @@ import java.io.IOException;
  * out.completeCall();      // complete the call
  * </pre>
  */
-public abstract class AbstractBurlapOutput extends AbstractHessianOutput
-        implements com.caucho.hessian.io.AbstractHessianOutput {
-    @Override
+public abstract class AbstractBurlapOutput extends AbstractHessianEncoder {
     public void startCall(String method, int length) throws IOException {
         startCall(method);
     }
 
     abstract void startCall(String method) throws IOException;
 
-    @Override
     public void setSerializerFactory(SerializerFactory factory) {
         super.setSerializerFactory(factory);
     }
