@@ -66,7 +66,7 @@ public class Hessian2StreamingInput {
     private static final Logger log = Logger.getLogger(Hessian2StreamingInput.class.getName());
 
     private StreamingInputStream _is;
-    private Hessian2Input _in;
+    private HessianDecoder _in;
 
     /**
      * Creates a new Hessian input stream, initialized with an
@@ -76,7 +76,7 @@ public class Hessian2StreamingInput {
      */
     public Hessian2StreamingInput(InputStream is) {
         _is = new StreamingInputStream(is);
-        _in = new Hessian2Input(_is);
+        _in = new HessianDecoder(_is);
     }
 
     public void setSerializerFactory(SerializerFactory factory) {
@@ -89,7 +89,7 @@ public class Hessian2StreamingInput {
         return is != null && is.isDataAvailable();
     }
 
-    public Hessian2Input startPacket() throws IOException {
+    public HessianDecoder startPacket() throws IOException {
         if (_is.startPacket()) {
             _in.resetReferences();
             _in.resetBuffer(); // XXX:
@@ -102,7 +102,7 @@ public class Hessian2StreamingInput {
         _in.resetBuffer(); // XXX:
     }
 
-    public Hessian2Input getHessianInput() {
+    public HessianDecoder getHessianInput() {
         return _in;
     }
 

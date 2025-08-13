@@ -216,8 +216,11 @@ public class ContextSerializerFactory {
     public Deserializer getCustomDeserializer(Class cl) {
         Deserializer deserializer = _customDeserializerMap.get(cl.getName());
 
-        if (deserializer == AbstractDeserializer.NULL) return null;
-        else if (deserializer != null) return deserializer;
+        if (deserializer == AbstractDeserializer.NULL) {
+            return null;
+        } else if (deserializer != null) {
+            return deserializer;
+        }
 
         try {
             Class serClass = Class.forName(cl.getName() + "HessianDeserializer", false, cl.getClassLoader());
@@ -256,23 +259,24 @@ public class ContextSerializerFactory {
             _deserializerClassNameMap.putAll(_staticClassNameMap);
         }
 
-        HashMap<Class, Class> classMap;
-
-        classMap = new HashMap<Class, Class>();
+        HashMap<Class, Class> classMap = new HashMap<>();
         initSerializerFiles("META-INF/hessian/serializers", _serializerFiles, classMap, Serializer.class);
 
         for (Map.Entry<Class, Class> entry : classMap.entrySet()) {
             try {
                 Serializer ser = (Serializer) entry.getValue().newInstance();
 
-                if (entry.getKey().isInterface()) _serializerInterfaceMap.put(entry.getKey(), ser);
-                else _serializerClassMap.put(entry.getKey().getName(), ser);
+                if (entry.getKey().isInterface()) {
+                    _serializerInterfaceMap.put(entry.getKey(), ser);
+                } else {
+                    _serializerClassMap.put(entry.getKey().getName(), ser);
+                }
             } catch (Exception e) {
                 throw new HessianException(e);
             }
         }
 
-        classMap = new HashMap<Class, Class>();
+        classMap = new HashMap<>();
         initSerializerFiles("META-INF/hessian/deserializers", _deserializerFiles, classMap, Deserializer.class);
 
         for (Map.Entry<Class, Class> entry : classMap.entrySet()) {

@@ -67,22 +67,22 @@ public abstract class AbstractDeserializerWrapper implements Deserializer {
     }
 
     @Override
-    public Object readObject(AbstractHessianInput in) throws IOException {
+    public Object readObject(AbstractHessianDecoder in) throws IOException {
         return getDelegate().readObject(in);
     }
 
     @Override
-    public Object readList(AbstractHessianInput in, int length) throws IOException {
+    public Object readList(AbstractHessianDecoder in, int length) throws IOException {
         return getDelegate().readList(in, length);
     }
 
     @Override
-    public Object readLengthList(AbstractHessianInput in, int length) throws IOException {
+    public Object readLengthList(AbstractHessianDecoder in, int length) throws IOException {
         return getDelegate().readLengthList(in, length);
     }
 
     @Override
-    public Object readMap(AbstractHessianInput in) throws IOException {
+    public Object readMap(AbstractHessianDecoder in) throws IOException {
         return getDelegate().readMap(in);
     }
 
@@ -111,7 +111,7 @@ public abstract class AbstractDeserializerWrapper implements Deserializer {
     }
 
     @Override
-    public Object readObject(AbstractHessianInput in, String[] fieldNames) throws IOException {
+    public Object readObject(AbstractHessianDecoder in, String[] fieldNames) throws IOException {
         return getDelegate().readObject(in, fieldNames);
     }
 
@@ -119,7 +119,7 @@ public abstract class AbstractDeserializerWrapper implements Deserializer {
      * Reads an object instance from the input stream
      */
     @Override
-    public Object readObject(AbstractHessianInput in, Object[] fields) throws IOException {
+    public Object readObject(AbstractHessianDecoder in, Object[] fields) throws IOException {
         return getDelegate().readObject(in, fields);
     }
 }

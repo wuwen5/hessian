@@ -123,7 +123,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
         static NullFieldDeserializer DESER = new NullFieldDeserializer();
 
         @Override
-        public void deserialize(AbstractHessianInput in, Object obj) throws IOException {
+        public void deserialize(AbstractHessianDecoder in, Object obj) throws IOException {
             in.readObject();
         }
     }
@@ -139,7 +139,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
         }
 
         @SuppressWarnings("restriction")
-        public void deserialize(AbstractHessianInput in, Object obj) throws IOException {
+        public void deserialize(AbstractHessianDecoder in, Object obj) throws IOException {
             Object value = null;
 
             try {
@@ -163,7 +163,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
         }
 
         @SuppressWarnings("restriction")
-        public void deserialize(AbstractHessianInput in, Object obj) throws IOException {
+        public void deserialize(AbstractHessianDecoder in, Object obj) throws IOException {
             boolean value = false;
 
             try {
@@ -187,7 +187,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
         }
 
         @SuppressWarnings("restriction")
-        public void deserialize(AbstractHessianInput in, Object obj) throws IOException {
+        public void deserialize(AbstractHessianDecoder in, Object obj) throws IOException {
             int value = 0;
 
             try {
@@ -211,7 +211,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
         }
 
         @SuppressWarnings("restriction")
-        public void deserialize(AbstractHessianInput in, Object obj) throws IOException {
+        public void deserialize(AbstractHessianDecoder in, Object obj) throws IOException {
             String value = null;
 
             try {
@@ -240,7 +240,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
         }
 
         @SuppressWarnings("restriction")
-        public void deserialize(AbstractHessianInput in, Object obj) throws IOException {
+        public void deserialize(AbstractHessianDecoder in, Object obj) throws IOException {
             int value = 0;
 
             try {
@@ -264,7 +264,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
         }
 
         @SuppressWarnings("restriction")
-        public void deserialize(AbstractHessianInput in, Object obj) throws IOException {
+        public void deserialize(AbstractHessianDecoder in, Object obj) throws IOException {
             int value = 0;
 
             try {
@@ -288,7 +288,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
         }
 
         @SuppressWarnings("restriction")
-        public void deserialize(AbstractHessianInput in, Object obj) throws IOException {
+        public void deserialize(AbstractHessianDecoder in, Object obj) throws IOException {
             long value = 0;
 
             try {
@@ -311,7 +311,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
             _offset = _unsafe.objectFieldOffset(_field);
         }
 
-        public void deserialize(AbstractHessianInput in, Object obj) throws IOException {
+        public void deserialize(AbstractHessianDecoder in, Object obj) throws IOException {
             double value = 0;
 
             try {
@@ -334,7 +334,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
         }
 
         @SuppressWarnings("restriction")
-        public void deserialize(AbstractHessianInput in, Object obj) throws IOException {
+        public void deserialize(AbstractHessianDecoder in, Object obj) throws IOException {
             double value = 0;
 
             try {
@@ -358,7 +358,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
         }
 
         @SuppressWarnings("restriction")
-        public void deserialize(AbstractHessianInput in, Object obj) throws IOException {
+        public void deserialize(AbstractHessianDecoder in, Object obj) throws IOException {
             String value = null;
 
             try {
@@ -382,7 +382,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
         }
 
         @SuppressWarnings("restriction")
-        public void deserialize(AbstractHessianInput in, Object obj) throws IOException {
+        public void deserialize(AbstractHessianDecoder in, Object obj) throws IOException {
             java.sql.Date value = null;
 
             try {
@@ -412,7 +412,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
         }
 
         @SuppressWarnings("restriction")
-        public void deserialize(AbstractHessianInput in, Object obj) throws IOException {
+        public void deserialize(AbstractHessianDecoder in, Object obj) throws IOException {
             java.sql.Timestamp value = null;
 
             try {
@@ -442,7 +442,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
         }
 
         @SuppressWarnings("restriction")
-        public void deserialize(AbstractHessianInput in, Object obj) throws IOException {
+        public void deserialize(AbstractHessianDecoder in, Object obj) throws IOException {
             java.sql.Time value = null;
 
             try {

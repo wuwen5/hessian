@@ -65,17 +65,14 @@ import lombok.extern.slf4j.Slf4j;
  * its own buffering.
  *
  * <pre>
- * InputStream is = ...; // from http connection
+ * InputStream is = ...;
  * HessianInput in = new HessianInput(is);
- * String value;
+ * in.readObject();
  *
- * in.startReply();         // read reply header
- * value = in.readString(); // read string value
- * in.completeReply();      // read reply footer
  * </pre>
  */
 @Slf4j
-public class Hessian2Input extends AbstractHessianInput implements Hessian2Constants {
+public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Constants {
 
     private static final int END_OF_DATA = -2;
 
@@ -128,7 +125,7 @@ public class Hessian2Input extends AbstractHessianInput implements Hessian2Const
 
     private HessianDebugInputStream dIs;
 
-    public Hessian2Input() {
+    public HessianDecoder() {
         if (log.isTraceEnabled()) {
             dIs = new HessianDebugInputStream(log::trace);
         }
@@ -140,7 +137,7 @@ public class Hessian2Input extends AbstractHessianInput implements Hessian2Const
      *
      * @param is the underlying input stream.
      */
-    public Hessian2Input(InputStream is) {
+    public HessianDecoder(InputStream is) {
         this();
 
         init(is);
@@ -3523,7 +3520,7 @@ public class Hessian2Input extends AbstractHessianInput implements Hessian2Const
                 return -1;
             }
 
-            int len = Hessian2Input.this.read(buffer, offset, length);
+            int len = HessianDecoder.this.read(buffer, offset, length);
             if (len < 0) {
                 isClosed = true;
             }

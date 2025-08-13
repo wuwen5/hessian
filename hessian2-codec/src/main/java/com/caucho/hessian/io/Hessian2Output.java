@@ -48,7 +48,7 @@
 
 package com.caucho.hessian.io;
 
-import java.io.IOException;
+import io.github.wuwen5.hessian.io.HessianEncoder;
 import java.io.OutputStream;
 
 /**
@@ -70,7 +70,7 @@ import java.io.OutputStream;
  * out.completeCall();        // complete the call
  * </pre>
  */
-public class Hessian2Output extends io.github.wuwen5.hessian.io.Hessian2Output implements AbstractHessianOutput {
+public class Hessian2Output extends HessianEncoder {
     public Hessian2Output() {
         super();
     }
@@ -83,154 +83,5 @@ public class Hessian2Output extends io.github.wuwen5.hessian.io.Hessian2Output i
      */
     public Hessian2Output(OutputStream os) {
         super(os);
-    }
-
-    @Override
-    public void setSerializerFactory(SerializerFactory factory) {
-        super.setSerializerFactory(factory);
-    }
-
-    /**
-     * Writes a complete method call.
-     */
-    @Override
-    public void call(String method, Object[] args) throws IOException {
-        writeVersion();
-
-        int length = args != null ? args.length : 0;
-
-        startCall(method, length);
-
-        for (int i = 0; i < length; i++) {
-            writeObject(args[i]);
-        }
-
-        completeCall();
-
-        flush();
-    }
-
-    /**
-     * Writes the call tag.  This would be followed by the
-     * method and the arguments
-     *<pre>
-     * C
-     * </pre>
-     */
-    @Override
-    public void startCall() throws IOException {
-        flushIfFull();
-
-        buffer[offset++] = (byte) 'C';
-    }
-
-    /**
-     * Starts the method call.  Clients would use <code>startCall</code>
-     * instead of <code>call</code> if they wanted finer control over
-     * writing the arguments, or needed to write headers.
-     *<pre>
-     * C
-     * string # method name
-     * int    # arg count
-     * </pre>
-     * @param method the method name to call.
-     */
-    @Override
-    public void startCall(String method, int length) throws IOException {
-        int offset = this.offset;
-
-        if (SIZE < offset + 32) {
-            flushBuffer();
-            offset = this.offset;
-        }
-
-        byte[] buffer = this.buffer;
-
-        buffer[this.offset++] = (byte) 'C';
-
-        writeString(method);
-        writeInt(length);
-    }
-
-    /**
-     * Writes the method tag.
-     *<pre>
-     * string
-     * </pre>
-     * @param method the method name to call.
-     */
-    @Override
-    public void writeMethod(String method) throws IOException {
-        writeString(method);
-    }
-
-    /**
-     * Completes.
-     *<pre>
-     * z
-     * </pre>
-     */
-    @Override
-    public void completeCall() throws IOException {
-        /*
-        flushIfFull();
-
-        _buffer[_offset++] = (byte) 'Z';
-        */
-    }
-
-    /**
-     * Starts the reply
-     *
-     * <p>A successful completion will have a single value:
-     *
-     * <pre>
-     * R
-     * </pre>
-     */
-    @Override
-    public void startReply() throws IOException {
-        writeVersion();
-
-        flushIfFull();
-
-        buffer[offset++] = (byte) 'R';
-    }
-
-    /**
-     * Starts an envelope.
-     * <pre>
-     * E major minor
-     * m b16 b8 method-name
-     * </pre>
-     *
-     * @param method the method name to call.
-     */
-    public void startEnvelope(String method) throws IOException {
-        int offset = this.offset;
-
-        if (SIZE < offset + 32) {
-            flushBuffer();
-            offset = this.offset;
-        }
-
-        buffer[this.offset++] = (byte) 'E';
-
-        writeString(method);
-    }
-
-    /**
-     * Completes an envelope.
-     *
-     * <p>A successful completion will have a single value:
-     *
-     * <pre>
-     * Z
-     * </pre>
-     */
-    public void completeEnvelope() throws IOException {
-        flushIfFull();
-
-        buffer[offset++] = (byte) 'Z';
     }
 }

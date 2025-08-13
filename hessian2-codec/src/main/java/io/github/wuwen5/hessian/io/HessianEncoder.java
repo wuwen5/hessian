@@ -73,7 +73,7 @@ import java.util.HashMap;
  * out.completeCall();        // complete the call
  * </pre>
  */
-public class Hessian2Output extends AbstractHessianOutput implements Hessian2Constants {
+public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Constants {
 
     /**
      * should match Resin buffer size for perf
@@ -115,7 +115,7 @@ public class Hessian2Output extends AbstractHessianOutput implements Hessian2Con
      * Creates a new Hessian output stream, initialized with an
      * underlying output stream.
      */
-    public Hessian2Output() {}
+    public HessianEncoder() {}
 
     /**
      * Creates a new Hessian output stream, initialized with an
@@ -123,7 +123,7 @@ public class Hessian2Output extends AbstractHessianOutput implements Hessian2Con
      *
      * @param os the underlying output stream.
      */
-    public Hessian2Output(OutputStream os) {
+    public HessianEncoder(OutputStream os) {
         init(os);
     }
 
@@ -1411,7 +1411,7 @@ public class Hessian2Output extends AbstractHessianOutput implements Hessian2Con
 
         BytesOutputStream() throws IOException {
             if (SIZE < offset + 16) {
-                Hessian2Output.this.flushBuffer();
+                HessianEncoder.this.flushBuffer();
             }
 
             startOffset = offset;
@@ -1427,7 +1427,7 @@ public class Hessian2Output extends AbstractHessianOutput implements Hessian2Con
                 buffer[startOffset + 1] = (byte) (length >> 8);
                 buffer[startOffset + 2] = (byte) (length);
 
-                Hessian2Output.this.flushBuffer();
+                HessianEncoder.this.flushBuffer();
 
                 startOffset = offset;
                 offset += 3;
@@ -1439,31 +1439,31 @@ public class Hessian2Output extends AbstractHessianOutput implements Hessian2Con
         @Override
         public void write(byte[] buffer, int offset, int length) throws IOException {
             while (length > 0) {
-                int sublen = SIZE - Hessian2Output.this.offset;
+                int sublen = SIZE - HessianEncoder.this.offset;
 
                 if (length < sublen) {
                     sublen = length;
                 }
 
                 if (sublen > 0) {
-                    System.arraycopy(buffer, offset, Hessian2Output.this.buffer, Hessian2Output.this.offset, sublen);
-                    Hessian2Output.this.offset += sublen;
+                    System.arraycopy(buffer, offset, HessianEncoder.this.buffer, HessianEncoder.this.offset, sublen);
+                    HessianEncoder.this.offset += sublen;
                 }
 
                 length -= sublen;
                 offset += sublen;
 
-                if (SIZE <= Hessian2Output.this.offset) {
-                    int chunkLength = (Hessian2Output.this.offset - startOffset) - 3;
+                if (SIZE <= HessianEncoder.this.offset) {
+                    int chunkLength = (HessianEncoder.this.offset - startOffset) - 3;
 
-                    Hessian2Output.this.buffer[startOffset] = (byte) BC_BINARY_CHUNK;
-                    Hessian2Output.this.buffer[startOffset + 1] = (byte) (chunkLength >> 8);
-                    Hessian2Output.this.buffer[startOffset + 2] = (byte) (chunkLength);
+                    HessianEncoder.this.buffer[startOffset] = (byte) BC_BINARY_CHUNK;
+                    HessianEncoder.this.buffer[startOffset + 1] = (byte) (chunkLength >> 8);
+                    HessianEncoder.this.buffer[startOffset + 2] = (byte) (chunkLength);
 
-                    Hessian2Output.this.flushBuffer();
+                    HessianEncoder.this.flushBuffer();
 
-                    startOffset = Hessian2Output.this.offset;
-                    Hessian2Output.this.offset += 3;
+                    startOffset = HessianEncoder.this.offset;
+                    HessianEncoder.this.offset += 3;
                 }
             }
         }
@@ -1483,7 +1483,7 @@ public class Hessian2Output extends AbstractHessianOutput implements Hessian2Con
             buffer[startOffset + 1] = (byte) (length >> 8);
             buffer[startOffset + 2] = (byte) (length);
 
-            Hessian2Output.this.flushBuffer();
+            HessianEncoder.this.flushBuffer();
         }
     }
 }

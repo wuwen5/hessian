@@ -78,13 +78,13 @@ public class Hessian2StringShortTest extends SerializeTestBase {
         stringShortMap.put("last", (short) 60);
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        Hessian2Output out = new Hessian2Output(bout);
+        HessianEncoder out = new HessianEncoder(bout);
 
         out.writeObject(stringShortMap);
         out.flush();
 
         ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
-        Hessian2Input input = new Hessian2Input(bin);
+        HessianDecoder input = new HessianDecoder(bin);
         // (Map) input.readObject(HashMap.class, String.class, Short.class); TODO
         Map deserialize = (Map) input.readObject();
         assertTrue(deserialize != null);
@@ -102,13 +102,13 @@ public class Hessian2StringShortTest extends SerializeTestBase {
         stringShortMap.put("last", (short) 60);
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        Hessian2Output out = new Hessian2Output(bout);
+        HessianEncoder out = new HessianEncoder(bout);
 
         out.writeObject(stringShortMap);
         out.flush();
 
         ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
-        Hessian2Input input = new Hessian2Input(bin);
+        HessianDecoder input = new HessianDecoder(bin);
 
         List<Class<?>> keyValueType = new ArrayList<Class<?>>();
         keyValueType.add(String.class);
@@ -139,13 +139,13 @@ public class Hessian2StringShortTest extends SerializeTestBase {
         stringShort.stringPersonTypeMap = stringPersonTypeMap;
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        Hessian2Output out = new Hessian2Output(bout);
+        HessianEncoder out = new HessianEncoder(bout);
 
         out.writeObject(stringShort);
         out.flush();
 
         ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
-        Hessian2Input input = new Hessian2Input(bin);
+        HessianDecoder input = new HessianDecoder(bin);
 
         Hessian2StringShortType deserialize = (Hessian2StringShortType) input.readObject();
         assertTrue(deserialize.stringPersonTypeMap != null);
@@ -171,13 +171,13 @@ public class Hessian2StringShortTest extends SerializeTestBase {
         shortList.add((short) 60);
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        Hessian2Output out = new Hessian2Output(bout);
+        HessianEncoder out = new HessianEncoder(bout);
 
         out.writeObject(shortList);
         out.flush();
 
         ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
-        Hessian2Input input = new Hessian2Input(bin);
+        HessianDecoder input = new HessianDecoder(bin);
         // (List) input.readObject(ArrayList.class, Short.class); TODO
         List<Short> deserialize = (List) input.readObject();
         assertTrue(deserialize != null);
@@ -195,13 +195,13 @@ public class Hessian2StringShortTest extends SerializeTestBase {
         shortList.add((short) 60);
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        Hessian2Output out = new Hessian2Output(bout);
+        HessianEncoder out = new HessianEncoder(bout);
 
         out.writeObject(shortList);
         out.flush();
 
         ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
-        Hessian2Input input = new Hessian2Input(bin);
+        HessianDecoder input = new HessianDecoder(bin);
 
         List<Class<?>> valueType = new ArrayList<>();
         valueType.add(short.class);

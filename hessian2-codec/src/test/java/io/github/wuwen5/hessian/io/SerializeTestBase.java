@@ -1,7 +1,5 @@
 package io.github.wuwen5.hessian.io;
 
-import com.caucho.hessian.io.AbstractHessianInput;
-import com.caucho.hessian.io.AbstractHessianOutput;
 import com.caucho.hessian.io.Hessian2Input;
 import com.caucho.hessian.io.Hessian2Output;
 import io.vavr.control.Try;
@@ -20,8 +18,7 @@ public abstract class SerializeTestBase {
                 .get());
     }
 
-    <T> T hessianIO(Function<AbstractHessianOutput, Object> outFun, Function<AbstractHessianInput, T> inFun)
-            throws IOException {
+    <T> T hessianIO(Function<HessianEncoder, Object> outFun, Function<HessianDecoder, T> inFun) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Hessian2Output output = new Hessian2Output(outputStream);
         outFun.apply(output);

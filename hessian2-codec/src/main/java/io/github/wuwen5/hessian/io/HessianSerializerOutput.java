@@ -82,7 +82,7 @@ import java.lang.reflect.Modifier;
  * out.completeCall();      // complete the call
  * </pre>
  */
-public class HessianSerializerOutput extends Hessian2Output {
+public class HessianSerializerOutput extends HessianEncoder {
     /**
      * Creates a new Hessian output stream, initialized with an
      * underlying output stream.

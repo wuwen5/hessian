@@ -60,7 +60,7 @@ public abstract class AbstractStreamSerializer extends AbstractSerializer {
      * Writes the object to the output stream.
      */
     @Override
-    public void writeObject(Object obj, AbstractHessianOutput out) throws IOException {
+    public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
         if (out.addRef(obj)) {
             return;
         }

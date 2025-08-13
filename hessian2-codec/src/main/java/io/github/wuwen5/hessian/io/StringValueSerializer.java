@@ -56,7 +56,7 @@ import java.io.IOException;
 public class StringValueSerializer extends AbstractSerializer {
     public static final Serializer SER = new StringValueSerializer();
 
-    public void writeObject(Object obj, AbstractHessianOutput out) throws IOException {
+    public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
         if (obj == null) out.writeNull();
         else {
             if (out.addRef(obj)) return;

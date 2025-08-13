@@ -67,7 +67,7 @@ public class AbstractDeserializer implements Deserializer {
     }
 
     @Override
-    public Object readObject(AbstractHessianInput in) throws IOException {
+    public Object readObject(AbstractHessianDecoder in) throws IOException {
         Object obj = in.readObject();
 
         String className = getClass().getName();
@@ -80,17 +80,17 @@ public class AbstractDeserializer implements Deserializer {
     }
 
     @Override
-    public Object readList(AbstractHessianInput in, int length) throws IOException {
+    public Object readList(AbstractHessianDecoder in, int length) throws IOException {
         throw new UnsupportedOperationException(String.valueOf(this));
     }
 
     @Override
-    public Object readLengthList(AbstractHessianInput in, int length) throws IOException {
+    public Object readLengthList(AbstractHessianDecoder in, int length) throws IOException {
         throw new UnsupportedOperationException(String.valueOf(this));
     }
 
     @Override
-    public Object readMap(AbstractHessianInput in) throws IOException {
+    public Object readMap(AbstractHessianDecoder in) throws IOException {
         Object obj = in.readObject();
 
         String className = getClass().getName();
@@ -127,7 +127,7 @@ public class AbstractDeserializer implements Deserializer {
     }
 
     @Override
-    public Object readObject(AbstractHessianInput in, String[] fieldNames) throws IOException {
+    public Object readObject(AbstractHessianDecoder in, String[] fieldNames) throws IOException {
         return readObject(in, (Object[]) fieldNames);
     }
 
@@ -135,7 +135,7 @@ public class AbstractDeserializer implements Deserializer {
      * Reads an object instance from the input stream
      */
     @Override
-    public Object readObject(AbstractHessianInput in, Object[] fields) throws IOException {
+    public Object readObject(AbstractHessianDecoder in, Object[] fields) throws IOException {
         throw new UnsupportedOperationException(toString());
     }
 

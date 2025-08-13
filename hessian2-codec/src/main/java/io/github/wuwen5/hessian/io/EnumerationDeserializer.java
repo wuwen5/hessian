@@ -63,7 +63,7 @@ public class EnumerationDeserializer extends AbstractListDeserializer {
         return _deserializer;
     }
 
-    public Object readList(AbstractHessianInput in, int length) throws IOException {
+    public Object readList(AbstractHessianDecoder in, int length) throws IOException {
         Vector list = new Vector();
 
         in.addRef(list);

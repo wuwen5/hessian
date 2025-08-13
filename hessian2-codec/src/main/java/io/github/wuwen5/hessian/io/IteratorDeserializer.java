@@ -64,7 +64,7 @@ public class IteratorDeserializer extends AbstractListDeserializer {
     }
 
     @Override
-    public Object readList(AbstractHessianInput in, int length) throws IOException {
+    public Object readList(AbstractHessianDecoder in, int length) throws IOException {
         ArrayList list = new ArrayList();
 
         in.addRef(list);

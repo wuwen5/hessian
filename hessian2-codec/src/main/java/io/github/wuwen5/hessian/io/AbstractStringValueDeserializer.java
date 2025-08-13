@@ -57,7 +57,7 @@ public abstract class AbstractStringValueDeserializer extends AbstractDeserializ
     protected abstract Object create(String value) throws IOException;
 
     @Override
-    public Object readMap(AbstractHessianInput in) throws IOException {
+    public Object readMap(AbstractHessianDecoder in) throws IOException {
         String value = null;
 
         while (!in.isEnd()) {
@@ -77,7 +77,7 @@ public abstract class AbstractStringValueDeserializer extends AbstractDeserializ
     }
 
     @Override
-    public Object readObject(AbstractHessianInput in, Object[] fields) throws IOException {
+    public Object readObject(AbstractHessianDecoder in, Object[] fields) throws IOException {
         String[] fieldNames = (String[]) fields;
 
         String value = null;

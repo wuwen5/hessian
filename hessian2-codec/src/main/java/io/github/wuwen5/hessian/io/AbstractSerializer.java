@@ -61,7 +61,7 @@ public abstract class AbstractSerializer implements Serializer {
     protected static final Logger log = Logger.getLogger(AbstractSerializer.class.getName());
 
     @Override
-    public void writeObject(Object obj, AbstractHessianOutput out) throws IOException {
+    public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
         if (out.addRef(obj)) {
             return;
         }
@@ -110,15 +110,15 @@ public abstract class AbstractSerializer implements Serializer {
         return obj.getClass();
     }
 
-    protected void writeObject10(Object obj, AbstractHessianOutput out) throws IOException {
+    protected void writeObject10(Object obj, AbstractHessianEncoder out) throws IOException {
         throw new UnsupportedOperationException(getClass().getName());
     }
 
-    protected void writeDefinition20(Class<?> cl, AbstractHessianOutput out) throws IOException {
+    protected void writeDefinition20(Class<?> cl, AbstractHessianEncoder out) throws IOException {
         throw new UnsupportedOperationException(getClass().getName());
     }
 
-    protected void writeInstance(Object obj, AbstractHessianOutput out) throws IOException {
+    protected void writeInstance(Object obj, AbstractHessianEncoder out) throws IOException {
         throw new UnsupportedOperationException(getClass().getName());
     }
 
@@ -127,7 +127,7 @@ public abstract class AbstractSerializer implements Serializer {
      * they save a null result.
      */
     static final class NullSerializer extends AbstractSerializer {
-        public void writeObject(Object obj, AbstractHessianOutput out) throws IOException {
+        public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
             throw new IllegalStateException(getClass().getName());
         }
     }

@@ -50,16 +50,18 @@ package com.caucho.hessian.server;
 
 import com.caucho.hessian.io.AbstractHessianInput;
 import com.caucho.hessian.io.AbstractHessianOutput;
+import com.caucho.hessian.io.HessianInputFactory;
+import com.caucho.hessian.io.HessianRpcInput;
+import com.caucho.hessian.io.HessianRpcOutput;
 import com.caucho.hessian.io.SerializerFactory;
 import com.caucho.services.server.AbstractSkeleton;
 import com.caucho.services.server.ServiceContext;
 import io.github.wuwen5.hessian.LineFlushingWriter;
-import io.github.wuwen5.hessian.io.Hessian2Input;
-import io.github.wuwen5.hessian.io.Hessian2Output;
 import io.github.wuwen5.hessian.io.HessianDebugInputStream;
 import io.github.wuwen5.hessian.io.HessianDebugOutputStream;
+import io.github.wuwen5.hessian.io.HessianDecoder;
+import io.github.wuwen5.hessian.io.HessianEncoder;
 import io.github.wuwen5.hessian.io.HessianFactory;
-import io.github.wuwen5.hessian.io.HessianInputFactory;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -85,11 +87,11 @@ public class HessianSkeleton extends AbstractSkeleton {
     @Setter
     private HessianFactory hessianFactory = new HessianFactory() {
         @Override
-        public Hessian2Input createHessian2Input(InputStream is) {
-            Hessian2Input in = freeHessian2Input.allocate();
+        public HessianDecoder createHessian2Input(InputStream is) {
+            HessianDecoder in = freeHessian2Input.allocate();
 
             if (in == null) {
-                in = new com.caucho.hessian.io.Hessian2Input(is);
+                in = new HessianRpcInput(is);
                 in.setSerializerFactory(getSerializerFactory());
             } else {
                 in.init(is);
@@ -98,11 +100,11 @@ public class HessianSkeleton extends AbstractSkeleton {
         }
 
         @Override
-        public Hessian2Output createHessian2Output(OutputStream os) {
-            Hessian2Output out = freeHessian2Output.allocate();
+        public HessianEncoder createHessian2Output(OutputStream os) {
+            HessianEncoder out = freeHessian2Output.allocate();
 
             if (out == null) {
-                out = new com.caucho.hessian.io.Hessian2Output();
+                out = new HessianRpcOutput();
 
                 out.setSerializerFactory(getSerializerFactory());
             }

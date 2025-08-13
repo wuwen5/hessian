@@ -25,7 +25,7 @@ import org.junit.jupiter.api.condition.JRE;
 
 public class LocaleSerializerTest extends SerializeTestBase {
 
-    /** {@linkplain LocaleSerializer#writeObject(Object, AbstractHessianOutput)} */
+    /** {@linkplain LocaleSerializer#writeObject(Object, AbstractHessianEncoder)} */
     @Test
     public void locale() throws IOException {
         assertLocale(null);

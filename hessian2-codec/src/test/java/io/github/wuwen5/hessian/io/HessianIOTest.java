@@ -11,8 +11,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.caucho.hessian.io.Hessian2Input;
+import com.caucho.hessian.io.Hessian2Output;
 import io.vavr.control.Try;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
@@ -29,6 +31,21 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class HessianIOTest extends SerializeTestBase {
+
+    @Test
+    public void testHession2Init() throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        try (Hessian2Output output = new Hessian2Output()) {
+            output.init(outputStream);
+            output.writeBoolean(true);
+        }
+        byte[] byteArray = outputStream.toByteArray();
+
+        try (Hessian2Input input = new Hessian2Input()) {
+            input.init(new ByteArrayInputStream(byteArray));
+            assertTrue(input.readBoolean());
+        }
+    }
 
     @Test
     public void testReadBoolean() throws IOException {

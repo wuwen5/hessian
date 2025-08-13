@@ -66,9 +66,9 @@ public class HessianFactory {
 
     private final SerializerFactory defaultSerializerFactory;
 
-    protected final HessianFreeList<Hessian2Output> freeHessian2Output = new HessianFreeList<>(32);
+    protected final HessianFreeList<HessianEncoder> freeHessian2Output = new HessianFreeList<>(32);
 
-    protected final HessianFreeList<Hessian2Input> freeHessian2Input = new HessianFreeList<>(32);
+    protected final HessianFreeList<HessianDecoder> freeHessian2Input = new HessianFreeList<>(32);
 
     public HessianFactory() {
         defaultSerializerFactory = SerializerFactory.createDefault();
@@ -114,11 +114,11 @@ public class HessianFactory {
     /**
      * Creates a new Hessian 2.0 deserializer.
      */
-    public Hessian2Input createHessian2Input(InputStream is) {
-        Hessian2Input in = freeHessian2Input.allocate();
+    public HessianDecoder createHessian2Input(InputStream is) {
+        HessianDecoder in = freeHessian2Input.allocate();
 
         if (in == null) {
-            in = new Hessian2Input(is);
+            in = new HessianDecoder(is);
             in.setSerializerFactory(getSerializerFactory());
         } else {
             in.init(is);
@@ -130,7 +130,7 @@ public class HessianFactory {
     /**
      * Frees a Hessian 2.0 deserializer
      */
-    public void freeHessian2Input(Hessian2Input in) {
+    public void freeHessian2Input(HessianDecoder in) {
         if (in == null) {
             return;
         }
@@ -158,8 +158,8 @@ public class HessianFactory {
     /**
      * Creates a new Hessian 2.0 serializer.
      */
-    public Hessian2Output createHessian2Output(OutputStream os) {
-        Hessian2Output out = createHessian2Output();
+    public HessianEncoder createHessian2Output(OutputStream os) {
+        HessianEncoder out = createHessian2Output();
 
         out.init(os);
 
@@ -169,11 +169,11 @@ public class HessianFactory {
     /**
      * Creates a new Hessian 2.0 serializer.
      */
-    public Hessian2Output createHessian2Output() {
-        Hessian2Output out = freeHessian2Output.allocate();
+    public HessianEncoder createHessian2Output() {
+        HessianEncoder out = freeHessian2Output.allocate();
 
         if (out == null) {
-            out = new Hessian2Output();
+            out = new HessianEncoder();
 
             out.setSerializerFactory(getSerializerFactory());
         }
@@ -184,7 +184,7 @@ public class HessianFactory {
     /**
      * Frees a Hessian 2.0 serializer
      */
-    public void freeHessian2Output(Hessian2Output out) {
+    public void freeHessian2Output(HessianEncoder out) {
         if (out == null) {
             return;
         }
@@ -198,7 +198,7 @@ public class HessianFactory {
      * Creates a new Hessian 2.0 serializer.
      */
     public Hessian2StreamingOutput createHessian2StreamingOutput(OutputStream os) {
-        Hessian2Output out = createHessian2Output(os);
+        HessianEncoder out = createHessian2Output(os);
 
         return new Hessian2StreamingOutput(out);
     }

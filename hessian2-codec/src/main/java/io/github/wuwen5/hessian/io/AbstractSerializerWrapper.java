@@ -60,7 +60,7 @@ public abstract class AbstractSerializerWrapper implements Serializer {
     protected abstract Serializer getDelegate();
 
     @Override
-    public void writeObject(Object obj, AbstractHessianOutput out) throws IOException {
+    public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
         getDelegate().writeObject(obj, out);
     }
 }

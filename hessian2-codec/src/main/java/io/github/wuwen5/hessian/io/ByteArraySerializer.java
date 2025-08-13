@@ -64,7 +64,7 @@ public class ByteArraySerializer extends AbstractSerializer implements ObjectSer
     }
 
     @Override
-    public void writeObject(Object obj, AbstractHessianOutput out) throws IOException {
+    public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
         byte[] data = (byte[]) obj;
 
         if (data != null) out.writeBytes(data, 0, data.length);

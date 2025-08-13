@@ -63,7 +63,7 @@ public class EnumerationSerializer extends AbstractSerializer {
         return _serializer;
     }
 
-    public void writeObject(Object obj, AbstractHessianOutput out) throws IOException {
+    public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
         Enumeration iter = (Enumeration) obj;
 
         boolean hasEnd = out.writeListBegin(-1, null);

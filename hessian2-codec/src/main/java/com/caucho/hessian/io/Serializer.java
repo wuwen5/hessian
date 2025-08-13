@@ -48,11 +48,7 @@
 
 package com.caucho.hessian.io;
 
-import java.io.IOException;
-
 /**
  * Serializing an object.
  */
-public interface Serializer {
-    void writeObject(Object obj, AbstractHessianOutput out) throws IOException;
-}
+public interface Serializer extends io.github.wuwen5.hessian.io.Serializer {}

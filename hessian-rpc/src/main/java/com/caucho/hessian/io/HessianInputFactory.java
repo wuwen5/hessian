@@ -22,7 +22,7 @@
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
- * 4. The names "Burlap", "Resin", and "Caucho" must not be used to
+ * 4. The names "Hessian", "Resin", and "Caucho" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    info@caucho.com.
@@ -48,33 +48,70 @@
 
 package com.caucho.hessian.io;
 
-/**
- * Input stream for Hessian requests, deserializing objects using the
- * java.io.Serialization protocol.
- *
- * <p>HessianSerializerInput is unbuffered, so any client needs to provide
- * its own buffering.
- *
- * <h2>Serialization</h2>
- *
- * <pre>
- * InputStream is = new FileInputStream("test.xml");
- * HessianOutput in = new HessianSerializerOutput(is);
- *
- * Object obj = in.readObject();
- * is.close();
- * </pre>
- *
- * <h3>Parsing a Hessian reply</h3>
- *
- * <pre>
- * InputStream is = ...; // from http connection
- * HessianInput in = new HessianSerializerInput(is);
- * String value;
- *
- * in.startReply();         // read reply header
- * value = in.readString(); // read string value
- * in.completeReply();      // read reply footer
- * </pre>
- */
-public class HessianSerializerInput extends io.github.wuwen5.hessian.io.HessianSerializerInput {}
+import io.github.wuwen5.hessian.io.AbstractHessianDecoder;
+import io.github.wuwen5.hessian.io.HessianFactory;
+import io.github.wuwen5.hessian.io.SerializerFactory;
+import java.io.IOException;
+import java.io.InputStream;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+public class HessianInputFactory {
+
+    private final HessianFactory factory = new HessianFactory();
+
+    public void setSerializerFactory(io.github.wuwen5.hessian.io.SerializerFactory factory) {
+        this.factory.setSerializerFactory(factory);
+    }
+
+    public SerializerFactory getSerializerFactory() {
+        return factory.getSerializerFactory();
+    }
+
+    public HeaderType readHeader(InputStream is) throws IOException {
+        int code = is.read();
+
+        int major = is.read();
+        int minor = is.read();
+
+        log.debug("Hessian header: code={}, major={}, minor={}", (char) code, major, minor);
+
+        switch (code) {
+            case -1:
+                throw new IOException("Unexpected end of file for Hessian message");
+            case 'H':
+                return HeaderType.HESSIAN_2;
+            default:
+                throw new IOException(
+                        (char) code + " 0x" + Integer.toHexString(code) + " is an unknown Hessian2 message code.");
+        }
+    }
+
+    public AbstractHessianDecoder open(InputStream is) throws IOException {
+        int code = is.read();
+
+        int major = is.read();
+        int minor = is.read();
+        log.debug("Hessian header: code={}, major={}, minor={}", (char) code, major, minor);
+
+        switch (code) {
+            case 'c':
+            case 'C':
+            case 'r':
+            case 'R':
+                if (major >= 2) {
+                    return factory.createHessian2Input(is);
+                } else {
+                    throw new IOException("major version " + major + " is not supported for Hessian 2.0 messages");
+                }
+
+            default:
+                throw new IOException((char) code + " is an unknown Hessian message code.");
+        }
+    }
+
+    public enum HeaderType {
+        HESSIAN_2,
+        REPLY_2;
+    }
+}

@@ -126,7 +126,7 @@ public class WriteReplaceSerializer extends AbstractSerializer {
     }
 
     @Override
-    public void writeObject(Object obj, AbstractHessianOutput out) throws IOException {
+    public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
         int ref = out.getRef(obj);
 
         if (ref >= 0) {

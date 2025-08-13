@@ -70,7 +70,7 @@ public class AnnotationDeserializer extends AbstractMapDeserializer {
         return _annType;
     }
 
-    public Object readMap(AbstractHessianInput in) throws IOException {
+    public Object readMap(AbstractHessianDecoder in) throws IOException {
         try {
             int ref = in.addRef(null);
 
@@ -97,7 +97,7 @@ public class AnnotationDeserializer extends AbstractMapDeserializer {
         }
     }
 
-    public Object readObject(AbstractHessianInput in, Object[] fields) throws IOException {
+    public Object readObject(AbstractHessianDecoder in, Object[] fields) throws IOException {
         String[] fieldNames = (String[]) fields;
 
         try {

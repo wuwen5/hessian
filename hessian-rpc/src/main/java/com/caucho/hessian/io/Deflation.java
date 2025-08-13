@@ -57,17 +57,17 @@ import java.util.zip.InflaterInputStream;
 public class Deflation extends HessianEnvelope {
     public Deflation() {}
 
-    public Hessian2Output wrap(Hessian2Output out) throws IOException {
+    public HessianRpcOutput wrap(HessianRpcOutput out) throws IOException {
         OutputStream os = new DeflateOutputStream(out);
 
-        Hessian2Output filterOut = new Hessian2Output(os);
+        HessianRpcOutput filterOut = new HessianRpcOutput(os);
 
         filterOut.setCloseStreamOnClose(true);
 
         return filterOut;
     }
 
-    public Hessian2Input unwrap(Hessian2Input in) throws IOException {
+    public HessianRpcInput unwrap(HessianRpcInput in) throws IOException {
         int version = in.readEnvelope();
 
         String method = in.readMethod();
@@ -79,10 +79,10 @@ public class Deflation extends HessianEnvelope {
         return unwrapHeaders(in);
     }
 
-    public Hessian2Input unwrapHeaders(Hessian2Input in) throws IOException {
+    public HessianRpcInput unwrapHeaders(HessianRpcInput in) throws IOException {
         InputStream is = new DeflateInputStream(in);
 
-        Hessian2Input filter = new Hessian2Input(is);
+        HessianRpcInput filter = new HessianRpcInput(is);
 
         filter.setCloseStreamOnClose(true);
 
@@ -90,11 +90,11 @@ public class Deflation extends HessianEnvelope {
     }
 
     static class DeflateOutputStream extends OutputStream {
-        private Hessian2Output _out;
+        private HessianRpcOutput _out;
         private OutputStream _bodyOut;
         private DeflaterOutputStream _deflateOut;
 
-        DeflateOutputStream(Hessian2Output out) throws IOException {
+        DeflateOutputStream(HessianRpcOutput out) throws IOException {
             _out = out;
 
             _out.startEnvelope(Deflation.class.getName());
@@ -115,7 +115,7 @@ public class Deflation extends HessianEnvelope {
         }
 
         public void close() throws IOException {
-            Hessian2Output out = _out;
+            HessianRpcOutput out = _out;
             _out = null;
 
             if (out != null) {

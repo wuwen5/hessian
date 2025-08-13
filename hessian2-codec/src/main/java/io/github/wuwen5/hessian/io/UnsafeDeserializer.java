@@ -98,7 +98,7 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
         return _readResolve != null;
     }
 
-    public Object readMap(AbstractHessianInput in) throws IOException {
+    public Object readMap(AbstractHessianDecoder in) throws IOException {
         try {
             Object obj = instantiate();
 
@@ -126,7 +126,7 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
     }
 
     @Override
-    public Object readObject(AbstractHessianInput in, Object[] fields) throws IOException {
+    public Object readObject(AbstractHessianDecoder in, Object[] fields) throws IOException {
         try {
             Object obj = instantiate();
 
@@ -141,7 +141,7 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
     }
 
     @Override
-    public Object readObject(AbstractHessianInput in, String[] fieldNames) throws IOException {
+    public Object readObject(AbstractHessianDecoder in, String[] fieldNames) throws IOException {
         try {
             Object obj = instantiate();
 
@@ -172,7 +172,7 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
         return null;
     }
 
-    public Object readMap(AbstractHessianInput in, Object obj) throws IOException {
+    public Object readMap(AbstractHessianDecoder in, Object obj) throws IOException {
         try {
             int ref = in.addRef(obj);
 
@@ -199,7 +199,7 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
         }
     }
 
-    public Object readObject(AbstractHessianInput in, Object obj, FieldDeserializer2[] fields) throws IOException {
+    public Object readObject(AbstractHessianDecoder in, Object obj, FieldDeserializer2[] fields) throws IOException {
         try {
             int ref = in.addRef(obj);
 
@@ -219,7 +219,7 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
         }
     }
 
-    public Object readObject(AbstractHessianInput in, Object obj, String[] fieldNames) throws IOException {
+    public Object readObject(AbstractHessianDecoder in, Object obj, String[] fieldNames) throws IOException {
         try {
             int ref = in.addRef(obj);
 
@@ -242,7 +242,7 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
         }
     }
 
-    protected Object resolve(AbstractHessianInput in, Object obj) throws Exception {
+    protected Object resolve(AbstractHessianDecoder in, Object obj) throws Exception {
         // if there's a readResolve method, call it
         try {
             if (_readResolve != null) return _readResolve.invoke(obj, new Object[0]);

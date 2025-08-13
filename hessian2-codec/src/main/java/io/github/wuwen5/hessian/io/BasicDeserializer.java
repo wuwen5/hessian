@@ -145,7 +145,7 @@ public class BasicDeserializer extends AbstractDeserializer {
     }
 
     @Override
-    public Object readObject(AbstractHessianInput in) throws IOException {
+    public Object readObject(AbstractHessianDecoder in) throws IOException {
         switch (_code) {
             case NULL:
                 // hessian/3490
@@ -261,7 +261,7 @@ public class BasicDeserializer extends AbstractDeserializer {
     }
 
     @Override
-    public Object readList(AbstractHessianInput in, int length) throws IOException {
+    public Object readList(AbstractHessianDecoder in, int length) throws IOException {
         switch (_code) {
             case BOOLEAN_ARRAY: {
                 if (length >= 0) {
@@ -479,7 +479,7 @@ public class BasicDeserializer extends AbstractDeserializer {
         }
     }
 
-    public Object readLengthList(AbstractHessianInput in, int length) throws IOException {
+    public Object readLengthList(AbstractHessianDecoder in, int length) throws IOException {
         switch (_code) {
             case BOOLEAN_ARRAY: {
                 boolean[] data = new boolean[length];

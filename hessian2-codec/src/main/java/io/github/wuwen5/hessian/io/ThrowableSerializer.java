@@ -66,7 +66,7 @@ public class ThrowableSerializer extends AbstractSerializerWrapper {
     }
 
     @Override
-    public void writeObject(Object obj, AbstractHessianOutput out) throws IOException {
+    public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
         Throwable e = (Throwable) obj;
 
         e.getStackTrace();

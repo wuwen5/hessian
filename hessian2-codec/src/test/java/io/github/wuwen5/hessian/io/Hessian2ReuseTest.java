@@ -37,9 +37,9 @@ import org.junit.jupiter.api.Test;
 
 public class Hessian2ReuseTest extends SerializeTestBase {
 
-    private static final Hessian2Input h2i = new Hessian2Input(null);
+    private static final HessianDecoder h2i = new HessianDecoder(null);
 
-    private static final Hessian2Output h2o = new Hessian2Output(null);
+    private static final HessianEncoder h2o = new HessianEncoder(null);
 
     @SuppressWarnings("unchecked")
     private static <T> T serializeAndDeserialize(T obj, Class<T> clazz) throws IOException {

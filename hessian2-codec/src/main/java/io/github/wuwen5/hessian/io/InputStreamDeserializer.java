@@ -58,7 +58,7 @@ public class InputStreamDeserializer extends AbstractDeserializer {
 
     public InputStreamDeserializer() {}
 
-    public Object readObject(AbstractHessianInput in) throws IOException {
+    public Object readObject(AbstractHessianDecoder in) throws IOException {
         return in.readInputStream();
     }
 }

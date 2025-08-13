@@ -58,7 +58,7 @@ import java.io.Reader;
  * Abstract base class for Hessian requests.  Hessian users should only
  * need to use the methods in this class.
  */
-public abstract class AbstractHessianInput implements Closeable {
+public abstract class AbstractHessianDecoder implements Closeable {
     private HessianRemoteResolver resolver;
     private byte[] buffer;
 

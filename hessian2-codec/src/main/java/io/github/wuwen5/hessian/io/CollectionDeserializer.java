@@ -65,7 +65,7 @@ public class CollectionDeserializer extends AbstractListDeserializer {
         return _type;
     }
 
-    public Object readList(AbstractHessianInput in, int length) throws IOException {
+    public Object readList(AbstractHessianDecoder in, int length) throws IOException {
         Collection list = createList();
 
         in.addRef(list);
@@ -77,7 +77,7 @@ public class CollectionDeserializer extends AbstractListDeserializer {
         return list;
     }
 
-    public Object readLengthList(AbstractHessianInput in, int length) throws IOException {
+    public Object readLengthList(AbstractHessianDecoder in, int length) throws IOException {
         Collection list = createList();
 
         in.addRef(list);
