@@ -336,14 +336,6 @@ public abstract class AbstractHessianEncoder implements Closeable {
     protected abstract void writeRef(int value) throws IOException;
 
     /**
-     * Removes a reference.
-     * @throws IOException if an I/O error occurs
-     */
-    public boolean removeRef(Object obj) throws IOException {
-        return false;
-    }
-
-    /**
      * Replaces a reference from one object to another.
      * @throws IOException if an I/O error occurs
      * @param newRef the new reference object

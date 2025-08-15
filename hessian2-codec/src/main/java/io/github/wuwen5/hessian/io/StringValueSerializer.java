@@ -56,12 +56,16 @@ import java.io.IOException;
 public class StringValueSerializer extends AbstractSerializer {
     public static final Serializer SER = new StringValueSerializer();
 
+    @Override
     public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
-        if (obj == null) out.writeNull();
-        else {
-            if (out.addRef(obj)) return;
+        if (obj == null) {
+            out.writeNull();
+        } else {
+            if (out.addRef(obj)) {
+                return;
+            }
 
-            Class cl = obj.getClass();
+            Class<?> cl = obj.getClass();
 
             int ref = out.writeObjectBegin(cl.getName());
 

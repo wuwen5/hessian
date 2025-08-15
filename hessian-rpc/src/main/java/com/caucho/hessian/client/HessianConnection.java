@@ -60,45 +60,45 @@ public interface HessianConnection {
     /**
      * Adds HTTP headers.
      */
-    public void addHeader(String key, String value);
+    void addHeader(String key, String value);
 
     /**
      * Returns the output stream for the request.
      */
-    public OutputStream getOutputStream() throws IOException;
+    OutputStream getOutputStream() throws IOException;
 
     /**
      * Sends the query
      */
-    public void sendRequest() throws IOException;
+    void sendRequest() throws IOException;
 
     /**
      * Returns the status code.
      */
-    public int getStatusCode();
+    int getStatusCode();
 
     /**
      * Returns the status string.
      */
-    public String getStatusMessage();
+    String getStatusMessage();
 
     /**
      * Returns the content encoding
      */
-    public String getContentEncoding();
+    String getContentEncoding();
 
     /**
      * Returns the InputStream to the result
      */
-    public InputStream getInputStream() throws IOException;
+    InputStream getInputStream() throws IOException;
 
     /**
      * Close/free the connection. If keepalive is allowed, it may be used.
      */
-    public void close() throws IOException;
+    void close() throws IOException;
 
     /**
      * Shut the connection down.
      */
-    public void destroy() throws IOException;
+    void destroy() throws IOException;
 }

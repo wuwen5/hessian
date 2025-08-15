@@ -56,42 +56,50 @@ import java.util.*;
  * Deserializing a JDK 1.2 Map.
  */
 public class MapDeserializer extends AbstractMapDeserializer {
-    private Class<?> _type;
-    private Constructor<?> _ctor;
+    private final Class<?> type;
+    private Constructor<?> ctor;
 
     public MapDeserializer(Class<?> type) {
-        if (type == null) type = HashMap.class;
-
-        _type = type;
-
-        Constructor<?>[] ctors = type.getConstructors();
-        for (int i = 0; i < ctors.length; i++) {
-            if (ctors[i].getParameterTypes().length == 0) _ctor = ctors[i];
+        if (type == null) {
+            type = HashMap.class;
         }
 
-        if (_ctor == null) {
+        this.type = type;
+
+        Constructor<?>[] ctors = type.getConstructors();
+        for (Constructor<?> ctor : ctors) {
+            if (ctor.getParameterTypes().length == 0) {
+                this.ctor = ctor;
+            }
+        }
+
+        if (ctor == null) {
             try {
-                _ctor = HashMap.class.getConstructor(new Class[0]);
+                ctor = HashMap.class.getConstructor();
             } catch (Exception e) {
                 throw new IllegalStateException(e);
             }
         }
     }
 
+    @Override
     public Class<?> getType() {
-        if (_type != null) return _type;
-        else return HashMap.class;
+        return Objects.requireNonNullElse(type, HashMap.class);
     }
 
+    @Override
     public Object readMap(AbstractHessianDecoder in) throws IOException {
-        Map map;
+        Map<Object, Object> map;
 
-        if (_type == null) map = new HashMap();
-        else if (_type.equals(Map.class)) map = new HashMap();
-        else if (_type.equals(SortedMap.class)) map = new TreeMap();
-        else {
+        if (type == null) {
+            map = new HashMap<>();
+        } else if (type.equals(Map.class)) {
+            map = new HashMap<>();
+        } else if (type.equals(SortedMap.class)) {
+            map = new TreeMap<>();
+        } else {
             try {
-                map = (Map) _ctor.newInstance();
+                map = (Map) ctor.newInstance();
             } catch (Exception e) {
                 throw new IOExceptionWrapper(e);
             }
@@ -113,25 +121,26 @@ public class MapDeserializer extends AbstractMapDeserializer {
         String[] fieldNames = (String[]) fields;
         Map<Object, Object> map = createMap();
 
-        int ref = in.addRef(map);
+        in.addRef(map);
 
-        for (int i = 0; i < fieldNames.length; i++) {
-            String name = fieldNames[i];
-
+        for (String name : fieldNames) {
             map.put(name, in.readObject());
         }
 
         return map;
     }
 
-    private Map createMap() throws IOException {
+    private Map<Object, Object> createMap() throws IOException {
 
-        if (_type == null) return new HashMap();
-        else if (_type.equals(Map.class)) return new HashMap();
-        else if (_type.equals(SortedMap.class)) return new TreeMap();
-        else {
+        if (type == null) {
+            return new HashMap<>();
+        } else if (type.equals(Map.class)) {
+            return new HashMap<>();
+        } else if (type.equals(SortedMap.class)) {
+            return new TreeMap<>();
+        } else {
             try {
-                return (Map) _ctor.newInstance();
+                return (Map) ctor.newInstance();
             } catch (Exception e) {
                 throw new IOExceptionWrapper(e);
             }

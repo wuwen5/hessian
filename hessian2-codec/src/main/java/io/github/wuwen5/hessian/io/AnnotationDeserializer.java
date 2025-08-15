@@ -52,29 +52,29 @@ import io.github.wuwen5.hessian.HessianException;
 import java.io.IOException;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
-import java.util.logging.*;
 
 /**
  * Deserializing a java annotation for known object types.
  */
 public class AnnotationDeserializer extends AbstractMapDeserializer {
-    private static final Logger log = Logger.getLogger(AnnotationDeserializer.class.getName());
 
-    private Class _annType;
+    private final Class<?> annType;
 
-    public AnnotationDeserializer(Class annType) {
-        _annType = annType;
+    public AnnotationDeserializer(Class<?> annType) {
+        this.annType = annType;
     }
 
-    public Class getType() {
-        return _annType;
+    @Override
+    public Class<?> getType() {
+        return annType;
     }
 
+    @Override
     public Object readMap(AbstractHessianDecoder in) throws IOException {
         try {
-            int ref = in.addRef(null);
+            in.addRef(null);
 
-            HashMap<String, Object> valueMap = new HashMap<String, Object>(8);
+            HashMap<String, Object> valueMap = new HashMap<>(8);
 
             while (!in.isEnd()) {
                 String key = in.readString();
@@ -86,9 +86,9 @@ public class AnnotationDeserializer extends AbstractMapDeserializer {
             in.readMapEnd();
 
             return Proxy.newProxyInstance(
-                    _annType.getClassLoader(),
-                    new Class[] {_annType},
-                    new AnnotationInvocationHandler(_annType, valueMap));
+                    annType.getClassLoader(),
+                    new Class[] {annType},
+                    new AnnotationInvocationHandler(annType, valueMap));
 
         } catch (IOException e) {
             throw e;
@@ -97,29 +97,28 @@ public class AnnotationDeserializer extends AbstractMapDeserializer {
         }
     }
 
+    @Override
     public Object readObject(AbstractHessianDecoder in, Object[] fields) throws IOException {
         String[] fieldNames = (String[]) fields;
 
         try {
             in.addRef(null);
 
-            HashMap<String, Object> valueMap = new HashMap<String, Object>(8);
+            HashMap<String, Object> valueMap = new HashMap<>(8);
 
-            for (int i = 0; i < fieldNames.length; i++) {
-                String name = fieldNames[i];
-
+            for (String name : fieldNames) {
                 valueMap.put(name, in.readObject());
             }
 
             return Proxy.newProxyInstance(
-                    _annType.getClassLoader(),
-                    new Class[] {_annType},
-                    new AnnotationInvocationHandler(_annType, valueMap));
+                    annType.getClassLoader(),
+                    new Class[] {annType},
+                    new AnnotationInvocationHandler(annType, valueMap));
 
         } catch (IOException e) {
             throw e;
         } catch (Exception e) {
-            throw new HessianException(_annType.getName() + ":" + e, e);
+            throw new HessianException(annType.getName() + ":" + e, e);
         }
     }
 }

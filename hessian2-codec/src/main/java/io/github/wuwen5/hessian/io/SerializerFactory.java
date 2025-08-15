@@ -71,8 +71,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.SneakyThrows;
 
-// import com.caucho.burlap.io.BurlapRemoteObject;
-
 /**
  * Factory for returning serialization methods.
  */
@@ -447,7 +445,7 @@ public class SerializerFactory extends AbstractSerializerFactory {
         try {
             Class<?> serClass = Class.forName(cl.getName() + "HessianDeserializer", false, cl.getClassLoader());
 
-            return (Deserializer) serClass.newInstance();
+            return (Deserializer) serClass.getDeclaredConstructor().newInstance();
         } catch (ClassNotFoundException e) {
             log.log(Level.FINEST, e.toString(), e);
 
@@ -468,7 +466,7 @@ public class SerializerFactory extends AbstractSerializerFactory {
      *
      * @return a serializer object for the serialization.
      */
-    protected Deserializer getDefaultDeserializer(Class cl) {
+    protected Deserializer getDefaultDeserializer(Class<?> cl) {
         if (InputStream.class.equals(cl)) {
             return InputStreamDeserializer.DESER;
         }
@@ -530,7 +528,7 @@ public class SerializerFactory extends AbstractSerializerFactory {
     /**
      * Reads the object as a map.
      */
-    public Deserializer getObjectDeserializer(String type, Class cl) throws HessianProtocolException {
+    public Deserializer getObjectDeserializer(String type, Class<?> cl) throws HessianProtocolException {
         Deserializer reader = getObjectDeserializer(type);
 
         if (cl == null
@@ -630,8 +628,6 @@ public class SerializerFactory extends AbstractSerializerFactory {
             }
         } else {
             try {
-                // Class cl = Class.forName(type, false, getClassLoader());
-
                 Class<?> cl = loadSerializedClass(type);
 
                 deserializer = getDeserializer(cl);

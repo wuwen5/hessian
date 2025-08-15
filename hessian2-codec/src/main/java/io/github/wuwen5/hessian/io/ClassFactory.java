@@ -50,39 +50,40 @@ package io.github.wuwen5.hessian.io;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
  * Loads a class from the classloader.
  */
 public class ClassFactory {
-    private static ArrayList<Allow> _staticAllowList;
+    private static final List<Allow> STATIC_ALLOW_LIST;
 
-    private static ArrayList<Allow> _staticDenyList;
+    private static final List<Allow> STATIC_DENY_LIST;
 
-    private ClassLoader _loader;
+    private final ClassLoader loader;
 
-    private boolean _isWhitelist;
+    private boolean isWhitelist;
 
-    private ArrayList<Allow> _allowList;
+    private List<Allow> arrayList;
 
     ClassFactory(ClassLoader loader) {
-        _loader = loader;
+        this.loader = loader;
     }
 
     public Class<?> load(String className) throws ClassNotFoundException {
         if (isAllow(className)) {
-            return Class.forName(className, false, _loader);
+            return Class.forName(className, false, loader);
         } else {
             return HashMap.class;
         }
     }
 
     private boolean isAllow(String className) {
-        ArrayList<Allow> allowList = _allowList;
+        List<Allow> allowList = arrayList;
 
         if (allowList == null) {
-            Boolean isAllow = isAllow(_staticDenyList, className);
+            Boolean isAllow = isAllow(STATIC_DENY_LIST, className);
 
             if (isAllow != null) {
                 return isAllow;
@@ -91,29 +92,26 @@ public class ClassFactory {
             }
         }
 
-        Boolean isAllow = isAllow(_allowList, className);
+        Boolean isAllow = isAllow(arrayList, className);
         if (isAllow != null) {
             return isAllow;
         }
 
-        isAllow = isAllow(_staticAllowList, className);
+        isAllow = isAllow(STATIC_ALLOW_LIST, className);
 
         if (isAllow != null) {
             return isAllow;
         }
 
-        return !_isWhitelist;
+        return !isWhitelist;
     }
 
-    private Boolean isAllow(ArrayList<Allow> allowList, String className) {
+    private Boolean isAllow(List<Allow> allowList, String className) {
         if (allowList == null) {
             return null;
         }
 
-        int size = allowList.size();
-        for (int i = 0; i < size; i++) {
-            Allow allow = allowList.get(i);
-
+        for (Allow allow : allowList) {
             Boolean isAllow = allow.allow(className);
 
             if (isAllow != null) {
@@ -127,7 +125,7 @@ public class ClassFactory {
     public void setWhitelist(boolean isWhitelist) {
         initAllow();
 
-        _isWhitelist = isWhitelist;
+        this.isWhitelist = isWhitelist;
     }
 
     /**
@@ -139,7 +137,7 @@ public class ClassFactory {
         initAllow();
 
         synchronized (this) {
-            _allowList.add(new Allow(toPattern(pattern), true));
+            arrayList.add(new Allow(toPattern(pattern), true));
         }
     }
 
@@ -152,7 +150,7 @@ public class ClassFactory {
         initAllow();
 
         synchronized (this) {
-            _allowList.add(new Allow(toPattern(pattern), false));
+            arrayList.add(new Allow(toPattern(pattern), false));
         }
     }
 
@@ -165,25 +163,25 @@ public class ClassFactory {
 
     private void initAllow() {
         synchronized (this) {
-            if (_allowList == null) {
-                _allowList = new ArrayList<>();
-                _isWhitelist = true;
+            if (arrayList == null) {
+                arrayList = new ArrayList<>();
+                isWhitelist = true;
             }
         }
     }
 
     static class Allow {
-        private Boolean _isAllow;
-        private Pattern _pattern;
+        private final Boolean isAllow;
+        private final Pattern pattern;
 
         private Allow(String pattern, boolean isAllow) {
-            _isAllow = isAllow;
-            _pattern = Pattern.compile(pattern);
+            this.isAllow = isAllow;
+            this.pattern = Pattern.compile(pattern);
         }
 
         Boolean allow(String className) {
-            if (_pattern.matcher(className).matches()) {
-                return _isAllow;
+            if (pattern.matcher(className).matches()) {
+                return isAllow;
             } else {
                 return null;
             }
@@ -191,18 +189,18 @@ public class ClassFactory {
     }
 
     static {
-        ArrayList<Allow> blacklist = new ArrayList<Allow>();
+        List<Allow> blacklist = new ArrayList<>();
 
         blacklist.add(new Allow("java\\.lang\\.Runtime", false));
         blacklist.add(new Allow("java\\.lang\\.Process", false));
         blacklist.add(new Allow("java\\.lang\\.System", false));
         blacklist.add(new Allow("java\\.lang\\.Thread", false));
 
-        _staticAllowList = new ArrayList<Allow>(blacklist);
+        STATIC_ALLOW_LIST = new ArrayList<>(blacklist);
 
-        _staticAllowList.add(new Allow("java\\..+", true));
-        _staticAllowList.add(new Allow("javax\\.management\\..+", true));
+        STATIC_ALLOW_LIST.add(new Allow("java\\..+", true));
+        STATIC_ALLOW_LIST.add(new Allow("javax\\.management\\..+", true));
 
-        _staticDenyList = new ArrayList<Allow>(blacklist);
+        STATIC_DENY_LIST = new ArrayList<>(blacklist);
     }
 }

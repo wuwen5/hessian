@@ -51,64 +51,79 @@ package io.github.wuwen5.hessian.io;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Deserializing a Java array
  */
 public class ArrayDeserializer extends AbstractListDeserializer {
-    private Class _componentType;
-    private Class _type;
+    private final Class<?> componentType;
+    private Class<?> type;
 
-    public ArrayDeserializer(Class componentType) {
-        _componentType = componentType;
+    public ArrayDeserializer(Class<?> componentType) {
+        this.componentType = componentType;
 
-        if (_componentType != null) {
+        if (this.componentType != null) {
             try {
-                _type = Array.newInstance(_componentType, 0).getClass();
-            } catch (Exception e) {
+                type = Array.newInstance(this.componentType, 0).getClass();
+            } catch (Exception ignored) {
             }
         }
 
-        if (_type == null) _type = Object[].class;
+        if (type == null) {
+            type = Object[].class;
+        }
     }
 
-    public Class getType() {
-        return _type;
+    @Override
+    public Class<?> getType() {
+        return type;
     }
 
     /**
      * Reads the array.
      */
+    @Override
     public Object readList(AbstractHessianDecoder in, int length) throws IOException {
         if (length >= 0) {
             Object[] data = createArray(length);
 
             in.addRef(data);
 
-            if (_componentType != null) {
-                for (int i = 0; i < data.length; i++) data[i] = in.readObject(_componentType);
+            if (componentType != null) {
+                for (int i = 0; i < data.length; i++) {
+                    data[i] = in.readObject(componentType);
+                }
             } else {
-                for (int i = 0; i < data.length; i++) data[i] = in.readObject();
+                for (int i = 0; i < data.length; i++) {
+                    data[i] = in.readObject();
+                }
             }
 
             in.readListEnd();
 
             return data;
         } else {
-            ArrayList list = new ArrayList();
+            List<Object> list = new ArrayList<>();
 
             in.addRef(list);
 
-            if (_componentType != null) {
-                while (!in.isEnd()) list.add(in.readObject(_componentType));
+            if (componentType != null) {
+                while (!in.isEnd()) {
+                    list.add(in.readObject(componentType));
+                }
             } else {
-                while (!in.isEnd()) list.add(in.readObject());
+                while (!in.isEnd()) {
+                    list.add(in.readObject());
+                }
             }
 
             in.readListEnd();
 
             Object[] data = createArray(list.size());
-            for (int i = 0; i < data.length; i++) data[i] = list.get(i);
+            for (int i = 0; i < data.length; i++) {
+                data[i] = list.get(i);
+            }
 
             return data;
         }
@@ -117,26 +132,35 @@ public class ArrayDeserializer extends AbstractListDeserializer {
     /**
      * Reads the array.
      */
+    @Override
     public Object readLengthList(AbstractHessianDecoder in, int length) throws IOException {
         Object[] data = createArray(length);
 
         in.addRef(data);
 
-        if (_componentType != null) {
-            for (int i = 0; i < data.length; i++) data[i] = in.readObject(_componentType);
+        if (componentType != null) {
+            for (int i = 0; i < data.length; i++) {
+                data[i] = in.readObject(componentType);
+            }
         } else {
-            for (int i = 0; i < data.length; i++) data[i] = in.readObject();
+            for (int i = 0; i < data.length; i++) {
+                data[i] = in.readObject();
+            }
         }
 
         return data;
     }
 
     protected Object[] createArray(int length) {
-        if (_componentType != null) return (Object[]) Array.newInstance(_componentType, length);
-        else return new Object[length];
+        if (componentType != null) {
+            return (Object[]) Array.newInstance(componentType, length);
+        } else {
+            return new Object[length];
+        }
     }
 
+    @Override
     public String toString() {
-        return "ArrayDeserializer[" + _componentType + "]";
+        return "ArrayDeserializer[" + componentType + "]";
     }
 }

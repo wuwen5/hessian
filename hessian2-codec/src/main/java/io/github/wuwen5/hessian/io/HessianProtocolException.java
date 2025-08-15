@@ -49,12 +49,18 @@
 package io.github.wuwen5.hessian.io;
 
 import java.io.IOException;
+import lombok.Getter;
 
 /**
  * Exception for faults when the fault doesn't return a java exception.
  * This exception is required for MicroHessianInput.
  */
+@Getter
 public class HessianProtocolException extends IOException {
+    /**
+     * -- GETTER --
+     *  Returns the underlying cause.
+     */
     private Throwable rootCause;
 
     /**
@@ -90,13 +96,7 @@ public class HessianProtocolException extends IOException {
     /**
      * Returns the underlying cause.
      */
-    public Throwable getRootCause() {
-        return rootCause;
-    }
-
-    /**
-     * Returns the underlying cause.
-     */
+    @Override
     public Throwable getCause() {
         return getRootCause();
     }

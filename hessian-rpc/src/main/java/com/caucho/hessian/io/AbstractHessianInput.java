@@ -141,14 +141,13 @@ public interface AbstractHessianInput extends Closeable {
      * Z
      * </pre>
      */
-    default void completeCall() throws IOException {}
-    ;
+    default void completeCall() {}
 
     /**
      * Reads a reply as an object.
      * If the reply has a fault, throws the exception.
      */
-    Object readReply(Class expectedClass) throws Throwable;
+    Object readReply(Class<?> expectedClass) throws Throwable;
 
     /**
      * Starts reading the reply
@@ -166,8 +165,7 @@ public interface AbstractHessianInput extends Closeable {
      * Starts reading the body of the reply, i.e. after the 'r' has been
      * parsed.
      */
-    default void startReplyBody() throws Throwable {}
-    ;
+    default void startReplyBody() {}
 
     /**
      * Completes reading the call

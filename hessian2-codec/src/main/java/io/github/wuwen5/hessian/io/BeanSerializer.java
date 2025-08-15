@@ -52,120 +52,133 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Locale;
 import java.util.logging.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Serializing an object for known object types.
  */
+@Slf4j
 public class BeanSerializer extends AbstractSerializer {
-    private static final Logger log = Logger.getLogger(BeanSerializer.class.getName());
 
-    private static final Object[] NULL_ARGS = new Object[0];
-    private Method[] _methods;
-    private String[] _names;
+    private final Method[] methods;
+    private final String[] names;
 
-    private Object _writeReplaceFactory;
-    private Method _writeReplace;
+    private Object writeReplaceFactory;
+    private Method writeReplace;
 
     public BeanSerializer(Class<?> cl, ClassLoader loader) {
         introspectWriteReplace(cl, loader);
 
-        ArrayList<Method> primitiveMethods = new ArrayList<Method>();
-        ArrayList compoundMethods = new ArrayList();
+        List<Method> primitiveMethods = new ArrayList<>();
+        List<Method> compoundMethods = new ArrayList<>();
 
         for (; cl != null; cl = cl.getSuperclass()) {
             Method[] methods = cl.getDeclaredMethods();
 
-            for (int i = 0; i < methods.length; i++) {
-                Method method = methods[i];
+            for (Method method : methods) {
+                if (Modifier.isStatic(method.getModifiers())) {
+                    continue;
+                }
 
-                if (Modifier.isStatic(method.getModifiers())) continue;
-
-                if (method.getParameterTypes().length != 0) continue;
+                if (method.getParameterTypes().length != 0) {
+                    continue;
+                }
 
                 String name = method.getName();
 
-                if (!name.startsWith("get")) continue;
+                if (!name.startsWith("get")) {
+                    continue;
+                }
 
-                Class type = method.getReturnType();
+                Class<?> type = method.getReturnType();
 
-                if (type.equals(void.class)) continue;
+                if (type.equals(void.class)) {
+                    continue;
+                }
 
-                if (findSetter(methods, name, type) == null) continue;
+                if (findSetter(methods, name, type) == null) {
+                    continue;
+                }
 
                 // XXX: could parameterize the handler to only deal with public
                 method.setAccessible(true);
 
-                if (type.isPrimitive() || type.getName().startsWith("java.lang.") && !type.equals(Object.class))
+                if (type.isPrimitive() || type.getName().startsWith("java.lang.") && !type.equals(Object.class)) {
                     primitiveMethods.add(method);
-                else compoundMethods.add(method);
+                } else {
+                    compoundMethods.add(method);
+                }
             }
         }
 
-        ArrayList methodList = new ArrayList();
+        List<Method> methodList = new ArrayList<>();
         methodList.addAll(primitiveMethods);
         methodList.addAll(compoundMethods);
 
-        Collections.sort(methodList, new MethodNameCmp());
+        methodList.sort(new MethodNameCmp());
 
-        _methods = new Method[methodList.size()];
-        methodList.toArray(_methods);
+        methods = new Method[methodList.size()];
+        methodList.toArray(methods);
 
-        _names = new String[_methods.length];
+        names = new String[methods.length];
 
-        for (int i = 0; i < _methods.length; i++) {
-            String name = _methods[i].getName();
+        for (int i = 0; i < methods.length; i++) {
+            String name = methods[i].getName();
 
             name = name.substring(3);
 
             int j = 0;
             for (; j < name.length() && Character.isUpperCase(name.charAt(j)); j++) {}
 
-            if (j == 1) name = name.substring(0, j).toLowerCase(Locale.ENGLISH) + name.substring(j);
-            else if (j > 1) name = name.substring(0, j - 1).toLowerCase(Locale.ENGLISH) + name.substring(j - 1);
+            if (j == 1) {
+                name = name.substring(0, j).toLowerCase(Locale.ENGLISH) + name.substring(j);
+            } else if (j > 1) {
+                name = name.substring(0, j - 1).toLowerCase(Locale.ENGLISH) + name.substring(j - 1);
+            }
 
-            _names[i] = name;
+            names[i] = name;
         }
     }
 
-    private void introspectWriteReplace(Class cl, ClassLoader loader) {
+    private void introspectWriteReplace(Class<?> cl, ClassLoader loader) {
         try {
             String className = cl.getName() + "HessianSerializer";
 
-            Class serializerClass = Class.forName(className, false, loader);
+            Class<?> serializerClass = Class.forName(className, false, loader);
 
             Object serializerObject = serializerClass.newInstance();
 
             Method writeReplace = getWriteReplace(serializerClass, cl);
 
             if (writeReplace != null) {
-                _writeReplaceFactory = serializerObject;
-                _writeReplace = writeReplace;
+                writeReplaceFactory = serializerObject;
+                this.writeReplace = writeReplace;
 
                 return;
             }
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException ignored) {
         } catch (Exception e) {
-            log.log(Level.FINER, e.toString(), e);
+            log.trace(e.toString(), e);
         }
 
-        _writeReplace = getWriteReplace(cl);
+        writeReplace = getWriteReplace(cl);
     }
 
     /**
      * Returns the writeReplace method
      */
-    protected Method getWriteReplace(Class cl) {
+    protected Method getWriteReplace(Class<?> cl) {
         for (; cl != null; cl = cl.getSuperclass()) {
             Method[] methods = cl.getDeclaredMethods();
 
-            for (int i = 0; i < methods.length; i++) {
-                Method method = methods[i];
-
-                if (method.getName().equals("writeReplace") && method.getParameterTypes().length == 0) return method;
+            for (Method method : methods) {
+                if ("writeReplace".equals(method.getName()) && method.getParameterTypes().length == 0) {
+                    return method;
+                }
             }
         }
 
@@ -175,31 +188,37 @@ public class BeanSerializer extends AbstractSerializer {
     /**
      * Returns the writeReplace method
      */
-    protected Method getWriteReplace(Class cl, Class param) {
+    protected Method getWriteReplace(Class<?> cl, Class<?> param) {
         for (; cl != null; cl = cl.getSuperclass()) {
             for (Method method : cl.getDeclaredMethods()) {
-                if (method.getName().equals("writeReplace")
+                if ("writeReplace".equals(method.getName())
                         && method.getParameterTypes().length == 1
-                        && param.equals(method.getParameterTypes()[0])) return method;
+                        && param.equals(method.getParameterTypes()[0])) {
+                    return method;
+                }
             }
         }
 
         return null;
     }
 
+    @Override
     public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
-        if (out.addRef(obj)) return;
+        if (out.addRef(obj)) {
+            return;
+        }
 
-        Class cl = obj.getClass();
+        Class<?> cl = obj.getClass();
 
         try {
-            if (_writeReplace != null) {
+            if (writeReplace != null) {
                 Object repl;
 
-                if (_writeReplaceFactory != null) repl = _writeReplace.invoke(_writeReplaceFactory, obj);
-                else repl = _writeReplace.invoke(obj);
-
-                // out.removeRef(obj);
+                if (writeReplaceFactory != null) {
+                    repl = writeReplace.invoke(writeReplaceFactory, obj);
+                } else {
+                    repl = writeReplace.invoke(obj);
+                }
 
                 out.writeObject(repl);
 
@@ -208,7 +227,7 @@ public class BeanSerializer extends AbstractSerializer {
                 return;
             }
         } catch (Exception e) {
-            log.log(Level.FINER, e.toString(), e);
+            log.trace(e.toString(), e);
         }
 
         int ref = out.writeObjectBegin(cl.getName());
@@ -216,17 +235,16 @@ public class BeanSerializer extends AbstractSerializer {
         if (ref < -1) {
             // Hessian 1.1 uses a map
 
-            for (int i = 0; i < _methods.length; i++) {
-                Method method = _methods[i];
+            for (int i = 0; i < methods.length; i++) {
                 Object value = null;
 
                 try {
-                    value = _methods[i].invoke(obj, (Object[]) null);
+                    value = methods[i].invoke(obj, (Object[]) null);
                 } catch (Exception e) {
-                    log.log(Level.FINE, e.toString(), e);
+                    log.debug(e.toString(), e);
                 }
 
-                out.writeString(_names[i]);
+                out.writeString(names[i]);
 
                 out.writeObject(value);
             }
@@ -234,21 +252,22 @@ public class BeanSerializer extends AbstractSerializer {
             out.writeMapEnd();
         } else {
             if (ref == -1) {
-                out.writeInt(_names.length);
+                out.writeInt(names.length);
 
-                for (int i = 0; i < _names.length; i++) out.writeString(_names[i]);
+                for (String name : names) {
+                    out.writeString(name);
+                }
 
                 out.writeObjectBegin(cl.getName());
             }
 
-            for (int i = 0; i < _methods.length; i++) {
-                Method method = _methods[i];
+            for (Method method : methods) {
                 Object value = null;
 
                 try {
-                    value = _methods[i].invoke(obj, (Object[]) null);
+                    value = method.invoke(obj, (Object[]) null);
                 } catch (Exception e) {
-                    log.log(Level.FINER, e.toString(), e);
+                    log.trace(e.toString(), e);
                 }
 
                 out.writeObject(value);
@@ -259,25 +278,24 @@ public class BeanSerializer extends AbstractSerializer {
     /**
      * Finds any matching setter.
      */
-    private Method findSetter(Method[] methods, String getterName, Class arg) {
+    private Method findSetter(Method[] methods, String getterName, Class<?> arg) {
         String setterName = "set" + getterName.substring(3);
 
-        for (int i = 0; i < methods.length; i++) {
-            Method method = methods[i];
+        for (Method method : methods) {
+            if (method.getName().equals(setterName) && method.getReturnType().equals(void.class)) {
+                Class<?>[] params = method.getParameterTypes();
 
-            if (!method.getName().equals(setterName)) continue;
-
-            if (!method.getReturnType().equals(void.class)) continue;
-
-            Class[] params = method.getParameterTypes();
-
-            if (params.length == 1 && params[0].equals(arg)) return method;
+                if (params.length == 1 && params[0].equals(arg)) {
+                    return method;
+                }
+            }
         }
 
         return null;
     }
 
     static class MethodNameCmp implements Comparator<Method> {
+        @Override
         public int compare(Method a, Method b) {
             return a.getName().compareTo(b.getName());
         }

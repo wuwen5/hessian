@@ -51,19 +51,18 @@ package io.github.wuwen5.hessian.io;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Proxy for a java annotation for known object types.
  */
 public class AnnotationInvocationHandler implements InvocationHandler {
-    private Class _annType;
-    private HashMap<String, Object> _valueMap;
+    private final Class<?> annType;
+    private final Map<String, Object> valueMap;
 
-    public AnnotationInvocationHandler(Class annType, HashMap<String, Object> valueMap) {
-        _annType = annType;
-        _valueMap = valueMap;
+    public AnnotationInvocationHandler(Class<?> annType, Map<String, Object> valueMap) {
+        this.annType = annType;
+        this.valueMap = valueMap;
     }
 
     @Override
@@ -72,13 +71,19 @@ public class AnnotationInvocationHandler implements InvocationHandler {
 
         boolean zeroArgs = args == null || args.length == 0;
 
-        if (name.equals("annotationType") && zeroArgs) return _annType;
-        else if (name.equals("toString") && zeroArgs) return toString();
-        else if (name.equals("hashCode") && zeroArgs) return doHashCode();
-        else if (name.equals("equals") && !zeroArgs && args.length == 1) return doEquals(args[0]);
-        else if (!zeroArgs) return null;
+        if ("annotationType".equals(name) && zeroArgs) {
+            return annType;
+        } else if ("toString".equals(name) && zeroArgs) {
+            return toString();
+        } else if ("hashCode".equals(name) && zeroArgs) {
+            return doHashCode();
+        } else if ("equals".equals(name) && !zeroArgs && args.length == 1) {
+            return doEquals(args[0]);
+        } else if (!zeroArgs) {
+            return null;
+        }
 
-        return _valueMap.get(method.getName());
+        return valueMap.get(method.getName());
     }
 
     public int doHashCode() {
@@ -86,33 +91,38 @@ public class AnnotationInvocationHandler implements InvocationHandler {
     }
 
     public boolean doEquals(Object value) {
-        if (!(value instanceof Annotation)) return false;
+        if (!(value instanceof Annotation)) {
+            return false;
+        }
 
         Annotation ann = (Annotation) value;
 
-        if (!_annType.equals(ann.annotationType())) return false;
-
-        return true;
+        return annType.equals(ann.annotationType());
     }
 
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
         sb.append("@");
-        sb.append(_annType.getName());
+        sb.append(annType.getName());
         sb.append("[");
 
         boolean isFirst = true;
-        for (Map.Entry entry : _valueMap.entrySet()) {
-            if (!isFirst) sb.append(", ");
+        for (Map.Entry<String, Object> entry : valueMap.entrySet()) {
+            if (!isFirst) {
+                sb.append(", ");
+            }
             isFirst = false;
 
             sb.append(entry.getKey());
             sb.append("=");
 
-            if (entry.getValue() instanceof String)
+            if (entry.getValue() instanceof String) {
                 sb.append('"').append(entry.getValue()).append('"');
-            else sb.append(entry.getValue());
+            } else {
+                sb.append(entry.getValue());
+            }
         }
         sb.append("]");
 

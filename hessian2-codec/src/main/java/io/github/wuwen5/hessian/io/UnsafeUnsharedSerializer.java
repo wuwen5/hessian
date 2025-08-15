@@ -49,13 +49,11 @@
 package io.github.wuwen5.hessian.io;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 
 /**
  * Serializing an object for known object types.
  */
 public class UnsafeUnsharedSerializer extends UnsafeSerializer {
-    private static final Logger log = Logger.getLogger(UnsafeUnsharedSerializer.class.getName());
 
     public UnsafeUnsharedSerializer(Class<?> cl) {
         super(cl);

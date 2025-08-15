@@ -65,8 +65,8 @@ import java.util.logging.*;
 public class Hessian2StreamingInput {
     private static final Logger log = Logger.getLogger(Hessian2StreamingInput.class.getName());
 
-    private StreamingInputStream _is;
-    private HessianDecoder _in;
+    private final StreamingInputStream is;
+    private final HessianDecoder in;
 
     /**
      * Creates a new Hessian input stream, initialized with an
@@ -75,46 +75,46 @@ public class Hessian2StreamingInput {
      * @param is the underlying output stream.
      */
     public Hessian2StreamingInput(InputStream is) {
-        _is = new StreamingInputStream(is);
-        _in = new HessianDecoder(_is);
+        this.is = new StreamingInputStream(is);
+        in = new HessianDecoder(this.is);
     }
 
     public void setSerializerFactory(SerializerFactory factory) {
-        _in.setSerializerFactory(factory);
+        in.setSerializerFactory(factory);
     }
 
     public boolean isDataAvailable() {
-        StreamingInputStream is = _is;
+        StreamingInputStream is = this.is;
 
         return is != null && is.isDataAvailable();
     }
 
     public HessianDecoder startPacket() throws IOException {
-        if (_is.startPacket()) {
-            _in.resetReferences();
-            _in.resetBuffer(); // XXX:
-            return _in;
+        if (is.startPacket()) {
+            in.resetReferences();
+            in.resetBuffer(); // XXX:
+            return in;
         } else return null;
     }
 
     public void endPacket() throws IOException {
-        _is.endPacket();
-        _in.resetBuffer(); // XXX:
+        is.endPacket();
+        in.resetBuffer(); // XXX:
     }
 
     public HessianDecoder getHessianInput() {
-        return _in;
+        return in;
     }
 
     /**
      * Read the next object
      */
     public Object readObject() throws IOException {
-        _is.startPacket();
+        is.startPacket();
 
-        Object obj = _in.readStreamingObject();
+        Object obj = in.readStreamingObject();
 
-        _is.endPacket();
+        is.endPacket();
 
         return obj;
     }
@@ -123,22 +123,22 @@ public class Hessian2StreamingInput {
      * Close the output.
      */
     public void close() throws IOException {
-        _in.close();
+        in.close();
     }
 
     static class StreamingInputStream extends InputStream {
-        private InputStream _is;
+        private final InputStream is;
 
-        private int _length;
-        private boolean _isPacketEnd;
+        private int length;
+        private boolean isPacketEnd;
 
         StreamingInputStream(InputStream is) {
-            _is = is;
+            this.is = is;
         }
 
         public boolean isDataAvailable() {
             try {
-                return _is != null && _is.available() > 0;
+                return is != null && is.available() > 0;
             } catch (IOException e) {
                 log.log(Level.FINER, e.toString(), e);
 
@@ -149,81 +149,98 @@ public class Hessian2StreamingInput {
         public boolean startPacket() throws IOException {
             // skip zero-length packets
             do {
-                _isPacketEnd = false;
-            } while ((_length = readChunkLength(_is)) == 0);
+                isPacketEnd = false;
+            } while ((length = readChunkLength(is)) == 0);
 
-            return _length > 0;
+            return length > 0;
         }
 
         public void endPacket() throws IOException {
-            while (!_isPacketEnd) {
-                if (_length <= 0) _length = readChunkLength(_is);
+            while (!isPacketEnd) {
+                if (length <= 0) {
+                    length = readChunkLength(is);
+                }
 
-                if (_length > 0) {
-                    _is.skip(_length);
-                    _length = 0;
+                if (length > 0) {
+                    is.skip(length);
+                    length = 0;
                 }
             }
 
-            if (_length > 0) {
-                _is.skip(_length);
-                _length = 0;
+            if (length > 0) {
+                is.skip(length);
+                length = 0;
             }
         }
 
+        @Override
         public int read() throws IOException {
-            InputStream is = _is;
+            InputStream is = this.is;
 
-            if (_length == 0) {
-                if (_isPacketEnd) return -1;
+            if (length == 0) {
+                if (isPacketEnd) {
+                    return -1;
+                }
 
-                _length = readChunkLength(is);
+                length = readChunkLength(is);
 
-                if (_length <= 0) return -1;
+                if (length <= 0) {
+                    return -1;
+                }
             }
 
-            _length--;
+            length--;
 
             return is.read();
         }
 
         @Override
         public int read(byte[] buffer, int offset, int length) throws IOException {
-            InputStream is = _is;
+            InputStream is = this.is;
 
-            if (_length <= 0) {
-                if (_isPacketEnd) return -1;
+            if (this.length <= 0) {
+                if (isPacketEnd) {
+                    return -1;
+                }
 
-                _length = readChunkLength(is);
+                this.length = readChunkLength(is);
 
-                if (_length <= 0) return -1;
+                if (this.length <= 0) {
+                    return -1;
+                }
             }
 
-            int sublen = _length;
-            if (length < sublen) sublen = length;
+            int sublen = this.length;
+            if (length < sublen) {
+                sublen = length;
+            }
 
             sublen = is.read(buffer, offset, sublen);
 
-            if (sublen < 0) return -1;
+            if (sublen < 0) {
+                return -1;
+            }
 
-            _length -= sublen;
+            this.length -= sublen;
 
             return sublen;
         }
 
         private int readChunkLength(InputStream is) throws IOException {
-            if (_isPacketEnd) return -1;
+            if (isPacketEnd) {
+                return -1;
+            }
 
             int length = 0;
 
             int code = is.read();
 
             if (code < 0) {
-                _isPacketEnd = true;
+                isPacketEnd = true;
                 return -1;
             }
 
-            _isPacketEnd = (code & 0x80) == 0;
+            isPacketEnd = (code & 0x80) == 0;
 
             int len = is.read() & 0x7f;
 

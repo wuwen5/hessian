@@ -53,7 +53,7 @@ import java.io.IOException;
 /**
  * Deserializing an object.
  */
-public class AbstractDeserializer implements Deserializer {
+public class BaseDeserializer implements Deserializer {
     public static final NullDeserializer NULL = new NullDeserializer();
 
     @Override
@@ -91,15 +91,7 @@ public class AbstractDeserializer implements Deserializer {
 
     @Override
     public Object readMap(AbstractHessianDecoder in) throws IOException {
-        Object obj = in.readObject();
-
-        String className = getClass().getName();
-
-        if (obj != null) {
-            throw error(className + ": unexpected object " + obj.getClass().getName() + " (" + obj + ")");
-        } else {
-            throw error(className + ": unexpected null value");
-        }
+        return readObject(in);
     }
 
     /**
@@ -155,5 +147,5 @@ public class AbstractDeserializer implements Deserializer {
      * The NullDeserializer exists as a marker for the factory classes so
      * they save a null result.
      */
-    static final class NullDeserializer extends AbstractDeserializer {}
+    static final class NullDeserializer extends BaseDeserializer {}
 }

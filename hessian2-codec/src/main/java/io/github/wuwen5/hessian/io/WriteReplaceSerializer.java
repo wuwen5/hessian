@@ -60,14 +60,14 @@ import java.util.logging.Logger;
 public class WriteReplaceSerializer extends AbstractSerializer {
     private static final Logger log = Logger.getLogger(WriteReplaceSerializer.class.getName());
 
-    private Object _writeReplaceFactory;
-    private Method _writeReplace;
-    private Serializer _baseSerializer;
+    private Object writeReplaceFactory;
+    private Method writeReplace;
+    private final Serializer baseSerializer;
 
     public WriteReplaceSerializer(Class<?> cl, ClassLoader loader, Serializer baseSerializer) {
         introspectWriteReplace(cl, loader);
 
-        _baseSerializer = baseSerializer;
+        this.baseSerializer = baseSerializer;
     }
 
     private void introspectWriteReplace(Class<?> cl, ClassLoader loader) {
@@ -76,21 +76,23 @@ public class WriteReplaceSerializer extends AbstractSerializer {
 
             Class<?> serializerClass = Class.forName(className, false, loader);
 
-            Object serializerObject = serializerClass.newInstance();
+            Object serializerObject = serializerClass.getDeclaredConstructor().newInstance();
 
             Method writeReplace = getWriteReplace(serializerClass, cl);
 
             if (writeReplace != null) {
-                _writeReplaceFactory = serializerObject;
-                _writeReplace = writeReplace;
+                writeReplaceFactory = serializerObject;
+                this.writeReplace = writeReplace;
             }
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException ignored) {
         } catch (Exception e) {
             log.log(Level.FINER, e.toString(), e);
         }
 
-        _writeReplace = getWriteReplace(cl);
-        if (_writeReplace != null) _writeReplace.setAccessible(true);
+        writeReplace = getWriteReplace(cl);
+        if (writeReplace != null) {
+            writeReplace.setAccessible(true);
+        }
     }
 
     /**
@@ -99,9 +101,11 @@ public class WriteReplaceSerializer extends AbstractSerializer {
     protected static Method getWriteReplace(Class<?> cl, Class<?> param) {
         for (; cl != null; cl = cl.getSuperclass()) {
             for (Method method : cl.getDeclaredMethods()) {
-                if (method.getName().equals("writeReplace")
+                if ("writeReplace".equals(method.getName())
                         && method.getParameterTypes().length == 1
-                        && param.equals(method.getParameterTypes()[0])) return method;
+                        && param.equals(method.getParameterTypes()[0])) {
+                    return method;
+                }
             }
         }
 
@@ -115,10 +119,10 @@ public class WriteReplaceSerializer extends AbstractSerializer {
         for (; cl != null; cl = cl.getSuperclass()) {
             Method[] methods = cl.getDeclaredMethods();
 
-            for (int i = 0; i < methods.length; i++) {
-                Method method = methods[i];
-
-                if (method.getName().equals("writeReplace") && method.getParameterTypes().length == 0) return method;
+            for (Method method : methods) {
+                if ("writeReplace".equals(method.getName()) && method.getParameterTypes().length == 0) {
+                    return method;
+                }
             }
         }
 
@@ -142,11 +146,11 @@ public class WriteReplaceSerializer extends AbstractSerializer {
 
             if (obj == repl) {
                 if (log.isLoggable(Level.FINE)) {
-                    log.fine(this + ": Hessian writeReplace error.  The writeReplace method (" + _writeReplace
+                    log.fine(this + ": Hessian writeReplace error.  The writeReplace method (" + writeReplace
                             + ") must not return the same object: " + obj);
                 }
 
-                _baseSerializer.writeObject(obj, out);
+                baseSerializer.writeObject(obj, out);
 
                 return;
             }
@@ -164,8 +168,11 @@ public class WriteReplaceSerializer extends AbstractSerializer {
     @Override
     protected Object writeReplace(Object obj) {
         try {
-            if (_writeReplaceFactory != null) return _writeReplace.invoke(_writeReplaceFactory, obj);
-            else return _writeReplace.invoke(obj);
+            if (writeReplaceFactory != null) {
+                return writeReplace.invoke(writeReplaceFactory, obj);
+            } else {
+                return writeReplace.invoke(obj);
+            }
         } catch (RuntimeException e) {
             throw e;
         } catch (InvocationTargetException e) {

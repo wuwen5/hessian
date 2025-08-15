@@ -54,15 +54,15 @@ import java.io.IOException;
  * Serializing an object for known object types.
  */
 public class ThrowableSerializer extends AbstractSerializerWrapper {
-    private final Serializer _ser;
+    private final Serializer ser;
 
     public ThrowableSerializer(Serializer ser) {
-        _ser = ser;
+        this.ser = ser;
     }
 
     @Override
     protected Serializer getDelegate() {
-        return _ser;
+        return ser;
     }
 
     @Override
@@ -71,6 +71,6 @@ public class ThrowableSerializer extends AbstractSerializerWrapper {
 
         e.getStackTrace();
 
-        _ser.writeObject(obj, out);
+        ser.writeObject(obj, out);
     }
 }
