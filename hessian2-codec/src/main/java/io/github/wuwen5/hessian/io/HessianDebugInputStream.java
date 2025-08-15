@@ -61,7 +61,7 @@ import java.util.function.Consumer;
 public class HessianDebugInputStream extends InputStream {
     private InputStream is;
 
-    private HessianDebugState state;
+    private final HessianDebugState state;
 
     /**
      * Creates an uninitialized Hessian input stream.
@@ -124,12 +124,10 @@ public class HessianDebugInputStream extends InputStream {
     public int read() throws IOException {
         int ch;
 
-        InputStream is = this.is;
-
-        if (is == null) {
+        if (this.is == null) {
             return -1;
         } else {
-            ch = is.read();
+            ch = this.is.read();
         }
 
         state.next(ch);
@@ -142,11 +140,11 @@ public class HessianDebugInputStream extends InputStream {
      */
     @Override
     public void close() throws IOException {
-        InputStream is = this.is;
+        InputStream lis = this.is;
         this.is = null;
 
-        if (is != null) {
-            is.close();
+        if (lis != null) {
+            lis.close();
         }
 
         state.println();

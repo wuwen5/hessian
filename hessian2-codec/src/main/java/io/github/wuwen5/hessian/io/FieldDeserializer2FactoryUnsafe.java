@@ -52,20 +52,19 @@ import com.caucho.hessian.io.FieldDeserializer2;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import lombok.extern.slf4j.Slf4j;
 import sun.misc.Unsafe;
 
 /**
  * Serializing an object for known object types.
  */
+@Slf4j
 public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
-    private static final Logger log = Logger.getLogger(JavaDeserializer.class.getName());
 
-    private static boolean _isEnabled;
+    private static boolean isEnabled;
 
     @SuppressWarnings("restriction")
-    private static Unsafe _unsafe;
+    private static Unsafe unsafe;
 
     /**
      * Creates a map of the classes fields.
@@ -75,15 +74,6 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
         if (Modifier.isTransient(field.getModifiers()) || Modifier.isStatic(field.getModifiers())) {
             return NullFieldDeserializer.DESER;
         }
-
-        /*
-        // XXX: could parameterize the handler to only deal with public
-        try {
-          field.setAccessible(true);
-        } catch (Throwable e) {
-          e.printStackTrace();
-        }
-        */
 
         Class<?> type = field.getType();
         FieldDeserializer2 deser;
@@ -129,39 +119,41 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
     }
 
     static class ObjectFieldDeserializer implements FieldDeserializer2 {
-        private final Field _field;
-        private final long _offset;
+        private final Field field;
+        private final long offset;
 
         @SuppressWarnings("restriction")
         ObjectFieldDeserializer(Field field) {
-            _field = field;
-            _offset = _unsafe.objectFieldOffset(_field);
+            this.field = field;
+            offset = unsafe.objectFieldOffset(this.field);
         }
 
+        @Override
         @SuppressWarnings("restriction")
         public void deserialize(AbstractHessianDecoder in, Object obj) throws IOException {
             Object value = null;
 
             try {
-                value = in.readObject(_field.getType());
+                value = in.readObject(field.getType());
 
-                _unsafe.putObject(obj, _offset, value);
+                unsafe.putObject(obj, offset, value);
             } catch (Exception e) {
-                logDeserializeError(_field, obj, value, e);
+                logDeserializeError(field, obj, value, e);
             }
         }
     }
 
     static class BooleanFieldDeserializer implements FieldDeserializer2 {
-        private final Field _field;
-        private final long _offset;
+        private final Field field;
+        private final long offset;
 
         @SuppressWarnings("restriction")
         BooleanFieldDeserializer(Field field) {
-            _field = field;
-            _offset = _unsafe.objectFieldOffset(_field);
+            this.field = field;
+            offset = unsafe.objectFieldOffset(this.field);
         }
 
+        @Override
         @SuppressWarnings("restriction")
         public void deserialize(AbstractHessianDecoder in, Object obj) throws IOException {
             boolean value = false;
@@ -169,23 +161,24 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
             try {
                 value = in.readBoolean();
 
-                _unsafe.putBoolean(obj, _offset, value);
+                unsafe.putBoolean(obj, offset, value);
             } catch (Exception e) {
-                logDeserializeError(_field, obj, value, e);
+                logDeserializeError(field, obj, value, e);
             }
         }
     }
 
     static class ByteFieldDeserializer implements FieldDeserializer2 {
-        private final Field _field;
-        private final long _offset;
+        private final Field field;
+        private final long offset;
 
         @SuppressWarnings("restriction")
         ByteFieldDeserializer(Field field) {
-            _field = field;
-            _offset = _unsafe.objectFieldOffset(_field);
+            this.field = field;
+            offset = unsafe.objectFieldOffset(this.field);
         }
 
+        @Override
         @SuppressWarnings("restriction")
         public void deserialize(AbstractHessianDecoder in, Object obj) throws IOException {
             int value = 0;
@@ -193,23 +186,24 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
             try {
                 value = in.readInt();
 
-                _unsafe.putByte(obj, _offset, (byte) value);
+                unsafe.putByte(obj, offset, (byte) value);
             } catch (Exception e) {
-                logDeserializeError(_field, obj, value, e);
+                logDeserializeError(field, obj, value, e);
             }
         }
     }
 
     static class CharFieldDeserializer implements FieldDeserializer2 {
-        private final Field _field;
-        private final long _offset;
+        private final Field field;
+        private final long offset;
 
         @SuppressWarnings("restriction")
         CharFieldDeserializer(Field field) {
-            _field = field;
-            _offset = _unsafe.objectFieldOffset(_field);
+            this.field = field;
+            offset = unsafe.objectFieldOffset(this.field);
         }
 
+        @Override
         @SuppressWarnings("restriction")
         public void deserialize(AbstractHessianDecoder in, Object obj) throws IOException {
             String value = null;
@@ -219,26 +213,30 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
 
                 char ch;
 
-                if (value != null && value.length() > 0) ch = value.charAt(0);
-                else ch = 0;
+                if (value != null && !value.isEmpty()) {
+                    ch = value.charAt(0);
+                } else {
+                    ch = 0;
+                }
 
-                _unsafe.putChar(obj, _offset, ch);
+                unsafe.putChar(obj, offset, ch);
             } catch (Exception e) {
-                logDeserializeError(_field, obj, value, e);
+                logDeserializeError(field, obj, value, e);
             }
         }
     }
 
     static class ShortFieldDeserializer implements FieldDeserializer2 {
-        private final Field _field;
-        private final long _offset;
+        private final Field field;
+        private final long offset;
 
         @SuppressWarnings("restriction")
         ShortFieldDeserializer(Field field) {
-            _field = field;
-            _offset = _unsafe.objectFieldOffset(_field);
+            this.field = field;
+            offset = unsafe.objectFieldOffset(this.field);
         }
 
+        @Override
         @SuppressWarnings("restriction")
         public void deserialize(AbstractHessianDecoder in, Object obj) throws IOException {
             int value = 0;
@@ -246,23 +244,24 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
             try {
                 value = in.readInt();
 
-                _unsafe.putShort(obj, _offset, (short) value);
+                unsafe.putShort(obj, offset, (short) value);
             } catch (Exception e) {
-                logDeserializeError(_field, obj, value, e);
+                logDeserializeError(field, obj, value, e);
             }
         }
     }
 
     static class IntFieldDeserializer implements FieldDeserializer2 {
-        private final Field _field;
-        private final long _offset;
+        private final Field field;
+        private final long offset;
 
         @SuppressWarnings("restriction")
         IntFieldDeserializer(Field field) {
-            _field = field;
-            _offset = _unsafe.objectFieldOffset(_field);
+            this.field = field;
+            offset = unsafe.objectFieldOffset(this.field);
         }
 
+        @Override
         @SuppressWarnings("restriction")
         public void deserialize(AbstractHessianDecoder in, Object obj) throws IOException {
             int value = 0;
@@ -270,23 +269,24 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
             try {
                 value = in.readInt();
 
-                _unsafe.putInt(obj, _offset, value);
+                unsafe.putInt(obj, offset, value);
             } catch (Exception e) {
-                logDeserializeError(_field, obj, value, e);
+                logDeserializeError(field, obj, value, e);
             }
         }
     }
 
     static class LongFieldDeserializer implements FieldDeserializer2 {
-        private final Field _field;
-        private final long _offset;
+        private final Field field;
+        private final long offset;
 
         @SuppressWarnings("restriction")
         LongFieldDeserializer(Field field) {
-            _field = field;
-            _offset = _unsafe.objectFieldOffset(_field);
+            this.field = field;
+            offset = unsafe.objectFieldOffset(this.field);
         }
 
+        @Override
         @SuppressWarnings("restriction")
         public void deserialize(AbstractHessianDecoder in, Object obj) throws IOException {
             long value = 0;
@@ -294,45 +294,47 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
             try {
                 value = in.readLong();
 
-                _unsafe.putLong(obj, _offset, value);
+                unsafe.putLong(obj, offset, value);
             } catch (Exception e) {
-                logDeserializeError(_field, obj, value, e);
+                logDeserializeError(field, obj, value, e);
             }
         }
     }
 
     static class FloatFieldDeserializer implements FieldDeserializer2 {
-        private final Field _field;
-        private final long _offset;
+        private final Field field;
+        private final long aLong;
 
         @SuppressWarnings("restriction")
         FloatFieldDeserializer(Field field) {
-            _field = field;
-            _offset = _unsafe.objectFieldOffset(_field);
+            this.field = field;
+            aLong = unsafe.objectFieldOffset(this.field);
         }
 
+        @Override
         public void deserialize(AbstractHessianDecoder in, Object obj) throws IOException {
             double value = 0;
 
             try {
                 value = in.readDouble();
 
-                _unsafe.putFloat(obj, _offset, (float) value);
+                unsafe.putFloat(obj, aLong, (float) value);
             } catch (Exception e) {
-                logDeserializeError(_field, obj, value, e);
+                logDeserializeError(field, obj, value, e);
             }
         }
     }
 
     static class DoubleFieldDeserializer implements FieldDeserializer2 {
-        private final Field _field;
-        private final long _offset;
+        private final Field field;
+        private final long offset;
 
         DoubleFieldDeserializer(Field field) {
-            _field = field;
-            _offset = _unsafe.objectFieldOffset(_field);
+            this.field = field;
+            offset = unsafe.objectFieldOffset(this.field);
         }
 
+        @Override
         @SuppressWarnings("restriction")
         public void deserialize(AbstractHessianDecoder in, Object obj) throws IOException {
             double value = 0;
@@ -340,47 +342,48 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
             try {
                 value = in.readDouble();
 
-                _unsafe.putDouble(obj, _offset, value);
+                unsafe.putDouble(obj, offset, value);
             } catch (Exception e) {
-                logDeserializeError(_field, obj, value, e);
+                logDeserializeError(field, obj, value, e);
             }
         }
     }
 
     static class StringFieldDeserializer implements FieldDeserializer2 {
-        private final Field _field;
-        private final long _offset;
+        private final Field field;
+        private final long offset;
 
         @SuppressWarnings("restriction")
         StringFieldDeserializer(Field field) {
-            _field = field;
-            _offset = _unsafe.objectFieldOffset(_field);
+            this.field = field;
+            offset = unsafe.objectFieldOffset(this.field);
         }
 
-        @SuppressWarnings("restriction")
+        @Override
         public void deserialize(AbstractHessianDecoder in, Object obj) throws IOException {
             String value = null;
 
             try {
                 value = in.readString();
 
-                _unsafe.putObject(obj, _offset, value);
+                unsafe.putObject(obj, offset, value);
             } catch (Exception e) {
-                logDeserializeError(_field, obj, value, e);
+                logDeserializeError(field, obj, value, e);
             }
         }
     }
 
     static class SqlDateFieldDeserializer implements FieldDeserializer2 {
-        private final Field _field;
-        private final long _offset;
+        private final Field field;
+        private final long offset;
 
         @SuppressWarnings("restriction")
         SqlDateFieldDeserializer(Field field) {
-            _field = field;
-            _offset = _unsafe.objectFieldOffset(_field);
+            this.field = field;
+            offset = unsafe.objectFieldOffset(this.field);
         }
 
+        @Override
         @SuppressWarnings("restriction")
         public void deserialize(AbstractHessianDecoder in, Object obj) throws IOException {
             java.sql.Date value = null;
@@ -391,26 +394,27 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
                 if (date != null) {
                     value = new java.sql.Date(date.getTime());
 
-                    _unsafe.putObject(obj, _offset, value);
+                    unsafe.putObject(obj, offset, value);
                 } else {
-                    _unsafe.putObject(obj, _offset, null);
+                    unsafe.putObject(obj, offset, null);
                 }
             } catch (Exception e) {
-                logDeserializeError(_field, obj, value, e);
+                logDeserializeError(field, obj, value, e);
             }
         }
     }
 
     static class SqlTimestampFieldDeserializer implements FieldDeserializer2 {
-        private final Field _field;
-        private final long _offset;
+        private final Field field;
+        private final long offset;
 
         @SuppressWarnings("restriction")
         SqlTimestampFieldDeserializer(Field field) {
-            _field = field;
-            _offset = _unsafe.objectFieldOffset(_field);
+            this.field = field;
+            offset = unsafe.objectFieldOffset(this.field);
         }
 
+        @Override
         @SuppressWarnings("restriction")
         public void deserialize(AbstractHessianDecoder in, Object obj) throws IOException {
             java.sql.Timestamp value = null;
@@ -421,27 +425,27 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
                 if (date != null) {
                     value = new java.sql.Timestamp(date.getTime());
 
-                    _unsafe.putObject(obj, _offset, value);
+                    unsafe.putObject(obj, offset, value);
                 } else {
-                    _unsafe.putObject(obj, _offset, null);
+                    unsafe.putObject(obj, offset, null);
                 }
             } catch (Exception e) {
-                logDeserializeError(_field, obj, value, e);
+                logDeserializeError(field, obj, value, e);
             }
         }
     }
 
     static class SqlTimeFieldDeserializer implements FieldDeserializer2 {
-        private final Field _field;
-        private final long _offset;
+        private final Field field;
+        private final long offset;
 
         @SuppressWarnings("restriction")
         SqlTimeFieldDeserializer(Field field) {
-            _field = field;
-            _offset = _unsafe.objectFieldOffset(_field);
+            this.field = field;
+            offset = unsafe.objectFieldOffset(this.field);
         }
 
-        @SuppressWarnings("restriction")
+        @Override
         public void deserialize(AbstractHessianDecoder in, Object obj) throws IOException {
             java.sql.Time value = null;
 
@@ -451,12 +455,12 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
                 if (date != null) {
                     value = new java.sql.Time(date.getTime());
 
-                    _unsafe.putObject(obj, _offset, value);
+                    unsafe.putObject(obj, offset, value);
                 } else {
-                    _unsafe.putObject(obj, _offset, null);
+                    unsafe.putObject(obj, offset, null);
                 }
             } catch (Exception e) {
-                logDeserializeError(_field, obj, value, e);
+                logDeserializeError(field, obj, value, e);
             }
         }
     }
@@ -464,17 +468,21 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
     static void logDeserializeError(Field field, Object obj, Object value, Throwable e) throws IOException {
         String fieldName = (field.getDeclaringClass().getName() + "." + field.getName());
 
-        if (e instanceof HessianFieldException) throw (HessianFieldException) e;
-        else if (e instanceof IOException) throw new HessianFieldException(fieldName + ": " + e.getMessage(), e);
+        if (e instanceof HessianFieldException) {
+            throw (HessianFieldException) e;
+        } else if (e instanceof IOException) {
+            throw new HessianFieldException(fieldName + ": " + e.getMessage(), e);
+        }
 
-        if (value != null)
+        if (value != null) {
             throw new HessianFieldException(
                     fieldName + ": " + value.getClass().getName() + " (" + value + ")" + " cannot be assigned to '"
                             + field.getType().getName() + "'",
                     e);
-        else
+        } else {
             throw new HessianFieldException(
                     fieldName + ": " + field.getType().getName() + " cannot be assigned from null", e);
+        }
     }
 
     static {
@@ -484,23 +492,27 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
             Class<?> unsafe = Class.forName("sun.misc.Unsafe");
             Field theUnsafe = null;
             for (Field field : unsafe.getDeclaredFields()) {
-                if (field.getName().equals("theUnsafe")) theUnsafe = field;
+                if ("theUnsafe".equals(field.getName())) {
+                    theUnsafe = field;
+                }
             }
 
             if (theUnsafe != null) {
                 theUnsafe.setAccessible(true);
-                _unsafe = (Unsafe) theUnsafe.get(null);
+                FieldDeserializer2FactoryUnsafe.unsafe = (Unsafe) theUnsafe.get(null);
             }
 
-            isEnabled = _unsafe != null;
+            isEnabled = FieldDeserializer2FactoryUnsafe.unsafe != null;
 
             String unsafeProp = System.getProperty("com.caucho.hessian.unsafe");
 
-            if ("false".equals(unsafeProp)) isEnabled = false;
+            if ("false".equals(unsafeProp)) {
+                isEnabled = false;
+            }
         } catch (Throwable e) {
-            log.log(Level.FINER, e.toString(), e);
+            log.trace(e.toString(), e);
         }
 
-        _isEnabled = isEnabled;
+        FieldDeserializer2FactoryUnsafe.isEnabled = isEnabled;
     }
 }

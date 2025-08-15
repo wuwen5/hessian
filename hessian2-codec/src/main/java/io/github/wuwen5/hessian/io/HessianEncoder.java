@@ -1110,7 +1110,6 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
     /**
      * Removes a reference.
      */
-    @Override
     public boolean removeRef(Object obj) {
         if (isUnshared) {
             return false;
@@ -1366,12 +1365,12 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
         // hessian/3a8c
         flush();
 
-        OutputStream os = this.os;
+        OutputStream los = this.os;
         this.os = null;
 
-        if (os != null) {
+        if (los != null) {
             if (isCloseStreamOnClose) {
-                os.close();
+                los.close();
             }
         }
     }

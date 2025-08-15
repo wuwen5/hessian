@@ -53,15 +53,16 @@ import java.io.IOException;
 /**
  * Serializing an object for known object types.
  */
-public class ObjectDeserializer extends AbstractDeserializer {
-    private Class<?> _cl;
+public class ObjectDeserializer extends BaseDeserializer {
+    private final Class<?> cl;
 
     public ObjectDeserializer(Class<?> cl) {
-        _cl = cl;
+        this.cl = cl;
     }
 
+    @Override
     public Class<?> getType() {
-        return _cl;
+        return cl;
     }
 
     @Override
@@ -86,6 +87,6 @@ public class ObjectDeserializer extends AbstractDeserializer {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "[" + _cl + "]";
+        return getClass().getSimpleName() + "[" + cl + "]";
     }
 }

@@ -55,16 +55,19 @@ import java.util.Enumeration;
  * Serializing a JDK 1.2 Enumeration.
  */
 public class EnumerationSerializer extends AbstractSerializer {
-    private static EnumerationSerializer _serializer;
+    private static EnumerationSerializer serializer;
 
     public static EnumerationSerializer create() {
-        if (_serializer == null) _serializer = new EnumerationSerializer();
+        if (serializer == null) {
+            serializer = new EnumerationSerializer();
+        }
 
-        return _serializer;
+        return serializer;
     }
 
+    @Override
     public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
-        Enumeration iter = (Enumeration) obj;
+        Enumeration<?> iter = (Enumeration) obj;
 
         boolean hasEnd = out.writeListBegin(-1, null);
 
@@ -74,6 +77,8 @@ public class EnumerationSerializer extends AbstractSerializer {
             out.writeObject(value);
         }
 
-        if (hasEnd) out.writeListEnd();
+        if (hasEnd) {
+            out.writeListEnd();
+        }
     }
 }

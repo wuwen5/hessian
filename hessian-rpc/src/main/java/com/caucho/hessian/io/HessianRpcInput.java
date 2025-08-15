@@ -77,7 +77,7 @@ public class HessianRpcInput extends Hessian2Input implements AbstractHessianInp
      * If the reply has a fault, throws the exception.
      */
     @Override
-    public Object readReply(Class expectedClass) throws Throwable {
+    public Object readReply(Class<?> expectedClass) throws Throwable {
         int tag = read();
 
         if (tag == 'R') {

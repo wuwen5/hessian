@@ -26,6 +26,8 @@ public class BasicTypeBean implements Serializable {
     private boolean aBoolean;
     private String aString;
     private byte[] aByteArray;
+    private byte aByte;
+    private Byte byteObject;
     private char aChar;
     private short aShort;
     private Integer anInteger;
@@ -60,7 +62,9 @@ public class BasicTypeBean implements Serializable {
                 .setABooleanObject(false)
                 .setAList(list)
                 .setMap(map)
-                .setDate(new Date());
+                .setDate(new Date())
+                .setAByte((byte) 1)
+                .setByteObject(Byte.valueOf("1"));
         return bean;
     }
 }

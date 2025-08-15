@@ -22,7 +22,7 @@ import java.util.Objects;
 public class AppResult<T> implements Serializable {
 
     private int ret;
-    private T Data;
+    private T data;
     private int errorCode;
     private String message;
 
@@ -36,7 +36,7 @@ public class AppResult<T> implements Serializable {
 
     public AppResult(T data) {
         this.message = "success";
-        this.Data = data;
+        this.data = data;
         ret = 1;
     }
 
@@ -49,11 +49,11 @@ public class AppResult<T> implements Serializable {
     }
 
     public T getData() {
-        return Data;
+        return data;
     }
 
     public void setData(T data) {
-        Data = data;
+        this.data = data;
     }
 
     public int getErrorCode() {
@@ -79,12 +79,12 @@ public class AppResult<T> implements Serializable {
         AppResult<?> appResult = (AppResult<?>) object;
         return ret == appResult.ret
                 && errorCode == appResult.errorCode
-                && Objects.equals(Data, appResult.Data)
+                && Objects.equals(data, appResult.data)
                 && Objects.equals(message, appResult.message);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ret, Data, errorCode, message);
+        return Objects.hash(ret, data, errorCode, message);
     }
 }

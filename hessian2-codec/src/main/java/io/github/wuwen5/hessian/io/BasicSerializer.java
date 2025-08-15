@@ -92,14 +92,15 @@ public class BasicSerializer extends AbstractSerializer implements ObjectSeriali
 
     private static final BasicSerializer FLOAT_HANDLE_SERIALIZER = new BasicSerializer(FLOAT_HANDLE);
 
-    private int _code;
+    private final int code;
 
     public BasicSerializer(int code) {
-        _code = code;
+        this.code = code;
     }
 
+    @Override
     public Serializer getObjectSerializer() {
-        switch (_code) {
+        switch (code) {
             case BYTE:
                 return BYTE_HANDLE_SERIALIZER;
             case SHORT:
@@ -111,52 +112,51 @@ public class BasicSerializer extends AbstractSerializer implements ObjectSeriali
         }
     }
 
+    @Override
     public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
-        switch (_code) {
+        switch (code) {
             case BOOLEAN:
-                out.writeBoolean(((Boolean) obj).booleanValue());
+                out.writeBoolean((Boolean) obj);
                 break;
-
             case BYTE:
             case SHORT:
             case INTEGER:
                 out.writeInt(((Number) obj).intValue());
                 break;
-
             case LONG:
                 out.writeLong(((Number) obj).longValue());
                 break;
-
             case FLOAT:
             case DOUBLE:
                 out.writeDouble(((Number) obj).doubleValue());
                 break;
-
             case CHARACTER:
             case CHARACTER_OBJECT:
                 out.writeString(String.valueOf(obj));
                 break;
-
             case STRING:
                 out.writeString((String) obj);
                 break;
-
             case STRING_BUILDER:
                 out.writeString(((StringBuilder) obj).toString());
                 break;
-
             case DATE:
                 out.writeUTCDate(((Date) obj).getTime());
                 break;
-
             case BOOLEAN_ARRAY: {
-                if (out.addRef(obj)) return;
+                if (out.addRef(obj)) {
+                    return;
+                }
 
                 boolean[] data = (boolean[]) obj;
                 boolean hasEnd = out.writeListBegin(data.length, "[boolean");
-                for (int i = 0; i < data.length; i++) out.writeBoolean(data[i]);
+                for (boolean datum : data) {
+                    out.writeBoolean(datum);
+                }
 
-                if (hasEnd) out.writeListEnd();
+                if (hasEnd) {
+                    out.writeListEnd();
+                }
 
                 break;
             }
@@ -168,81 +168,115 @@ public class BasicSerializer extends AbstractSerializer implements ObjectSeriali
             }
 
             case SHORT_ARRAY: {
-                if (out.addRef(obj)) return;
+                if (out.addRef(obj)) {
+                    return;
+                }
 
                 short[] data = (short[]) obj;
                 boolean hasEnd = out.writeListBegin(data.length, "[short");
 
-                for (int i = 0; i < data.length; i++) out.writeInt(data[i]);
+                for (short datum : data) {
+                    out.writeInt(datum);
+                }
 
-                if (hasEnd) out.writeListEnd();
+                if (hasEnd) {
+                    out.writeListEnd();
+                }
                 break;
             }
 
             case INTEGER_ARRAY: {
-                if (out.addRef(obj)) return;
+                if (out.addRef(obj)) {
+                    return;
+                }
 
                 int[] data = (int[]) obj;
 
                 boolean hasEnd = out.writeListBegin(data.length, "[int");
 
-                for (int i = 0; i < data.length; i++) out.writeInt(data[i]);
+                for (int datum : data) {
+                    out.writeInt(datum);
+                }
 
-                if (hasEnd) out.writeListEnd();
+                if (hasEnd) {
+                    out.writeListEnd();
+                }
 
                 break;
             }
 
             case LONG_ARRAY: {
-                if (out.addRef(obj)) return;
+                if (out.addRef(obj)) {
+                    return;
+                }
 
                 long[] data = (long[]) obj;
 
                 boolean hasEnd = out.writeListBegin(data.length, "[long");
 
-                for (int i = 0; i < data.length; i++) out.writeLong(data[i]);
+                for (long datum : data) {
+                    out.writeLong(datum);
+                }
 
-                if (hasEnd) out.writeListEnd();
+                if (hasEnd) {
+                    out.writeListEnd();
+                }
                 break;
             }
 
             case FLOAT_ARRAY: {
-                if (out.addRef(obj)) return;
+                if (out.addRef(obj)) {
+                    return;
+                }
 
                 float[] data = (float[]) obj;
 
                 boolean hasEnd = out.writeListBegin(data.length, "[float");
 
-                for (int i = 0; i < data.length; i++) out.writeDouble(data[i]);
+                for (float datum : data) {
+                    out.writeDouble(datum);
+                }
 
-                if (hasEnd) out.writeListEnd();
+                if (hasEnd) {
+                    out.writeListEnd();
+                }
                 break;
             }
 
             case DOUBLE_ARRAY: {
-                if (out.addRef(obj)) return;
+                if (out.addRef(obj)) {
+                    return;
+                }
 
                 double[] data = (double[]) obj;
                 boolean hasEnd = out.writeListBegin(data.length, "[double");
 
-                for (int i = 0; i < data.length; i++) out.writeDouble(data[i]);
+                for (double datum : data) {
+                    out.writeDouble(datum);
+                }
 
-                if (hasEnd) out.writeListEnd();
+                if (hasEnd) {
+                    out.writeListEnd();
+                }
                 break;
             }
 
             case STRING_ARRAY: {
-                if (out.addRef(obj)) return;
+                if (out.addRef(obj)) {
+                    return;
+                }
 
                 String[] data = (String[]) obj;
 
                 boolean hasEnd = out.writeListBegin(data.length, "[string");
 
-                for (int i = 0; i < data.length; i++) {
-                    out.writeString(data[i]);
+                for (String datum : data) {
+                    out.writeString(datum);
                 }
 
-                if (hasEnd) out.writeListEnd();
+                if (hasEnd) {
+                    out.writeListEnd();
+                }
                 break;
             }
 
@@ -253,17 +287,21 @@ public class BasicSerializer extends AbstractSerializer implements ObjectSeriali
             }
 
             case OBJECT_ARRAY: {
-                if (out.addRef(obj)) return;
+                if (out.addRef(obj)) {
+                    return;
+                }
 
                 Object[] data = (Object[]) obj;
 
                 boolean hasEnd = out.writeListBegin(data.length, "[object");
 
-                for (int i = 0; i < data.length; i++) {
-                    out.writeObject(data[i]);
+                for (Object datum : data) {
+                    out.writeObject(datum);
                 }
 
-                if (hasEnd) out.writeListEnd();
+                if (hasEnd) {
+                    out.writeListEnd();
+                }
                 break;
             }
 
@@ -288,7 +326,7 @@ public class BasicSerializer extends AbstractSerializer implements ObjectSeriali
                 break;
 
             default:
-                throw new RuntimeException(_code + " unknown code for " + obj.getClass());
+                throw new RuntimeException(code + " unknown code for " + obj.getClass());
         }
     }
 }

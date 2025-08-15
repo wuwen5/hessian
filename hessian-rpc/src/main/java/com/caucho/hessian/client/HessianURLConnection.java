@@ -86,6 +86,7 @@ public class HessianURLConnection extends AbstractHessianConnection {
     /**
      * Returns the output stream for the request.
      */
+    @Override
     public OutputStream getOutputStream() throws IOException {
         return _conn.getOutputStream();
     }

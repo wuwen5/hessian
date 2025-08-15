@@ -70,6 +70,7 @@ public class ByteHandle implements Serializable {
         return new Byte(_value);
     }
 
+    @Override
     public String toString() {
         return getClass().getSimpleName() + "[" + _value + "]";
     }

@@ -70,7 +70,6 @@ public abstract class AbstractSerializer implements Serializer {
             Object replace = writeReplace(obj);
 
             if (replace != null) {
-                // out.removeRef(obj);
 
                 out.writeObject(replace);
 
@@ -81,7 +80,6 @@ public abstract class AbstractSerializer implements Serializer {
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
-            // log.log(Level.FINE, e.toString(), e);
             throw new HessianException(e);
         }
 
@@ -127,6 +125,7 @@ public abstract class AbstractSerializer implements Serializer {
      * they save a null result.
      */
     static final class NullSerializer extends AbstractSerializer {
+        @Override
         public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
             throw new IllegalStateException(getClass().getName());
         }

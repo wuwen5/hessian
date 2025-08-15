@@ -70,6 +70,7 @@ public class FloatHandle implements Serializable {
         return new Float(_value);
     }
 
+    @Override
     public String toString() {
         return getClass().getSimpleName() + "[" + _value + "]";
     }

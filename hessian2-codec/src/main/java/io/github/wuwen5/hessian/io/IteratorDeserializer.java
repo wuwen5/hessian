@@ -50,26 +50,31 @@ package io.github.wuwen5.hessian.io;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Deserializing a JDK 1.2 Collection.
  */
 public class IteratorDeserializer extends AbstractListDeserializer {
-    private static IteratorDeserializer _deserializer;
+    private static IteratorDeserializer deserializer;
 
     public static IteratorDeserializer create() {
-        if (_deserializer == null) _deserializer = new IteratorDeserializer();
+        if (deserializer == null) {
+            deserializer = new IteratorDeserializer();
+        }
 
-        return _deserializer;
+        return deserializer;
     }
 
     @Override
     public Object readList(AbstractHessianDecoder in, int length) throws IOException {
-        ArrayList list = new ArrayList();
+        List<Object> list = new ArrayList<>();
 
         in.addRef(list);
 
-        while (!in.isEnd()) list.add(in.readObject());
+        while (!in.isEnd()) {
+            list.add(in.readObject());
+        }
 
         in.readEnd();
 

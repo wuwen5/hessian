@@ -52,14 +52,13 @@ import com.caucho.hessian.io.FieldDeserializer2;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.logging.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Serializing an object for known object types.
  */
+@Slf4j
 public class FieldDeserializer2Factory {
-    private static final Logger log = Logger.getLogger(JavaDeserializer.class.getName());
-
     public static FieldDeserializer2Factory create() {
         boolean isEnableUnsafeSerializer = (UnsafeSerializer.isEnabled() && UnsafeDeserializer.isEnabled());
 
@@ -82,14 +81,15 @@ public class FieldDeserializer2Factory {
         try {
             field.setAccessible(true);
         } catch (Throwable e) {
-            e.printStackTrace();
+            log.trace("Unable to set field to accessible", e);
         }
 
         Class<?> type = field.getType();
         FieldDeserializer2 deser;
 
-        if (String.class.equals(type)) deser = new StringFieldDeserializer(field);
-        else if (byte.class.equals(type)) {
+        if (String.class.equals(type)) {
+            deser = new StringFieldDeserializer(field);
+        } else if (byte.class.equals(type)) {
             deser = new ByteFieldDeserializer(field);
         } else if (short.class.equals(type)) {
             deser = new ShortFieldDeserializer(field);
@@ -120,16 +120,27 @@ public class FieldDeserializer2Factory {
      * Creates a map of the classes fields.
      */
     protected static Object getParamArg(Class<?> cl) {
-        if (!cl.isPrimitive()) return null;
-        else if (boolean.class.equals(cl)) return Boolean.FALSE;
-        else if (byte.class.equals(cl)) return new Byte((byte) 0);
-        else if (short.class.equals(cl)) return new Short((short) 0);
-        else if (char.class.equals(cl)) return new Character((char) 0);
-        else if (int.class.equals(cl)) return Integer.valueOf(0);
-        else if (long.class.equals(cl)) return Long.valueOf(0);
-        else if (float.class.equals(cl)) return Float.valueOf(0);
-        else if (double.class.equals(cl)) return Double.valueOf(0);
-        else throw new UnsupportedOperationException();
+        if (!cl.isPrimitive()) {
+            return null;
+        } else if (boolean.class.equals(cl)) {
+            return Boolean.FALSE;
+        } else if (byte.class.equals(cl)) {
+            return new Byte((byte) 0);
+        } else if (short.class.equals(cl)) {
+            return new Short((short) 0);
+        } else if (char.class.equals(cl)) {
+            return new Character((char) 0);
+        } else if (int.class.equals(cl)) {
+            return Integer.valueOf(0);
+        } else if (long.class.equals(cl)) {
+            return Long.valueOf(0);
+        } else if (float.class.equals(cl)) {
+            return Float.valueOf(0);
+        } else if (double.class.equals(cl)) {
+            return Double.valueOf(0);
+        } else {
+            throw new UnsupportedOperationException();
+        }
     }
 
     static class NullFieldDeserializer implements FieldDeserializer2 {
@@ -142,10 +153,10 @@ public class FieldDeserializer2Factory {
     }
 
     static class ObjectFieldDeserializer implements FieldDeserializer2 {
-        private final Field _field;
+        private final Field field;
 
         ObjectFieldDeserializer(Field field) {
-            _field = field;
+            this.field = field;
         }
 
         @Override
@@ -153,20 +164,20 @@ public class FieldDeserializer2Factory {
             Object value = null;
 
             try {
-                value = in.readObject(_field.getType());
+                value = in.readObject(field.getType());
 
-                _field.set(obj, value);
+                field.set(obj, value);
             } catch (Exception e) {
-                logDeserializeError(_field, obj, value, e);
+                logDeserializeError(field, obj, value, e);
             }
         }
     }
 
     static class BooleanFieldDeserializer implements FieldDeserializer2 {
-        private final Field _field;
+        private final Field field;
 
         BooleanFieldDeserializer(Field field) {
-            _field = field;
+            this.field = field;
         }
 
         @Override
@@ -176,18 +187,18 @@ public class FieldDeserializer2Factory {
             try {
                 value = in.readBoolean();
 
-                _field.setBoolean(obj, value);
+                field.setBoolean(obj, value);
             } catch (Exception e) {
-                logDeserializeError(_field, obj, value, e);
+                logDeserializeError(field, obj, value, e);
             }
         }
     }
 
     static class ByteFieldDeserializer implements FieldDeserializer2 {
-        private final Field _field;
+        private final Field field;
 
         ByteFieldDeserializer(Field field) {
-            _field = field;
+            this.field = field;
         }
 
         @Override
@@ -197,18 +208,18 @@ public class FieldDeserializer2Factory {
             try {
                 value = in.readInt();
 
-                _field.setByte(obj, (byte) value);
+                field.setByte(obj, (byte) value);
             } catch (Exception e) {
-                logDeserializeError(_field, obj, value, e);
+                logDeserializeError(field, obj, value, e);
             }
         }
     }
 
     static class ShortFieldDeserializer implements FieldDeserializer2 {
-        private final Field _field;
+        private final Field field;
 
         ShortFieldDeserializer(Field field) {
-            _field = field;
+            this.field = field;
         }
 
         @Override
@@ -218,18 +229,18 @@ public class FieldDeserializer2Factory {
             try {
                 value = in.readInt();
 
-                _field.setShort(obj, (short) value);
+                field.setShort(obj, (short) value);
             } catch (Exception e) {
-                logDeserializeError(_field, obj, value, e);
+                logDeserializeError(field, obj, value, e);
             }
         }
     }
 
     static class IntFieldDeserializer implements FieldDeserializer2 {
-        private final Field _field;
+        private final Field field;
 
         IntFieldDeserializer(Field field) {
-            _field = field;
+            this.field = field;
         }
 
         @Override
@@ -239,18 +250,18 @@ public class FieldDeserializer2Factory {
             try {
                 value = in.readInt();
 
-                _field.setInt(obj, value);
+                field.setInt(obj, value);
             } catch (Exception e) {
-                logDeserializeError(_field, obj, value, e);
+                logDeserializeError(field, obj, value, e);
             }
         }
     }
 
     static class LongFieldDeserializer implements FieldDeserializer2 {
-        private final Field _field;
+        private final Field field;
 
         LongFieldDeserializer(Field field) {
-            _field = field;
+            this.field = field;
         }
 
         @Override
@@ -260,18 +271,18 @@ public class FieldDeserializer2Factory {
             try {
                 value = in.readLong();
 
-                _field.setLong(obj, value);
+                field.setLong(obj, value);
             } catch (Exception e) {
-                logDeserializeError(_field, obj, value, e);
+                logDeserializeError(field, obj, value, e);
             }
         }
     }
 
     static class FloatFieldDeserializer implements FieldDeserializer2 {
-        private final Field _field;
+        private final Field field;
 
         FloatFieldDeserializer(Field field) {
-            _field = field;
+            this.field = field;
         }
 
         @Override
@@ -281,18 +292,18 @@ public class FieldDeserializer2Factory {
             try {
                 value = in.readDouble();
 
-                _field.setFloat(obj, (float) value);
+                field.setFloat(obj, (float) value);
             } catch (Exception e) {
-                logDeserializeError(_field, obj, value, e);
+                logDeserializeError(field, obj, value, e);
             }
         }
     }
 
     static class DoubleFieldDeserializer implements FieldDeserializer2 {
-        private final Field _field;
+        private final Field field;
 
         DoubleFieldDeserializer(Field field) {
-            _field = field;
+            this.field = field;
         }
 
         @Override
@@ -302,18 +313,18 @@ public class FieldDeserializer2Factory {
             try {
                 value = in.readDouble();
 
-                _field.setDouble(obj, value);
+                field.setDouble(obj, value);
             } catch (Exception e) {
-                logDeserializeError(_field, obj, value, e);
+                logDeserializeError(field, obj, value, e);
             }
         }
     }
 
     static class StringFieldDeserializer implements FieldDeserializer2 {
-        private final Field _field;
+        private final Field field;
 
         StringFieldDeserializer(Field field) {
-            _field = field;
+            this.field = field;
         }
 
         @Override
@@ -323,18 +334,18 @@ public class FieldDeserializer2Factory {
             try {
                 value = in.readString();
 
-                _field.set(obj, value);
+                field.set(obj, value);
             } catch (Exception e) {
-                logDeserializeError(_field, obj, value, e);
+                logDeserializeError(field, obj, value, e);
             }
         }
     }
 
     static class SqlDateFieldDeserializer implements FieldDeserializer2 {
-        private final Field _field;
+        private final Field field;
 
         SqlDateFieldDeserializer(Field field) {
-            _field = field;
+            this.field = field;
         }
 
         @Override
@@ -347,21 +358,21 @@ public class FieldDeserializer2Factory {
                 if (date != null) {
                     value = new java.sql.Date(date.getTime());
 
-                    _field.set(obj, value);
+                    field.set(obj, value);
                 } else {
-                    _field.set(obj, null);
+                    field.set(obj, null);
                 }
             } catch (Exception e) {
-                logDeserializeError(_field, obj, value, e);
+                logDeserializeError(field, obj, value, e);
             }
         }
     }
 
     static class SqlTimestampFieldDeserializer implements FieldDeserializer2 {
-        private final Field _field;
+        private final Field field;
 
         SqlTimestampFieldDeserializer(Field field) {
-            _field = field;
+            this.field = field;
         }
 
         @Override
@@ -374,21 +385,21 @@ public class FieldDeserializer2Factory {
                 if (date != null) {
                     value = new java.sql.Timestamp(date.getTime());
 
-                    _field.set(obj, value);
+                    field.set(obj, value);
                 } else {
-                    _field.set(obj, null);
+                    field.set(obj, null);
                 }
             } catch (Exception e) {
-                logDeserializeError(_field, obj, value, e);
+                logDeserializeError(field, obj, value, e);
             }
         }
     }
 
     static class SqlTimeFieldDeserializer implements FieldDeserializer2 {
-        private final Field _field;
+        private final Field field;
 
         SqlTimeFieldDeserializer(Field field) {
-            _field = field;
+            this.field = field;
         }
 
         @Override
@@ -401,12 +412,12 @@ public class FieldDeserializer2Factory {
                 if (date != null) {
                     value = new java.sql.Time(date.getTime());
 
-                    _field.set(obj, value);
+                    field.set(obj, value);
                 } else {
-                    _field.set(obj, null);
+                    field.set(obj, null);
                 }
             } catch (Exception e) {
-                logDeserializeError(_field, obj, value, e);
+                logDeserializeError(field, obj, value, e);
             }
         }
     }
@@ -414,16 +425,20 @@ public class FieldDeserializer2Factory {
     static void logDeserializeError(Field field, Object obj, Object value, Throwable e) throws IOException {
         String fieldName = (field.getDeclaringClass().getName() + "." + field.getName());
 
-        if (e instanceof HessianFieldException) throw (HessianFieldException) e;
-        else if (e instanceof IOException) throw new HessianFieldException(fieldName + ": " + e.getMessage(), e);
+        if (e instanceof HessianFieldException) {
+            throw (HessianFieldException) e;
+        } else if (e instanceof IOException) {
+            throw new HessianFieldException(fieldName + ": " + e.getMessage(), e);
+        }
 
-        if (value != null)
+        if (value != null) {
             throw new HessianFieldException(
                     fieldName + ": " + value.getClass().getName() + " (" + value + ")" + " cannot be assigned to '"
                             + field.getType().getName() + "'",
                     e);
-        else
+        } else {
             throw new HessianFieldException(
                     fieldName + ": " + field.getType().getName() + " cannot be assigned from null", e);
+        }
     }
 }

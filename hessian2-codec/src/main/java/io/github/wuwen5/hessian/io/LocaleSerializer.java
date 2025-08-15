@@ -61,9 +61,11 @@ public class LocaleSerializer extends AbstractSerializer {
         return SERIALIZER;
     }
 
+    @Override
     public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
-        if (obj == null) out.writeNull();
-        else {
+        if (obj == null) {
+            out.writeNull();
+        } else {
             Locale locale = (Locale) obj;
 
             out.writeObject(new LocaleHandle(locale.toString()));

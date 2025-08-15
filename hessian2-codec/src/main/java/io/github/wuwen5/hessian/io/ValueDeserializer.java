@@ -53,15 +53,19 @@ import java.io.IOException;
 /**
  * Deserializing a string valued object
  */
-public abstract class ValueDeserializer extends AbstractDeserializer {
+public abstract class ValueDeserializer extends BaseDeserializer {
+    @Override
     public Object readMap(AbstractHessianDecoder in) throws IOException {
         String initValue = null;
 
         while (!in.isEnd()) {
             String key = in.readString();
 
-            if (key.equals("value")) initValue = in.readString();
-            else in.readObject();
+            if (key.equals("value")) {
+                initValue = in.readString();
+            } else {
+                in.readObject();
+            }
         }
 
         in.readMapEnd();
@@ -69,12 +73,16 @@ public abstract class ValueDeserializer extends AbstractDeserializer {
         return create(initValue);
     }
 
+    @Override
     public Object readObject(AbstractHessianDecoder in, String[] fieldNames) throws IOException {
         String initValue = null;
 
-        for (int i = 0; i < fieldNames.length; i++) {
-            if ("value".equals(fieldNames[i])) initValue = in.readString();
-            else in.readObject();
+        for (String fieldName : fieldNames) {
+            if ("value".equals(fieldName)) {
+                initValue = in.readString();
+            } else {
+                in.readObject();
+            }
         }
 
         return create(initValue);

@@ -106,10 +106,15 @@ public abstract class AbstractStreamSerializer extends AbstractSerializer {
             }
 
             try {
-                if (is != null) out.writeByteStream(is);
-                else out.writeNull();
+                if (is != null) {
+                    out.writeByteStream(is);
+                } else {
+                    out.writeNull();
+                }
             } finally {
-                if (is != null) is.close();
+                if (is != null) {
+                    is.close();
+                }
             }
         }
     }

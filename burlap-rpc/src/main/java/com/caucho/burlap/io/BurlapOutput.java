@@ -678,7 +678,6 @@ public class BurlapOutput extends AbstractBurlapOutput {
     /**
      * Removes a reference.
      */
-    @Override
     public boolean removeRef(Object obj) {
         if (_refs != null) {
             _refs.remove(obj);

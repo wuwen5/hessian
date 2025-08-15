@@ -59,10 +59,10 @@ public interface HessianConnectionFactory {
     /**
      * Sets the HessianProxyFactory
      */
-    public void setHessianProxyFactory(HessianProxyFactory factory);
+    void setHessianProxyFactory(HessianProxyFactory factory);
 
     /**
      * Opens a new or recycled connection to the HTTP server.
      */
-    public HessianConnection open(URL url) throws IOException;
+    HessianConnection open(URL url) throws IOException;
 }

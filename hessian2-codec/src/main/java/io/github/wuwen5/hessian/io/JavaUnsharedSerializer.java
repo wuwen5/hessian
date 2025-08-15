@@ -49,14 +49,11 @@
 package io.github.wuwen5.hessian.io;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 
 /**
  * Serializing an object for known object types.
  */
 public class JavaUnsharedSerializer extends JavaSerializer {
-    private static final Logger log = Logger.getLogger(JavaUnsharedSerializer.class.getName());
-
     public JavaUnsharedSerializer(Class<?> cl) {
         super(cl);
     }

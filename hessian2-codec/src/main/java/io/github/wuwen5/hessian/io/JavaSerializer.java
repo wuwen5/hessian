@@ -65,35 +65,39 @@ import java.util.logging.Logger;
 public class JavaSerializer extends AbstractSerializer {
     private static final Logger log = Logger.getLogger(JavaSerializer.class.getName());
 
-    private static final WeakHashMap<Class<?>, SoftReference<JavaSerializer>> _serializerMap =
-            new WeakHashMap<Class<?>, SoftReference<JavaSerializer>>();
+    private static final WeakHashMap<Class<?>, SoftReference<JavaSerializer>> SERIALIZER_MAP = new WeakHashMap<>();
 
-    private Field[] _fields;
-    private FieldSerializer[] _fieldSerializers;
+    private Field[] fields;
+    private FieldSerializer[] fieldSerializers;
 
-    private Object _writeReplaceFactory;
-    private Method _writeReplace;
+    private Object writeReplaceFactory;
+    private final Method writeReplace;
 
     public JavaSerializer(Class<?> cl) {
         introspect(cl);
 
-        _writeReplace = getWriteReplace(cl);
+        writeReplace = getWriteReplace(cl);
 
-        if (_writeReplace != null) _writeReplace.setAccessible(true);
+        if (writeReplace != null) {
+            writeReplace.setAccessible(true);
+        }
     }
 
     public static Serializer create(Class<?> cl) {
-        synchronized (_serializerMap) {
-            SoftReference<JavaSerializer> baseRef = _serializerMap.get(cl);
+        synchronized (SERIALIZER_MAP) {
+            SoftReference<JavaSerializer> baseRef = SERIALIZER_MAP.get(cl);
 
             JavaSerializer base = baseRef != null ? baseRef.get() : null;
 
             if (base == null) {
-                if (cl.isAnnotationPresent(HessianUnshared.class)) base = new JavaUnsharedSerializer(cl);
-                else base = new JavaSerializer(cl);
+                if (cl.isAnnotationPresent(HessianUnshared.class)) {
+                    base = new JavaUnsharedSerializer(cl);
+                } else {
+                    base = new JavaSerializer(cl);
+                }
 
-                baseRef = new SoftReference<JavaSerializer>(base);
-                _serializerMap.put(cl, baseRef);
+                baseRef = new SoftReference<>(base);
+                SERIALIZER_MAP.put(cl, baseRef);
             }
 
             return base;
@@ -101,39 +105,44 @@ public class JavaSerializer extends AbstractSerializer {
     }
 
     protected void introspect(Class<?> cl) {
-        if (_writeReplace != null) _writeReplace.setAccessible(true);
+        if (writeReplace != null) {
+            writeReplace.setAccessible(true);
+        }
 
-        ArrayList<Field> primitiveFields = new ArrayList<Field>();
-        ArrayList<Field> compoundFields = new ArrayList<Field>();
+        ArrayList<Field> primitiveFields = new ArrayList<>();
+        ArrayList<Field> compoundFields = new ArrayList<>();
 
         for (; cl != null; cl = cl.getSuperclass()) {
             Field[] fields = cl.getDeclaredFields();
-            for (int i = 0; i < fields.length; i++) {
-                Field field = fields[i];
-
-                if (Modifier.isTransient(field.getModifiers()) || Modifier.isStatic(field.getModifiers())) continue;
+            for (Field field : fields) {
+                if (Modifier.isTransient(field.getModifiers()) || Modifier.isStatic(field.getModifiers())) {
+                    continue;
+                }
 
                 // XXX: could parameterize the handler to only deal with public
                 field.setAccessible(true);
 
                 if (field.getType().isPrimitive()
                         || (field.getType().getName().startsWith("java.lang.")
-                                && !field.getType().equals(Object.class))) primitiveFields.add(field);
-                else compoundFields.add(field);
+                                && !field.getType().equals(Object.class))) {
+                    primitiveFields.add(field);
+                } else {
+                    compoundFields.add(field);
+                }
             }
         }
 
-        ArrayList<Field> fields = new ArrayList<Field>();
+        ArrayList<Field> fields = new ArrayList<>();
         fields.addAll(primitiveFields);
         fields.addAll(compoundFields);
 
-        _fields = new Field[fields.size()];
-        fields.toArray(_fields);
+        this.fields = new Field[fields.size()];
+        fields.toArray(this.fields);
 
-        _fieldSerializers = new FieldSerializer[_fields.length];
+        fieldSerializers = new FieldSerializer[this.fields.length];
 
-        for (int i = 0; i < _fields.length; i++) {
-            _fieldSerializers[i] = getFieldSerializer(_fields[i].getType());
+        for (int i = 0; i < this.fields.length; i++) {
+            fieldSerializers[i] = getFieldSerializer(this.fields[i].getType());
         }
     }
 
@@ -144,10 +153,10 @@ public class JavaSerializer extends AbstractSerializer {
         for (; cl != null; cl = cl.getSuperclass()) {
             Method[] methods = cl.getDeclaredMethods();
 
-            for (int i = 0; i < methods.length; i++) {
-                Method method = methods[i];
-
-                if (method.getName().equals("writeReplace") && method.getParameterTypes().length == 0) return method;
+            for (Method method : methods) {
+                if ("writeReplace".equals(method.getName()) && method.getParameterTypes().length == 0) {
+                    return method;
+                }
             }
         }
 
@@ -160,9 +169,11 @@ public class JavaSerializer extends AbstractSerializer {
     protected Method getWriteReplace(Class<?> cl, Class<?> param) {
         for (; cl != null; cl = cl.getSuperclass()) {
             for (Method method : cl.getDeclaredMethods()) {
-                if (method.getName().equals("writeReplace")
+                if ("writeReplace".equals(method.getName())
                         && method.getParameterTypes().length == 1
-                        && param.equals(method.getParameterTypes()[0])) return method;
+                        && param.equals(method.getParameterTypes()[0])) {
+                    return method;
+                }
             }
         }
 
@@ -178,13 +189,14 @@ public class JavaSerializer extends AbstractSerializer {
         Class<?> cl = obj.getClass();
 
         try {
-            if (_writeReplace != null) {
+            if (writeReplace != null) {
                 Object repl;
 
-                if (_writeReplaceFactory != null) repl = _writeReplace.invoke(_writeReplaceFactory, obj);
-                else repl = _writeReplace.invoke(obj);
-
-                // out.removeRef(obj);
+                if (writeReplaceFactory != null) {
+                    repl = writeReplace.invoke(writeReplaceFactory, obj);
+                } else {
+                    repl = writeReplace.invoke(obj);
+                }
 
                 /*
                 out.writeObject(repl);
@@ -211,7 +223,6 @@ public class JavaSerializer extends AbstractSerializer {
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
-            // log.log(Level.FINE, e.toString(), e);
             throw new RuntimeException(e);
         }
 
@@ -229,24 +240,23 @@ public class JavaSerializer extends AbstractSerializer {
         }
     }
 
+    @Override
     protected void writeObject10(Object obj, AbstractHessianEncoder out) throws IOException {
-        for (int i = 0; i < _fields.length; i++) {
-            Field field = _fields[i];
+        for (int i = 0; i < fields.length; i++) {
+            Field field = fields[i];
 
             out.writeString(field.getName());
 
-            _fieldSerializers[i].serialize(out, obj, field);
+            fieldSerializers[i].serialize(out, obj, field);
         }
 
         out.writeMapEnd();
     }
 
     private void writeDefinition20(AbstractHessianEncoder out) throws IOException {
-        out.writeClassFieldLength(_fields.length);
+        out.writeClassFieldLength(fields.length);
 
-        for (int i = 0; i < _fields.length; i++) {
-            Field field = _fields[i];
-
+        for (Field field : fields) {
             out.writeString(field.getName());
         }
     }
@@ -254,10 +264,10 @@ public class JavaSerializer extends AbstractSerializer {
     @Override
     public void writeInstance(Object obj, AbstractHessianEncoder out) throws IOException {
         try {
-            for (int i = 0; i < _fields.length; i++) {
-                Field field = _fields[i];
+            for (int i = 0; i < fields.length; i++) {
+                Field field = fields[i];
 
-                _fieldSerializers[i].serialize(out, obj, field);
+                fieldSerializers[i].serialize(out, obj, field);
             }
         } catch (RuntimeException e) {
             throw new RuntimeException(
@@ -269,7 +279,7 @@ public class JavaSerializer extends AbstractSerializer {
     }
 
     private static FieldSerializer getFieldSerializer(Class<?> type) {
-        if (int.class.equals(type) || byte.class.equals(type) || short.class.equals(type) || int.class.equals(type)) {
+        if (int.class.equals(type) || byte.class.equals(type) || short.class.equals(type)) {
             return IntFieldSerializer.SER;
         } else if (long.class.equals(type)) {
             return LongFieldSerializer.SER;
@@ -284,7 +294,9 @@ public class JavaSerializer extends AbstractSerializer {
                 || java.sql.Timestamp.class.equals(type)
                 || java.sql.Time.class.equals(type)) {
             return DateFieldSerializer.SER;
-        } else return FieldSerializer.SER;
+        } else {
+            return FieldSerializer.SER;
+        }
     }
 
     static class FieldSerializer {
@@ -320,6 +332,7 @@ public class JavaSerializer extends AbstractSerializer {
     static class BooleanFieldSerializer extends FieldSerializer {
         static final FieldSerializer SER = new BooleanFieldSerializer();
 
+        @Override
         void serialize(AbstractHessianEncoder out, Object obj, Field field) throws IOException {
             boolean value = false;
 
@@ -336,6 +349,7 @@ public class JavaSerializer extends AbstractSerializer {
     static class IntFieldSerializer extends FieldSerializer {
         static final FieldSerializer SER = new IntFieldSerializer();
 
+        @Override
         void serialize(AbstractHessianEncoder out, Object obj, Field field) throws IOException {
             int value = 0;
 
@@ -352,6 +366,7 @@ public class JavaSerializer extends AbstractSerializer {
     static class LongFieldSerializer extends FieldSerializer {
         static final FieldSerializer SER = new LongFieldSerializer();
 
+        @Override
         void serialize(AbstractHessianEncoder out, Object obj, Field field) throws IOException {
             long value = 0;
 
@@ -368,6 +383,7 @@ public class JavaSerializer extends AbstractSerializer {
     static class DoubleFieldSerializer extends FieldSerializer {
         static final FieldSerializer SER = new DoubleFieldSerializer();
 
+        @Override
         void serialize(AbstractHessianEncoder out, Object obj, Field field) throws IOException {
             double value = 0;
 
@@ -384,6 +400,7 @@ public class JavaSerializer extends AbstractSerializer {
     static class StringFieldSerializer extends FieldSerializer {
         static final FieldSerializer SER = new StringFieldSerializer();
 
+        @Override
         void serialize(AbstractHessianEncoder out, Object obj, Field field) throws IOException {
             String value = null;
 
@@ -400,6 +417,7 @@ public class JavaSerializer extends AbstractSerializer {
     static class DateFieldSerializer extends FieldSerializer {
         static final FieldSerializer SER = new DateFieldSerializer();
 
+        @Override
         void serialize(AbstractHessianEncoder out, Object obj, Field field) throws IOException {
             java.util.Date value = null;
 
@@ -409,8 +427,11 @@ public class JavaSerializer extends AbstractSerializer {
                 log.log(Level.FINE, e.toString(), e);
             }
 
-            if (value == null) out.writeNull();
-            else out.writeUTCDate(value.getTime());
+            if (value == null) {
+                out.writeNull();
+            } else {
+                out.writeUTCDate(value.getTime());
+            }
         }
     }
 }

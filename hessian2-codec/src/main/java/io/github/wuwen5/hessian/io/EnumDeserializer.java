@@ -54,35 +54,44 @@ import java.lang.reflect.Method;
 /**
  * Deserializing an enum valued object
  */
-public class EnumDeserializer extends AbstractDeserializer {
-    private Class _enumType;
-    private Method _valueOf;
+public class EnumDeserializer extends BaseDeserializer {
+    private final Class<?> enumType;
+    private final Method valueOf;
 
-    public EnumDeserializer(Class cl) {
+    public EnumDeserializer(Class<?> cl) {
         // hessian/33b[34], hessian/3bb[78]
-        if (cl.isEnum()) _enumType = cl;
-        else if (cl.getSuperclass().isEnum()) _enumType = cl.getSuperclass();
-        else throw new RuntimeException("Class " + cl.getName() + " is not an enum");
+        if (cl.isEnum()) {
+            enumType = cl;
+        } else if (cl.getSuperclass().isEnum()) {
+            enumType = cl.getSuperclass();
+        } else {
+            throw new RuntimeException("Class " + cl.getName() + " is not an enum");
+        }
 
         try {
-            _valueOf = _enumType.getMethod("valueOf", new Class[] {Class.class, String.class});
+            valueOf = enumType.getMethod("valueOf", Class.class, String.class);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public Class getType() {
-        return _enumType;
+    @Override
+    public Class<?> getType() {
+        return enumType;
     }
 
+    @Override
     public Object readMap(AbstractHessianDecoder in) throws IOException {
         String name = null;
 
         while (!in.isEnd()) {
             String key = in.readString();
 
-            if (key.equals("name")) name = in.readString();
-            else in.readObject();
+            if ("name".equals(key)) {
+                name = in.readString();
+            } else {
+                in.readObject();
+            }
         }
 
         in.readMapEnd();
@@ -99,9 +108,12 @@ public class EnumDeserializer extends AbstractDeserializer {
         String[] fieldNames = (String[]) fields;
         String name = null;
 
-        for (int i = 0; i < fieldNames.length; i++) {
-            if ("name".equals(fieldNames[i])) name = in.readString();
-            else in.readObject();
+        for (String fieldName : fieldNames) {
+            if ("name".equals(fieldName)) {
+                name = in.readString();
+            } else {
+                in.readObject();
+            }
         }
 
         Object obj = create(name);
@@ -112,10 +124,12 @@ public class EnumDeserializer extends AbstractDeserializer {
     }
 
     private Object create(String name) throws IOException {
-        if (name == null) throw new IOException(_enumType.getName() + " expects name.");
+        if (name == null) {
+            throw new IOException(enumType.getName() + " expects name.");
+        }
 
         try {
-            return _valueOf.invoke(null, _enumType, name);
+            return valueOf.invoke(null, enumType, name);
         } catch (Exception e) {
             throw new IOExceptionWrapper(e);
         }

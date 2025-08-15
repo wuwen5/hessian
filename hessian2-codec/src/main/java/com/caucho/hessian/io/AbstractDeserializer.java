@@ -48,7 +48,9 @@
 
 package com.caucho.hessian.io;
 
+import io.github.wuwen5.hessian.io.BaseDeserializer;
+
 /**
  * Deserializing an object.
  */
-public class AbstractDeserializer extends io.github.wuwen5.hessian.io.AbstractDeserializer {}
+public class AbstractDeserializer extends BaseDeserializer {}

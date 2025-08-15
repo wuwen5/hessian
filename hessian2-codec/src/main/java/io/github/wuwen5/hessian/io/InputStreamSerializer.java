@@ -57,11 +57,13 @@ import java.io.InputStream;
 public class InputStreamSerializer extends AbstractSerializer {
     public InputStreamSerializer() {}
 
+    @Override
     public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
         InputStream is = (InputStream) obj;
 
-        if (is == null) out.writeNull();
-        else {
+        if (is == null) {
+            out.writeNull();
+        } else {
             out.writeByteStream(is);
         }
     }

@@ -1788,7 +1788,9 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
                 while (offset < chunkLength) {
                     int sublen = read(buffer, 0, chunkLength - offset);
 
-                    if (sublen <= 0) break;
+                    if (sublen <= 0) {
+                        break;
+                    }
 
                     offset += sublen;
                 }
@@ -3434,7 +3436,9 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
                             + " at 0x" + Integer.toHexString(ch & 0xff)
                             + " " + obj.getClass().getName() + " (" + obj + ")"
                             + "\n  " + context + "");
-                } else return error("expected " + expect + " at 0x" + Integer.toHexString(ch & 0xff) + " null");
+                } else {
+                    return error("expected " + expect + " at 0x" + Integer.toHexString(ch & 0xff) + " null");
+                }
             } catch (Exception e) {
                 log.debug(e.toString(), e);
 
@@ -3491,17 +3495,18 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
 
     @Override
     public void close() throws IOException {
-        InputStream is = this.is;
+        InputStream lis = this.is;
         this.is = null;
 
-        if (isCloseStreamOnClose && is != null) {
-            is.close();
+        if (isCloseStreamOnClose && lis != null) {
+            lis.close();
         }
     }
 
     class ReadInputStream extends InputStream {
         boolean isClosed = false;
 
+        @Override
         public int read() throws IOException {
             if (isClosed) {
                 return -1;
@@ -3515,6 +3520,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             return ch;
         }
 
+        @Override
         public int read(byte[] buffer, int offset, int length) throws IOException {
             if (isClosed) {
                 return -1;

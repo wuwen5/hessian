@@ -55,29 +55,36 @@ import java.lang.reflect.Method;
  * Serializing an object for known object types.
  */
 public class EnumSerializer extends AbstractSerializer {
-    private Method _name;
+    private final Method name;
 
-    public EnumSerializer(Class cl) {
+    public EnumSerializer(Class<?> cl) {
         // hessian/32b[12], hessian/3ab[23]
-        if (!cl.isEnum() && cl.getSuperclass().isEnum()) cl = cl.getSuperclass();
+        if (!cl.isEnum() && cl.getSuperclass().isEnum()) {
+            cl = cl.getSuperclass();
+        }
 
         try {
-            _name = cl.getMethod("name", new Class[0]);
+            name = cl.getMethod("name");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
+    @Override
     public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
-        if (out.addRef(obj)) return;
+        if (out.addRef(obj)) {
+            return;
+        }
 
         Class<?> cl = obj.getClass();
 
-        if (!cl.isEnum() && cl.getSuperclass().isEnum()) cl = cl.getSuperclass();
+        if (!cl.isEnum() && cl.getSuperclass().isEnum()) {
+            cl = cl.getSuperclass();
+        }
 
-        String name = null;
+        String name;
         try {
-            name = (String) _name.invoke(obj, (Object[]) null);
+            name = (String) this.name.invoke(obj, (Object[]) null);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

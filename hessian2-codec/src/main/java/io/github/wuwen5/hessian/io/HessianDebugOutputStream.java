@@ -63,7 +63,7 @@ public class HessianDebugOutputStream extends OutputStream {
 
     private OutputStream os;
 
-    private HessianDebugState state;
+    private final HessianDebugState state;
 
     /**
      * Creates an uninitialized Hessian input stream.
@@ -126,12 +126,12 @@ public class HessianDebugOutputStream extends OutputStream {
      */
     @Override
     public void close() throws IOException {
-        OutputStream os = this.os;
+        OutputStream los = this.os;
         this.os = null;
 
-        if (os != null) {
+        if (los != null) {
             state.next(-1);
-            os.close();
+            los.close();
         }
 
         state.println();

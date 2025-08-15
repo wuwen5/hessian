@@ -55,59 +55,72 @@ import java.util.*;
  * Deserializing a JDK 1.2 Collection.
  */
 public class CollectionDeserializer extends AbstractListDeserializer {
-    private Class _type;
+    private final Class<?> type;
 
-    public CollectionDeserializer(Class type) {
-        _type = type;
+    public CollectionDeserializer(Class<?> type) {
+        this.type = type;
     }
 
-    public Class getType() {
-        return _type;
+    @Override
+    public Class<?> getType() {
+        return type;
     }
 
+    @Override
     public Object readList(AbstractHessianDecoder in, int length) throws IOException {
-        Collection list = createList();
+        Collection<Object> list = createList();
 
         in.addRef(list);
 
-        while (!in.isEnd()) list.add(in.readObject());
+        while (!in.isEnd()) {
+            list.add(in.readObject());
+        }
 
         in.readEnd();
 
         return list;
     }
 
+    @Override
     public Object readLengthList(AbstractHessianDecoder in, int length) throws IOException {
-        Collection list = createList();
+        Collection<Object> list = createList();
 
         in.addRef(list);
 
-        for (; length > 0; length--) list.add(in.readObject());
+        for (; length > 0; length--) {
+            list.add(in.readObject());
+        }
 
         return list;
     }
 
-    private Collection createList() throws IOException {
-        Collection list = null;
+    private Collection<Object> createList() throws IOException {
+        Collection<Object> list = null;
 
-        if (_type == null) list = new ArrayList();
-        else if (!_type.isInterface()) {
+        if (type == null) {
+            list = new ArrayList<>();
+        } else if (!type.isInterface()) {
             try {
-                list = (Collection) _type.newInstance();
-            } catch (Exception e) {
+                list = (Collection) type.newInstance();
+            } catch (Exception ignored) {
             }
         }
 
-        if (list != null) {
-        } else if (SortedSet.class.isAssignableFrom(_type)) list = new TreeSet();
-        else if (Set.class.isAssignableFrom(_type)) list = new HashSet();
-        else if (List.class.isAssignableFrom(_type)) list = new ArrayList();
-        else if (Collection.class.isAssignableFrom(_type)) list = new ArrayList();
-        else {
-            try {
-                list = (Collection) _type.newInstance();
-            } catch (Exception e) {
-                throw new IOExceptionWrapper(e);
+        if (list == null) {
+            if (SortedSet.class.isAssignableFrom(type)) {
+                list = new TreeSet<>();
+            } else if (Set.class.isAssignableFrom(type)) {
+                list = new HashSet<>();
+            } else if (List.class.isAssignableFrom(type)) {
+                list = new ArrayList<>();
+            } else if (Collection.class.isAssignableFrom(type)) {
+                list = new ArrayList<>();
+            } else {
+                try {
+                    list = (Collection) type.newInstance();
+                } catch (Exception e) {
+                    throw new IOExceptionWrapper(e);
+                }
             }
         }
 
@@ -115,6 +128,6 @@ public class CollectionDeserializer extends AbstractListDeserializer {
     }
 
     public String toString() {
-        return getClass().getSimpleName() + "[" + _type + "]";
+        return getClass().getSimpleName() + "[" + type + "]";
     }
 }

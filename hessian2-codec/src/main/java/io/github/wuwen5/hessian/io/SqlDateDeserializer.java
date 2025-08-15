@@ -55,23 +55,25 @@ import java.lang.reflect.Constructor;
 /**
  * Deserializing a string valued object
  */
-public class SqlDateDeserializer extends AbstractDeserializer {
-    private Class _cl;
-    private Constructor _constructor;
+public class SqlDateDeserializer extends BaseDeserializer {
+    private final Class<?> cl;
+    private final Constructor<?> constructor;
 
-    public SqlDateDeserializer(Class cl) {
+    public SqlDateDeserializer(Class<?> cl) {
         try {
-            _cl = cl;
-            _constructor = cl.getConstructor(new Class[] {long.class});
+            this.cl = cl;
+            constructor = cl.getConstructor(long.class);
         } catch (NoSuchMethodException e) {
             throw new HessianException(e);
         }
     }
 
-    public Class getType() {
-        return _cl;
+    @Override
+    public Class<?> getType() {
+        return cl;
     }
 
+    @Override
     public Object readMap(AbstractHessianDecoder in) throws IOException {
         int ref = in.addRef(null);
 
@@ -80,8 +82,11 @@ public class SqlDateDeserializer extends AbstractDeserializer {
         while (!in.isEnd()) {
             String key = in.readString();
 
-            if (key.equals("value")) initValue = in.readUTCDate();
-            else in.readString();
+            if ("value".equals(key)) {
+                initValue = in.readUTCDate();
+            } else {
+                in.readString();
+            }
         }
 
         in.readMapEnd();
@@ -93,6 +98,7 @@ public class SqlDateDeserializer extends AbstractDeserializer {
         return value;
     }
 
+    @Override
     public Object readObject(AbstractHessianDecoder in, Object[] fields) throws IOException {
         String[] fieldNames = (String[]) fields;
 
@@ -100,11 +106,12 @@ public class SqlDateDeserializer extends AbstractDeserializer {
 
         long initValue = Long.MIN_VALUE;
 
-        for (int i = 0; i < fieldNames.length; i++) {
-            String key = fieldNames[i];
-
-            if (key.equals("value")) initValue = in.readUTCDate();
-            else in.readObject();
+        for (String key : fieldNames) {
+            if ("value".equals(key)) {
+                initValue = in.readUTCDate();
+            } else {
+                in.readObject();
+            }
         }
 
         Object value = create(initValue);
@@ -115,10 +122,10 @@ public class SqlDateDeserializer extends AbstractDeserializer {
     }
 
     private Object create(long initValue) throws IOException {
-        if (initValue == Long.MIN_VALUE) throw new IOException(_cl.getName() + " expects name.");
+        if (initValue == Long.MIN_VALUE) throw new IOException(cl.getName() + " expects name.");
 
         try {
-            return _constructor.newInstance(new Object[] {new Long(initValue)});
+            return constructor.newInstance(new Long(initValue));
         } catch (Exception e) {
             throw new IOExceptionWrapper(e);
         }

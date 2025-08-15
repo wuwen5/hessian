@@ -55,6 +55,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Input stream for Hessian requests, deserializing objects using the
@@ -107,14 +108,16 @@ public class HessianSerializerInput extends HessianDecoder {
      * Reads an object from the input stream.  cl is known not to be
      * a Map.
      */
-    public Object readObjectImpl(Class cl) throws IOException {
+    public Object readObjectImpl(Class<?> cl) throws IOException {
         try {
-            Object obj = cl.newInstance();
+            Object obj = cl.getDeclaredConstructor().newInstance();
 
-            if (refs == null) refs = new ArrayList();
+            if (refs == null) {
+                refs = new ArrayList<>();
+            }
             refs.add(obj);
 
-            HashMap fieldMap = getFieldMap(cl);
+            Map<String, Field> fieldMap = getFieldMap(cl);
 
             int code = read();
             for (; code >= 0 && code != 'z'; code = read()) {
@@ -122,23 +125,25 @@ public class HessianSerializerInput extends HessianDecoder {
 
                 Object key = readObject();
 
-                Field field = (Field) fieldMap.get(key);
+                Field field = fieldMap.get(key);
 
                 if (field != null) {
                     Object value = readObject(field.getType());
                     field.set(obj, value);
                 } else {
-                    Object value = readObject();
+                    readObject();
                 }
             }
 
-            if (code != 'z') throw expect("map", code);
+            if (code != 'z') {
+                throw expect("map", code);
+            }
 
             // if there's a readResolve method, call it
             try {
-                Method method = cl.getMethod("readResolve", new Class[0]);
-                return method.invoke(obj, new Object[0]);
-            } catch (Exception e) {
+                Method method = cl.getMethod("readResolve");
+                return method.invoke(obj);
+            } catch (Exception ignored) {
             }
 
             return obj;
@@ -152,15 +157,15 @@ public class HessianSerializerInput extends HessianDecoder {
     /**
      * Creates a map of the classes fields.
      */
-    protected HashMap getFieldMap(Class cl) {
-        HashMap fieldMap = new HashMap();
+    protected Map<String, Field> getFieldMap(Class<?> cl) {
+        Map<String, Field> fieldMap = new HashMap<>();
 
         for (; cl != null; cl = cl.getSuperclass()) {
             Field[] fields = cl.getDeclaredFields();
-            for (int i = 0; i < fields.length; i++) {
-                Field field = fields[i];
-
-                if (Modifier.isTransient(field.getModifiers()) || Modifier.isStatic(field.getModifiers())) continue;
+            for (Field field : fields) {
+                if (Modifier.isTransient(field.getModifiers()) || Modifier.isStatic(field.getModifiers())) {
+                    continue;
+                }
 
                 // XXX: could parameterize the handler to only deal with public
                 field.setAccessible(true);

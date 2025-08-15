@@ -109,8 +109,8 @@ public class HessianSerializerOutput extends HessianEncoder {
         Class<?> cl = obj.getClass();
 
         try {
-            Method method = cl.getMethod("writeReplace", new Class[0]);
-            Object repl = method.invoke(obj, new Object[0]);
+            Method method = cl.getMethod("writeReplace");
+            Object repl = method.invoke(obj);
 
             writeObject(repl);
             return;

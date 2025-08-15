@@ -49,13 +49,14 @@
 package io.github.wuwen5.hessian.io;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Factory for returning serialization methods.
  */
 public class ExtSerializerFactory extends AbstractSerializerFactory {
-    private HashMap _serializerMap = new HashMap();
-    private HashMap _deserializerMap = new HashMap();
+    private Map<Class<?>, Serializer> serializerMap = new HashMap<>();
+    private Map<Class<?>, Deserializer> deserializerMap = new HashMap<>();
 
     /**
      * Adds a serializer.
@@ -63,8 +64,8 @@ public class ExtSerializerFactory extends AbstractSerializerFactory {
      * @param cl the class of the serializer
      * @param serializer the serializer
      */
-    public void addSerializer(Class cl, Serializer serializer) {
-        _serializerMap.put(cl, serializer);
+    public void addSerializer(Class<?> cl, Serializer serializer) {
+        serializerMap.put(cl, serializer);
     }
 
     /**
@@ -73,8 +74,8 @@ public class ExtSerializerFactory extends AbstractSerializerFactory {
      * @param cl the class of the deserializer
      * @param deserializer the deserializer
      */
-    public void addDeserializer(Class cl, Deserializer deserializer) {
-        _deserializerMap.put(cl, deserializer);
+    public void addDeserializer(Class<?> cl, Deserializer deserializer) {
+        deserializerMap.put(cl, deserializer);
     }
 
     /**
@@ -84,8 +85,9 @@ public class ExtSerializerFactory extends AbstractSerializerFactory {
      *
      * @return a serializer object for the serialization.
      */
-    public Serializer getSerializer(Class cl) throws HessianProtocolException {
-        return (Serializer) _serializerMap.get(cl);
+    @Override
+    public Serializer getSerializer(Class<?> cl) {
+        return serializerMap.get(cl);
     }
 
     /**
@@ -96,6 +98,6 @@ public class ExtSerializerFactory extends AbstractSerializerFactory {
      * @return a deserializer object for the serialization.
      */
     public Deserializer getDeserializer(Class cl) throws HessianProtocolException {
-        return (Deserializer) _deserializerMap.get(cl);
+        return (Deserializer) deserializerMap.get(cl);
     }
 }

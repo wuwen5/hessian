@@ -51,11 +51,12 @@ package io.github.wuwen5.hessian.io;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Serializing an object for known object types.
  */
-public class BasicDeserializer extends AbstractDeserializer {
+public class BasicDeserializer extends BaseDeserializer {
     public static final int NULL = BasicSerializer.NULL;
     public static final int BOOLEAN = BasicSerializer.BOOLEAN;
     public static final int BYTE = BasicSerializer.BYTE;
@@ -82,14 +83,15 @@ public class BasicDeserializer extends AbstractDeserializer {
     public static final int STRING_ARRAY = BasicSerializer.STRING_ARRAY;
     public static final int OBJECT_ARRAY = BasicSerializer.OBJECT_ARRAY;
 
-    private int _code;
+    private int code;
 
     public BasicDeserializer(int code) {
-        _code = code;
+        this.code = code;
     }
 
-    public Class getType() {
-        switch (_code) {
+    @Override
+    public Class<?> getType() {
+        switch (code) {
             case NULL:
                 return void.class;
             case BOOLEAN:
@@ -107,7 +109,6 @@ public class BasicDeserializer extends AbstractDeserializer {
             case DOUBLE:
                 return Double.class;
             case CHARACTER:
-                return Character.class;
             case CHARACTER_OBJECT:
                 return Character.class;
             case STRING:
@@ -146,7 +147,7 @@ public class BasicDeserializer extends AbstractDeserializer {
 
     @Override
     public Object readObject(AbstractHessianDecoder in) throws IOException {
-        switch (_code) {
+        switch (code) {
             case NULL:
                 // hessian/3490
                 in.readObject();
@@ -178,29 +179,30 @@ public class BasicDeserializer extends AbstractDeserializer {
                 return in.readString();
 
             case OBJECT:
+            case NUMBER:
                 return in.readObject();
 
             case CHARACTER: {
                 String s = in.readString();
-                if (s == null || s.equals("")) return Character.valueOf((char) 0);
-                else return Character.valueOf(s.charAt(0));
+                if (s == null || s.isEmpty()) {
+                    return Character.valueOf((char) 0);
+                } else {
+                    return Character.valueOf(s.charAt(0));
+                }
             }
 
             case CHARACTER_OBJECT: {
                 String s = in.readString();
-                if (s == null || s.equals("")) return null;
-                else return Character.valueOf(s.charAt(0));
+                if (s == null || s.isEmpty()) {
+                    return null;
+                } else {
+                    return Character.valueOf(s.charAt(0));
+                }
             }
-
             case DATE:
                 return new Date(in.readUTCDate());
-
-            case NUMBER:
-                return in.readObject();
-
             case BYTE_ARRAY:
                 return in.readBytes();
-
             case CHARACTER_ARRAY: {
                 String s = in.readString();
 
@@ -248,7 +250,7 @@ public class BasicDeserializer extends AbstractDeserializer {
                         return readLengthList(in, length);
 
                     default:
-                        String type = in.readType();
+                        in.readType();
                         length = in.readLength();
 
                         return readList(in, length);
@@ -262,22 +264,26 @@ public class BasicDeserializer extends AbstractDeserializer {
 
     @Override
     public Object readList(AbstractHessianDecoder in, int length) throws IOException {
-        switch (_code) {
+        switch (code) {
             case BOOLEAN_ARRAY: {
                 if (length >= 0) {
                     boolean[] data = new boolean[length];
 
                     in.addRef(data);
 
-                    for (int i = 0; i < data.length; i++) data[i] = in.readBoolean();
+                    for (int i = 0; i < data.length; i++) {
+                        data[i] = in.readBoolean();
+                    }
 
                     in.readEnd();
 
                     return data;
                 } else {
-                    ArrayList list = new ArrayList();
+                    List<Boolean> list = new ArrayList<>();
 
-                    while (!in.isEnd()) list.add(Boolean.valueOf(in.readBoolean()));
+                    while (!in.isEnd()) {
+                        list.add(Boolean.valueOf(in.readBoolean()));
+                    }
 
                     in.readEnd();
 
@@ -285,7 +291,9 @@ public class BasicDeserializer extends AbstractDeserializer {
 
                     in.addRef(data);
 
-                    for (int i = 0; i < data.length; i++) data[i] = ((Boolean) list.get(i)).booleanValue();
+                    for (int i = 0; i < data.length; i++) {
+                        data[i] = list.get(i);
+                    }
 
                     return data;
                 }
@@ -297,20 +305,26 @@ public class BasicDeserializer extends AbstractDeserializer {
 
                     in.addRef(data);
 
-                    for (int i = 0; i < data.length; i++) data[i] = (short) in.readInt();
+                    for (int i = 0; i < data.length; i++) {
+                        data[i] = (short) in.readInt();
+                    }
 
                     in.readEnd();
 
                     return data;
                 } else {
-                    ArrayList list = new ArrayList();
+                    List<Short> list = new ArrayList<>();
 
-                    while (!in.isEnd()) list.add(Short.valueOf((short) in.readInt()));
+                    while (!in.isEnd()) {
+                        list.add(Short.valueOf((short) in.readInt()));
+                    }
 
                     in.readEnd();
 
                     short[] data = new short[list.size()];
-                    for (int i = 0; i < data.length; i++) data[i] = ((Short) list.get(i)).shortValue();
+                    for (int i = 0; i < data.length; i++) {
+                        data[i] = list.get(i).shortValue();
+                    }
 
                     in.addRef(data);
 
@@ -324,20 +338,26 @@ public class BasicDeserializer extends AbstractDeserializer {
 
                     in.addRef(data);
 
-                    for (int i = 0; i < data.length; i++) data[i] = in.readInt();
+                    for (int i = 0; i < data.length; i++) {
+                        data[i] = in.readInt();
+                    }
 
                     in.readEnd();
 
                     return data;
                 } else {
-                    ArrayList list = new ArrayList();
+                    List<Integer> list = new ArrayList<>();
 
-                    while (!in.isEnd()) list.add(Integer.valueOf(in.readInt()));
+                    while (!in.isEnd()) {
+                        list.add(Integer.valueOf(in.readInt()));
+                    }
 
                     in.readEnd();
 
                     int[] data = new int[list.size()];
-                    for (int i = 0; i < data.length; i++) data[i] = ((Integer) list.get(i)).intValue();
+                    for (int i = 0; i < data.length; i++) {
+                        data[i] = list.get(i).intValue();
+                    }
 
                     in.addRef(data);
 
@@ -351,20 +371,26 @@ public class BasicDeserializer extends AbstractDeserializer {
 
                     in.addRef(data);
 
-                    for (int i = 0; i < data.length; i++) data[i] = in.readLong();
+                    for (int i = 0; i < data.length; i++) {
+                        data[i] = in.readLong();
+                    }
 
                     in.readEnd();
 
                     return data;
                 } else {
-                    ArrayList list = new ArrayList();
+                    List<Long> list = new ArrayList<>();
 
-                    while (!in.isEnd()) list.add(Long.valueOf(in.readLong()));
+                    while (!in.isEnd()) {
+                        list.add(in.readLong());
+                    }
 
                     in.readEnd();
 
                     long[] data = new long[list.size()];
-                    for (int i = 0; i < data.length; i++) data[i] = ((Long) list.get(i)).longValue();
+                    for (int i = 0; i < data.length; i++) {
+                        data[i] = list.get(i);
+                    }
 
                     in.addRef(data);
 
@@ -377,20 +403,26 @@ public class BasicDeserializer extends AbstractDeserializer {
                     float[] data = new float[length];
                     in.addRef(data);
 
-                    for (int i = 0; i < data.length; i++) data[i] = (float) in.readDouble();
+                    for (int i = 0; i < data.length; i++) {
+                        data[i] = (float) in.readDouble();
+                    }
 
                     in.readEnd();
 
                     return data;
                 } else {
-                    ArrayList list = new ArrayList();
+                    List<Float> list = new ArrayList<>();
 
-                    while (!in.isEnd()) list.add(new Float(in.readDouble()));
+                    while (!in.isEnd()) {
+                        list.add((float) in.readDouble());
+                    }
 
                     in.readEnd();
 
                     float[] data = new float[list.size()];
-                    for (int i = 0; i < data.length; i++) data[i] = ((Float) list.get(i)).floatValue();
+                    for (int i = 0; i < data.length; i++) {
+                        data[i] = list.get(i);
+                    }
 
                     in.addRef(data);
 
@@ -403,21 +435,27 @@ public class BasicDeserializer extends AbstractDeserializer {
                     double[] data = new double[length];
                     in.addRef(data);
 
-                    for (int i = 0; i < data.length; i++) data[i] = in.readDouble();
+                    for (int i = 0; i < data.length; i++) {
+                        data[i] = in.readDouble();
+                    }
 
                     in.readEnd();
 
                     return data;
                 } else {
-                    ArrayList list = new ArrayList();
+                    List<Double> list = new ArrayList<>();
 
-                    while (!in.isEnd()) list.add(new Double(in.readDouble()));
+                    while (!in.isEnd()) {
+                        list.add(in.readDouble());
+                    }
 
                     in.readEnd();
 
                     double[] data = new double[list.size()];
                     in.addRef(data);
-                    for (int i = 0; i < data.length; i++) data[i] = ((Double) list.get(i)).doubleValue();
+                    for (int i = 0; i < data.length; i++) {
+                        data[i] = list.get(i);
+                    }
 
                     return data;
                 }
@@ -428,21 +466,27 @@ public class BasicDeserializer extends AbstractDeserializer {
                     String[] data = new String[length];
                     in.addRef(data);
 
-                    for (int i = 0; i < data.length; i++) data[i] = in.readString();
+                    for (int i = 0; i < data.length; i++) {
+                        data[i] = in.readString();
+                    }
 
                     in.readEnd();
 
                     return data;
                 } else {
-                    ArrayList list = new ArrayList();
+                    List<String> list = new ArrayList<>();
 
-                    while (!in.isEnd()) list.add(in.readString());
+                    while (!in.isEnd()) {
+                        list.add(in.readString());
+                    }
 
                     in.readEnd();
 
                     String[] data = new String[list.size()];
                     in.addRef(data);
-                    for (int i = 0; i < data.length; i++) data[i] = (String) list.get(i);
+                    for (int i = 0; i < data.length; i++) {
+                        data[i] = list.get(i);
+                    }
 
                     return data;
                 }
@@ -453,22 +497,29 @@ public class BasicDeserializer extends AbstractDeserializer {
                     Object[] data = new Object[length];
                     in.addRef(data);
 
-                    for (int i = 0; i < data.length; i++) data[i] = in.readObject();
+                    for (int i = 0; i < data.length; i++) {
+                        data[i] = in.readObject();
+                    }
 
                     in.readEnd();
 
                     return data;
                 } else {
-                    ArrayList list = new ArrayList();
+                    List<Object> list = new ArrayList<>();
 
-                    in.addRef(list); // XXX: potential issues here
+                    // XXX: potential issues here
+                    in.addRef(list);
 
-                    while (!in.isEnd()) list.add(in.readObject());
+                    while (!in.isEnd()) {
+                        list.add(in.readObject());
+                    }
 
                     in.readEnd();
 
                     Object[] data = new Object[list.size()];
-                    for (int i = 0; i < data.length; i++) data[i] = (Object) list.get(i);
+                    for (int i = 0; i < data.length; i++) {
+                        data[i] = list.get(i);
+                    }
 
                     return data;
                 }
@@ -479,14 +530,17 @@ public class BasicDeserializer extends AbstractDeserializer {
         }
     }
 
+    @Override
     public Object readLengthList(AbstractHessianDecoder in, int length) throws IOException {
-        switch (_code) {
+        switch (code) {
             case BOOLEAN_ARRAY: {
                 boolean[] data = new boolean[length];
 
                 in.addRef(data);
 
-                for (int i = 0; i < data.length; i++) data[i] = in.readBoolean();
+                for (int i = 0; i < data.length; i++) {
+                    data[i] = in.readBoolean();
+                }
 
                 return data;
             }
@@ -496,7 +550,9 @@ public class BasicDeserializer extends AbstractDeserializer {
 
                 in.addRef(data);
 
-                for (int i = 0; i < data.length; i++) data[i] = (short) in.readInt();
+                for (int i = 0; i < data.length; i++) {
+                    data[i] = (short) in.readInt();
+                }
 
                 return data;
             }
@@ -506,7 +562,9 @@ public class BasicDeserializer extends AbstractDeserializer {
 
                 in.addRef(data);
 
-                for (int i = 0; i < data.length; i++) data[i] = in.readInt();
+                for (int i = 0; i < data.length; i++) {
+                    data[i] = in.readInt();
+                }
 
                 return data;
             }
@@ -516,7 +574,9 @@ public class BasicDeserializer extends AbstractDeserializer {
 
                 in.addRef(data);
 
-                for (int i = 0; i < data.length; i++) data[i] = in.readLong();
+                for (int i = 0; i < data.length; i++) {
+                    data[i] = in.readLong();
+                }
 
                 return data;
             }
@@ -525,7 +585,9 @@ public class BasicDeserializer extends AbstractDeserializer {
                 float[] data = new float[length];
                 in.addRef(data);
 
-                for (int i = 0; i < data.length; i++) data[i] = (float) in.readDouble();
+                for (int i = 0; i < data.length; i++) {
+                    data[i] = (float) in.readDouble();
+                }
 
                 return data;
             }
@@ -534,7 +596,9 @@ public class BasicDeserializer extends AbstractDeserializer {
                 double[] data = new double[length];
                 in.addRef(data);
 
-                for (int i = 0; i < data.length; i++) data[i] = in.readDouble();
+                for (int i = 0; i < data.length; i++) {
+                    data[i] = in.readDouble();
+                }
 
                 return data;
             }
@@ -543,7 +607,9 @@ public class BasicDeserializer extends AbstractDeserializer {
                 String[] data = new String[length];
                 in.addRef(data);
 
-                for (int i = 0; i < data.length; i++) data[i] = in.readString();
+                for (int i = 0; i < data.length; i++) {
+                    data[i] = in.readString();
+                }
 
                 return data;
             }
@@ -552,7 +618,9 @@ public class BasicDeserializer extends AbstractDeserializer {
                 Object[] data = new Object[length];
                 in.addRef(data);
 
-                for (int i = 0; i < data.length; i++) data[i] = in.readObject();
+                for (int i = 0; i < data.length; i++) {
+                    data[i] = in.readObject();
+                }
 
                 return data;
             }
@@ -562,7 +630,8 @@ public class BasicDeserializer extends AbstractDeserializer {
         }
     }
 
+    @Override
     public String toString() {
-        return getClass().getSimpleName() + "[" + _code + "]";
+        return getClass().getSimpleName() + "[" + code + "]";
     }
 }

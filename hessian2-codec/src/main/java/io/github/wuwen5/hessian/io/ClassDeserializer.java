@@ -50,23 +50,26 @@ package io.github.wuwen5.hessian.io;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Deserializing a JDK 1.2 Class.
  */
 public class ClassDeserializer extends AbstractMapDeserializer {
-    private static final HashMap<String, Class> _primClasses = new HashMap<String, Class>();
+    private static final Map<String, Class<?>> PRIM_CLASSES = new HashMap<>();
 
-    private ClassLoader _loader;
+    private ClassLoader loader;
 
     public ClassDeserializer(ClassLoader loader) {
-        _loader = loader;
+        this.loader = loader;
     }
 
-    public Class getType() {
+    @Override
+    public Class<?> getType() {
         return Class.class;
     }
 
+    @Override
     public Object readMap(AbstractHessianDecoder in) throws IOException {
         int ref = in.addRef(null);
 
@@ -75,8 +78,11 @@ public class ClassDeserializer extends AbstractMapDeserializer {
         while (!in.isEnd()) {
             String key = in.readString();
 
-            if (key.equals("name")) name = in.readString();
-            else in.readObject();
+            if ("name".equals(key)) {
+                name = in.readString();
+            } else {
+                in.readObject();
+            }
         }
 
         in.readMapEnd();
@@ -88,6 +94,7 @@ public class ClassDeserializer extends AbstractMapDeserializer {
         return value;
     }
 
+    @Override
     public Object readObject(AbstractHessianDecoder in, Object[] fields) throws IOException {
         String[] fieldNames = (String[]) fields;
 
@@ -95,9 +102,12 @@ public class ClassDeserializer extends AbstractMapDeserializer {
 
         String name = null;
 
-        for (int i = 0; i < fieldNames.length; i++) {
-            if ("name".equals(fieldNames[i])) name = in.readString();
-            else in.readObject();
+        for (String fieldName : fieldNames) {
+            if ("name".equals(fieldName)) {
+                name = in.readString();
+            } else {
+                in.readObject();
+            }
         }
 
         Object value = create(name);
@@ -108,38 +118,45 @@ public class ClassDeserializer extends AbstractMapDeserializer {
     }
 
     Object create(String name) throws IOException {
-        if (name == null) throw new IOException("Serialized Class expects name.");
+        if (name == null) {
+            throw new IOException("Serialized Class expects name.");
+        }
 
-        Class cl = _primClasses.get(name);
+        Class<?> cl = PRIM_CLASSES.get(name);
 
-        if (cl != null) return cl;
+        if (cl != null) {
+            return cl;
+        }
 
         try {
-            if (_loader != null) return Class.forName(name, false, _loader);
-            else return Class.forName(name);
+            if (loader != null) {
+                return Class.forName(name, false, loader);
+            } else {
+                return Class.forName(name);
+            }
         } catch (Exception e) {
             throw new IOExceptionWrapper(e);
         }
     }
 
     static {
-        _primClasses.put("void", void.class);
-        _primClasses.put("boolean", boolean.class);
-        _primClasses.put("java.lang.Boolean", Boolean.class);
-        _primClasses.put("byte", byte.class);
-        _primClasses.put("java.lang.Byte", Byte.class);
-        _primClasses.put("char", char.class);
-        _primClasses.put("java.lang.Character", Character.class);
-        _primClasses.put("short", short.class);
-        _primClasses.put("java.lang.Short", Short.class);
-        _primClasses.put("int", int.class);
-        _primClasses.put("java.lang.Integer", Integer.class);
-        _primClasses.put("long", long.class);
-        _primClasses.put("java.lang.Long", Long.class);
-        _primClasses.put("float", float.class);
-        _primClasses.put("java.lang.Float", Float.class);
-        _primClasses.put("double", double.class);
-        _primClasses.put("java.lang.Double", Double.class);
-        _primClasses.put("java.lang.String", String.class);
+        PRIM_CLASSES.put("void", void.class);
+        PRIM_CLASSES.put("boolean", boolean.class);
+        PRIM_CLASSES.put("java.lang.Boolean", Boolean.class);
+        PRIM_CLASSES.put("byte", byte.class);
+        PRIM_CLASSES.put("java.lang.Byte", Byte.class);
+        PRIM_CLASSES.put("char", char.class);
+        PRIM_CLASSES.put("java.lang.Character", Character.class);
+        PRIM_CLASSES.put("short", short.class);
+        PRIM_CLASSES.put("java.lang.Short", Short.class);
+        PRIM_CLASSES.put("int", int.class);
+        PRIM_CLASSES.put("java.lang.Integer", Integer.class);
+        PRIM_CLASSES.put("long", long.class);
+        PRIM_CLASSES.put("java.lang.Long", Long.class);
+        PRIM_CLASSES.put("float", float.class);
+        PRIM_CLASSES.put("java.lang.Float", Float.class);
+        PRIM_CLASSES.put("double", double.class);
+        PRIM_CLASSES.put("java.lang.Double", Double.class);
+        PRIM_CLASSES.put("java.lang.String", String.class);
     }
 }

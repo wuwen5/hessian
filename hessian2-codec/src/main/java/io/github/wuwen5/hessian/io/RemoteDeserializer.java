@@ -48,14 +48,10 @@
 
 package io.github.wuwen5.hessian.io;
 
-import java.util.logging.Logger;
-
 /**
  * Serializing an object for known object types.
  */
 public class RemoteDeserializer extends JavaDeserializer {
-    private static final Logger log = Logger.getLogger(RemoteDeserializer.class.getName());
-
     public static final Deserializer DESER = new RemoteDeserializer();
 
     public RemoteDeserializer() {
@@ -73,9 +69,10 @@ public class RemoteDeserializer extends JavaDeserializer {
         HessianRemoteResolver resolver = in.getRemoteResolver();
 
         if (resolver != null) {
-            Object proxy = resolver.lookup(remote.getType(), remote.getURL());
 
-            return proxy;
-        } else return remote;
+            return resolver.lookup(remote.getType(), remote.getURL());
+        } else {
+            return remote;
+        }
     }
 }

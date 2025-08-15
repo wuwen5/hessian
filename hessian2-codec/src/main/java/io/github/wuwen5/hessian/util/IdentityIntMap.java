@@ -59,8 +59,9 @@ public class IdentityIntMap {
     /**
      * Encoding of a null entry.  Since NULL is equal to Integer.MIN_VALUE,
      * it's impossible to distinguish between the two.
+     * Integer.MIN_VALUE + 1;
      */
-    public static final int NULL = 0xdeadbeef; // Integer.MIN_VALUE + 1;
+    public static final int NULL = 0xdeadbeef;
 
     private Object[] _keys;
     private int[] _values;
@@ -106,7 +107,6 @@ public class IdentityIntMap {
     public final int get(Object key) {
         int prime = _prime;
         int hash = System.identityHashCode(key) % prime;
-        // int hash = key.hashCode() & mask;
 
         final Object[] keys = _keys;
 
@@ -126,7 +126,6 @@ public class IdentityIntMap {
     public final int put(Object key, int value, boolean isReplace) {
         int prime = _prime;
         int hash = Math.abs(System.identityHashCode(key) % prime);
-        // int hash = key.hashCode() % prime;
 
         Object[] keys = _keys;
 
@@ -145,7 +144,6 @@ public class IdentityIntMap {
             } else if (key != testKey) {
                 hash = (hash + 1) % prime;
 
-                continue;
             } else if (isReplace) {
                 int old = _values[hash];
 
@@ -172,7 +170,7 @@ public class IdentityIntMap {
      */
     private void resize(int newSize) {
         Object[] keys = _keys;
-        int values[] = _values;
+        int[] values = _values;
 
         _keys = new Object[newSize];
         _values = new int[newSize];
@@ -194,6 +192,7 @@ public class IdentityIntMap {
         return System.identityHashCode(value);
     }
 
+    @Override
     public String toString() {
         StringBuffer sbuf = new StringBuffer();
 

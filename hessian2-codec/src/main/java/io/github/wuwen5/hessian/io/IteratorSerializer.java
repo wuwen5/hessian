@@ -55,16 +55,19 @@ import java.util.Iterator;
  * Serializing a JDK 1.2 Iterator.
  */
 public class IteratorSerializer extends AbstractSerializer {
-    private static IteratorSerializer _serializer;
+    private static IteratorSerializer serializer;
 
     public static IteratorSerializer create() {
-        if (_serializer == null) _serializer = new IteratorSerializer();
+        if (serializer == null) {
+            serializer = new IteratorSerializer();
+        }
 
-        return _serializer;
+        return serializer;
     }
 
+    @Override
     public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
-        Iterator iter = (Iterator) obj;
+        Iterator<?> iter = (Iterator) obj;
 
         boolean hasEnd = out.writeListBegin(-1, null);
 
@@ -74,6 +77,8 @@ public class IteratorSerializer extends AbstractSerializer {
             out.writeObject(value);
         }
 
-        if (hasEnd) out.writeListEnd();
+        if (hasEnd) {
+            out.writeListEnd();
+        }
     }
 }

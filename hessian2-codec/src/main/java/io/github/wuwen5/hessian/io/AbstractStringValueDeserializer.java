@@ -53,7 +53,7 @@ import java.io.IOException;
 /**
  * Deserializes a string-valued object like BigDecimal.
  */
-public abstract class AbstractStringValueDeserializer extends AbstractDeserializer {
+public abstract class AbstractStringValueDeserializer extends BaseDeserializer {
     protected abstract Object create(String value) throws IOException;
 
     @Override

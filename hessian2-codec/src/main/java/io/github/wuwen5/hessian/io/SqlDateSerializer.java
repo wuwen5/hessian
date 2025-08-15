@@ -55,12 +55,16 @@ import java.util.Date;
  * Serializing a sql date object.
  */
 public class SqlDateSerializer extends AbstractSerializer {
+    @Override
     public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
-        if (obj == null) out.writeNull();
-        else {
-            Class cl = obj.getClass();
+        if (obj == null) {
+            out.writeNull();
+        } else {
+            Class<?> cl = obj.getClass();
 
-            if (out.addRef(obj)) return;
+            if (out.addRef(obj)) {
+                return;
+            }
 
             int ref = out.writeObjectBegin(cl.getName());
 

@@ -53,7 +53,13 @@ import java.io.IOException;
 /**
  * Deserializing a byte stream
  */
-public abstract class AbstractStreamDeserializer extends AbstractDeserializer {
+public abstract class AbstractStreamDeserializer extends BaseDeserializer {
+
+    /**
+     * Returns the type of the deserializer.
+     * @return the type of the deserializer
+     */
+    @Override
     public abstract Class<?> getType();
 
     /**
@@ -66,8 +72,11 @@ public abstract class AbstractStreamDeserializer extends AbstractDeserializer {
         while (!in.isEnd()) {
             String key = in.readString();
 
-            if (key.equals("value")) value = readStreamValue(in);
-            else in.readObject();
+            if ("value".equals(key)) {
+                value = readStreamValue(in);
+            } else {
+                in.readObject();
+            }
         }
 
         in.readMapEnd();
@@ -81,8 +90,8 @@ public abstract class AbstractStreamDeserializer extends AbstractDeserializer {
 
         Object value = null;
 
-        for (int i = 0; i < fieldNames.length; i++) {
-            if ("value".equals(fieldNames[i])) {
+        for (String fieldName : fieldNames) {
+            if ("value".equals(fieldName)) {
                 value = readStreamValue(in);
                 in.addRef(value);
             } else {
