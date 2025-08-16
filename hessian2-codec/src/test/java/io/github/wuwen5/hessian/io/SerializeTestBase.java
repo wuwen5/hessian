@@ -19,11 +19,25 @@ public abstract class SerializeTestBase {
     }
 
     <T> T hessianIO(Function<HessianEncoder, Object> outFun, Function<HessianDecoder, T> inFun) throws IOException {
+        return hessianIOBeanSerializeFactory(outFun, inFun, null);
+    }
+
+    <T> T hessianIOBeanSerializeFactory(
+            Function<HessianEncoder, Object> outFun,
+            Function<HessianDecoder, T> inFun,
+            SerializerFactory serializerFactory)
+            throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Hessian2Output output = new Hessian2Output(outputStream);
+        if (serializerFactory != null) {
+            output.setSerializerFactory(serializerFactory);
+        }
         outFun.apply(output);
         output.flush();
         Hessian2Input input = new Hessian2Input(new ByteArrayInputStream(outputStream.toByteArray()));
+        if (serializerFactory != null) {
+            input.setSerializerFactory(serializerFactory);
+        }
         return inFun.apply(input);
     }
 }

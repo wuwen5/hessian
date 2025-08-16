@@ -112,6 +112,36 @@ public class BeanDeserializer extends AbstractMapDeserializer {
         }
     }
 
+    @Override
+    public Object readObject(AbstractHessianDecoder in, Object[] fields) throws IOException {
+        try {
+            Object obj = instantiate();
+            int ref = in.addRef(obj);
+
+            String[] fieldNames = (String[]) fields;
+            for (String fieldName : fieldNames) {
+                Object value = in.readObject(methodMap.get(fieldName).getParameterTypes()[0]);
+
+                Method method = methodMap.get(fieldName);
+                if (method != null) {
+                    method.invoke(obj, value);
+                } else {
+                    in.readObject();
+                }
+            }
+
+            Object resolve = resolve(obj);
+
+            if (obj != resolve) {
+                in.setRef(ref, resolve);
+            }
+
+            return resolve;
+        } catch (Exception e) {
+            throw new IOExceptionWrapper(e);
+        }
+    }
+
     public Object readMap(AbstractHessianDecoder in, Object obj) throws IOException {
         try {
             int ref = in.addRef(obj);
@@ -180,6 +210,39 @@ public class BeanDeserializer extends AbstractMapDeserializer {
     }
 
     /**
+     * Checks if the method is a candidate write method.
+     * Reference has been made to the implementation of org.springframework.beans.ExtendedBeanInfo.
+     * <p>
+     * register static and/or non-void returning setter methods. For example:
+     * <pre>
+     *   public class Bean {
+     *
+     *       private Foo foo;
+     *
+     *       public Foo getFoo() {
+     *           return this.foo;
+     *       }
+     *
+     *       public Bean setFoo(Foo foo) {
+     *           this.foo = foo;
+     *           return this;
+     *       }
+     *   }
+     *   </pre>
+     *
+     * @param method the method to check
+     * @return true if the method is a candidate write method
+     */
+    private static boolean isCandidateWriteMethod(Method method) {
+        String methodName = method.getName();
+        int nParams = method.getParameterCount();
+        return (methodName.length() > 3
+                && methodName.startsWith("set")
+                && Modifier.isPublic(method.getModifiers())
+                && (nParams == 1 || (nParams == 2 && int.class == method.getParameterTypes()[0])));
+    }
+
+    /**
      * Creates a map of the classes fields.
      */
     protected Map<String, Method> getMethodMap(Class<?> cl) {
@@ -189,48 +252,31 @@ public class BeanDeserializer extends AbstractMapDeserializer {
             Method[] methods = cl.getDeclaredMethods();
 
             for (Method method : methods) {
-                if (Modifier.isStatic(method.getModifiers())) {
-                    continue;
+
+                if (isCandidateWriteMethod(method)) {
+
+                    String name = method.getName();
+
+                    // XXX: could parameterize the handler to only deal with public
+                    try {
+                        method.setAccessible(true);
+                    } catch (Throwable e) {
+                        log.trace("Failed to set method {} accessible", method, e);
+                    }
+
+                    name = name.substring(3);
+
+                    int j = 0;
+                    for (; j < name.length() && Character.isUpperCase(name.charAt(j)); j++) {}
+
+                    if (j == 1) {
+                        name = name.substring(0, j).toLowerCase(Locale.ENGLISH) + name.substring(j);
+                    } else if (j > 1) {
+                        name = name.substring(0, j - 1).toLowerCase(Locale.ENGLISH) + name.substring(j - 1);
+                    }
+
+                    mMap.put(name, method);
                 }
-
-                String name = method.getName();
-
-                if (!name.startsWith("set")) {
-                    continue;
-                }
-
-                Class<?>[] paramTypes = method.getParameterTypes();
-                if (paramTypes.length != 1) {
-                    continue;
-                }
-
-                if (!method.getReturnType().equals(void.class)) {
-                    continue;
-                }
-
-                if (findGetter(methods, name, paramTypes[0]) == null) {
-                    continue;
-                }
-
-                // XXX: could parameterize the handler to only deal with public
-                try {
-                    method.setAccessible(true);
-                } catch (Throwable e) {
-                    log.trace("Failed to set method {} accessible", method, e);
-                }
-
-                name = name.substring(3);
-
-                int j = 0;
-                for (; j < name.length() && Character.isUpperCase(name.charAt(j)); j++) {}
-
-                if (j == 1) {
-                    name = name.substring(0, j).toLowerCase(Locale.ENGLISH) + name.substring(j);
-                } else if (j > 1) {
-                    name = name.substring(0, j - 1).toLowerCase(Locale.ENGLISH) + name.substring(j - 1);
-                }
-
-                mMap.put(name, method);
             }
         }
 
@@ -238,48 +284,34 @@ public class BeanDeserializer extends AbstractMapDeserializer {
     }
 
     /**
-     * Finds any matching setter.
-     */
-    private Method findGetter(Method[] methods, String setterName, Class<?> arg) {
-        String getterName = "get" + setterName.substring(3);
-
-        for (Method method : methods) {
-            if (method.getName().equals(getterName) && method.getReturnType().equals(arg)) {
-                Class<?>[] params = method.getParameterTypes();
-
-                if (params.length == 0) {
-                    return method;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * Creates a map of the classes fields.
      */
-    protected static Object getParamArg(Class<?> cl) {
+    private static Object getParamArg(Class<?> cl) {
         if (!cl.isPrimitive()) {
             return null;
         } else if (boolean.class.equals(cl)) {
             return Boolean.FALSE;
         } else if (byte.class.equals(cl)) {
-            return Byte.valueOf((byte) 0);
+            return (byte) 0;
         } else if (short.class.equals(cl)) {
-            return Short.valueOf((short) 0);
+            return (short) 0;
         } else if (char.class.equals(cl)) {
-            return Character.valueOf((char) 0);
+            return (char) 0;
         } else if (int.class.equals(cl)) {
-            return Integer.valueOf(0);
+            return 0;
         } else if (long.class.equals(cl)) {
-            return Long.valueOf(0);
+            return 0L;
         } else if (float.class.equals(cl)) {
-            return Double.valueOf(0);
+            return (float) 0;
         } else if (double.class.equals(cl)) {
-            return Double.valueOf(0);
+            return (double) 0;
         } else {
             throw new UnsupportedOperationException();
         }
+    }
+
+    @Override
+    public boolean isReadResolve() {
+        return true;
     }
 }

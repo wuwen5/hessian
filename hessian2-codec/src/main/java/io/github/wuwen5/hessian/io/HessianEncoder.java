@@ -289,7 +289,9 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
             if (type != null) {
                 buffer[offset++] = (byte) BC_LIST_VARIABLE;
                 writeType(type);
-            } else buffer[offset++] = (byte) BC_LIST_VARIABLE_UNTYPED;
+            } else {
+                buffer[offset++] = (byte) BC_LIST_VARIABLE_UNTYPED;
+            }
 
             return true;
         } else if (length <= LIST_DIRECT_MAX) {
@@ -370,6 +372,7 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
      * C &lt;string&gt; &lt;int&gt; &lt;string&gt;*
      * </code>
      * </pre>
+     * @return the reference number for the class, or -1 if the class is not
      */
     @Override
     public int writeObjectBegin(String type) throws IOException {
@@ -835,12 +838,16 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
             while (length > 0x8000) {
                 int sublen = 0x8000;
 
-                if (SIZE < this.offset + 16) flushBuffer();
+                if (SIZE < this.offset + 16) {
+                    flushBuffer();
+                }
 
                 // chunk can't end in high surrogate
                 char tail = buffer[offset + sublen - 1];
 
-                if (0xd800 <= tail && tail <= 0xdbff) sublen--;
+                if (0xd800 <= tail && tail <= 0xdbff) {
+                    sublen--;
+                }
 
                 this.buffer[this.offset++] = (byte) BC_STRING_CHUNK;
                 this.buffer[this.offset++] = (byte) (sublen >> 8);
