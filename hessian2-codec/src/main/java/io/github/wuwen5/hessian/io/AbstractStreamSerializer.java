@@ -50,11 +50,12 @@ package io.github.wuwen5.hessian.io;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.logging.Level;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Serializing an object containing a byte stream.
  */
+@Slf4j
 public abstract class AbstractStreamSerializer extends AbstractSerializer {
     /**
      * Writes the object to the output stream.
@@ -75,7 +76,7 @@ public abstract class AbstractStreamSerializer extends AbstractSerializer {
             try {
                 is = getInputStream(obj);
             } catch (Exception e) {
-                log.log(Level.WARNING, e.toString(), e);
+                log.warn(e.toString(), e);
             }
 
             if (is != null) {
@@ -102,7 +103,7 @@ public abstract class AbstractStreamSerializer extends AbstractSerializer {
             try {
                 is = getInputStream(obj);
             } catch (Exception e) {
-                log.log(Level.WARNING, e.toString(), e);
+                log.warn(e.toString(), e);
             }
 
             try {
@@ -123,5 +124,11 @@ public abstract class AbstractStreamSerializer extends AbstractSerializer {
         return obj.getClass().getName();
     }
 
+    /**
+     * Gets the input stream of the object.
+     * @param obj Object
+     * @return InputStream
+     * @throws IOException if an error occurs
+     */
     protected abstract InputStream getInputStream(Object obj) throws IOException;
 }

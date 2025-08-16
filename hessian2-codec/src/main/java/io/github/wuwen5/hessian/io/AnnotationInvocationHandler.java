@@ -57,6 +57,10 @@ import java.util.Map;
  * Proxy for a java annotation for known object types.
  */
 public class AnnotationInvocationHandler implements InvocationHandler {
+    private static final String ANNOTATION_TYPE = "annotationType";
+    private static final String TO_STRING = "toString";
+    private static final String HASH_CODE = "hashCode";
+    private static final String EQUALS = "equals";
     private final Class<?> annType;
     private final Map<String, Object> valueMap;
 
@@ -71,19 +75,28 @@ public class AnnotationInvocationHandler implements InvocationHandler {
 
         boolean zeroArgs = args == null || args.length == 0;
 
-        if ("annotationType".equals(name) && zeroArgs) {
+        if (ANNOTATION_TYPE.equals(name) && zeroArgs) {
             return annType;
-        } else if ("toString".equals(name) && zeroArgs) {
+        } else if (TO_STRING.equals(name) && zeroArgs) {
             return toString();
-        } else if ("hashCode".equals(name) && zeroArgs) {
+        } else if (HASH_CODE.equals(name) && zeroArgs) {
             return doHashCode();
-        } else if ("equals".equals(name) && !zeroArgs && args.length == 1) {
+        } else if (EQUALS.equals(name) && !zeroArgs && args.length == 1) {
             return doEquals(args[0]);
         } else if (!zeroArgs) {
             return null;
         }
 
-        return valueMap.get(method.getName());
+        Object value = valueMap.get(method.getName());
+
+        if (method.getReturnType().equals(byte.class) && value instanceof Integer) {
+            return ((Integer) value).byteValue();
+        } else if (method.getReturnType().equals(short.class) && value instanceof Integer) {
+            return ((Integer) value).shortValue();
+        } else if (method.getReturnType().equals(float.class) && value instanceof Double) {
+            return ((Double) value).floatValue();
+        }
+        return value;
     }
 
     public int doHashCode() {
