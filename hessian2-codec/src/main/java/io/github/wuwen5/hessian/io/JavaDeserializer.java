@@ -166,7 +166,7 @@ public class JavaDeserializer extends AbstractMapDeserializer {
 
     @Override
     public Object[] createFields(int len) {
-        return new com.caucho.hessian.io.FieldDeserializer2[len];
+        return new FieldDeserializer2[len];
     }
 
     @Override
@@ -185,7 +185,7 @@ public class JavaDeserializer extends AbstractMapDeserializer {
         try {
             Object obj = instantiate();
 
-            return readObject(in, obj, (com.caucho.hessian.io.FieldDeserializer2[]) fields);
+            return readObject(in, obj, (FieldDeserializer2[]) fields);
         } catch (IOException | RuntimeException e) {
             throw e;
         } catch (Exception e) {

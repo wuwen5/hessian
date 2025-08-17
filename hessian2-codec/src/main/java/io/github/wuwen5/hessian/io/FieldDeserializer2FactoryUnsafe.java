@@ -48,7 +48,6 @@
 
 package io.github.wuwen5.hessian.io;
 
-import com.caucho.hessian.io.FieldDeserializer2;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;

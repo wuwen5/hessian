@@ -48,6 +48,7 @@
 
 package io.github.wuwen5.hessian.io;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.*;
@@ -129,7 +130,7 @@ public class Hessian2StreamingInput {
     static class StreamingInputStream extends InputStream {
         private final InputStream is;
 
-        private int length;
+        private long length;
         private boolean isPacketEnd;
 
         StreamingInputStream(InputStream is) {
@@ -161,15 +162,17 @@ public class Hessian2StreamingInput {
                     length = readChunkLength(is);
                 }
 
-                if (length > 0) {
-                    is.skip(length);
-                    length = 0;
+                while (length > 0) {
+                    long skipped = is.skip(length);
+                    if (skipped <= 0) {
+                        if (is.read() == -1) {
+                            throw new EOFException("Unexpected end of stream while skipping packet");
+                        } else {
+                            skipped = 1;
+                        }
+                    }
+                    length -= skipped;
                 }
-            }
-
-            if (length > 0) {
-                is.skip(length);
-                length = 0;
             }
         }
 
@@ -210,12 +213,12 @@ public class Hessian2StreamingInput {
                 }
             }
 
-            int sublen = this.length;
+            long sublen = this.length;
             if (length < sublen) {
                 sublen = length;
             }
 
-            sublen = is.read(buffer, offset, sublen);
+            sublen = is.read(buffer, offset, (int) sublen);
 
             if (sublen < 0) {
                 return -1;
@@ -223,15 +226,13 @@ public class Hessian2StreamingInput {
 
             this.length -= sublen;
 
-            return sublen;
+            return (int) sublen;
         }
 
-        private int readChunkLength(InputStream is) throws IOException {
+        private long readChunkLength(InputStream is) throws IOException {
             if (isPacketEnd) {
                 return -1;
             }
-
-            int length = 0;
 
             int code = is.read();
 
@@ -245,21 +246,25 @@ public class Hessian2StreamingInput {
             int len = is.read() & 0x7f;
 
             if (len < 0x7e) {
-                length = len;
+                return len;
             } else if (len == 0x7e) {
-                length = (((is.read() & 0xff) << 8) + (is.read() & 0xff));
+                int hi = is.read();
+                int lo = is.read();
+                if (hi < 0 || lo < 0) {
+                    throw new EOFException("Unexpected end of stream in medium chunk length");
+                }
+                return ((hi & 0xff) << 8) | (lo & 0xff);
             } else {
-                length = (((is.read() & 0xff) << 56)
-                        + ((is.read() & 0xff) << 48)
-                        + ((is.read() & 0xff) << 40)
-                        + ((is.read() & 0xff) << 32)
-                        + ((is.read() & 0xff) << 24)
-                        + ((is.read() & 0xff) << 16)
-                        + ((is.read() & 0xff) << 8)
-                        + ((is.read() & 0xff)));
+                long length = 0;
+                for (int i = 0; i < 8; i++) {
+                    int b = is.read();
+                    if (b < 0) {
+                        throw new EOFException("Unexpected end of stream in large chunk length");
+                    }
+                    length = (length << 8) | (b & 0xff);
+                }
+                return length;
             }
-
-            return length;
         }
     }
 }

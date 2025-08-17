@@ -117,7 +117,6 @@ public class AnnotationSerializer extends AbstractSerializer {
                             && !"hashCode".equals(m.getName())
                             && !"toString".equals(m.getName())
                             && !"annotationType".equals(m.getName()))
-                    .peek(m -> m.setAccessible(true))
                     .toArray(Method[]::new);
 
             methodSerializers = new MethodSerializer[this.methods.length];

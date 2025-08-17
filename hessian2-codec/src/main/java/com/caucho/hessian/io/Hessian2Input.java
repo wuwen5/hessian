@@ -84,8 +84,4 @@ public class Hessian2Input extends HessianDecoder {
     public Hessian2Input(InputStream is) {
         super(is);
     }
-
-    public void setSerializerFactory(SerializerFactory serializerFactory) {
-        super.setSerializerFactory(serializerFactory);
-    }
 }

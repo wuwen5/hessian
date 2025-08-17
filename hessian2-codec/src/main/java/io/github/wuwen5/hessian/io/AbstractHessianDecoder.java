@@ -82,11 +82,6 @@ public abstract class AbstractHessianDecoder implements Closeable {
     }
 
     /**
-     * Sets the serializer factory.
-     */
-    public void setSerializerFactory(SerializerFactory ser) {}
-
-    /**
      * Reads a boolean
      *
      * <pre>
