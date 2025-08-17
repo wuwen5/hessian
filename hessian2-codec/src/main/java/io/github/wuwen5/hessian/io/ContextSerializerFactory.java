@@ -82,7 +82,7 @@ public class ContextSerializerFactory {
     private static Map<String, Deserializer> staticClassNameMap;
 
     private ContextSerializerFactory parent;
-    private WeakReference<ClassLoader> loaderRef;
+    private final WeakReference<ClassLoader> loaderRef;
 
     private final Set<String> serializerFiles = new HashSet<>();
     private final Set<String> deserializerFiles = new HashSet<>();
@@ -143,10 +143,9 @@ public class ContextSerializerFactory {
     }
 
     public ClassLoader getClassLoader() {
-        WeakReference<ClassLoader> loaderRef = this.loaderRef;
 
-        if (loaderRef != null) {
-            return loaderRef.get();
+        if (this.loaderRef != null) {
+            return this.loaderRef.get();
         } else {
             return null;
         }

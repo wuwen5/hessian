@@ -49,10 +49,12 @@
 package io.github.wuwen5.hessian.io;
 
 import java.io.Serializable;
+import lombok.ToString;
 
 /**
  * Handle for Java Byte objects.
  */
+@ToString
 public class ByteHandle implements Serializable {
     private byte _value;
 
@@ -68,10 +70,5 @@ public class ByteHandle implements Serializable {
 
     public Object readResolve() {
         return new Byte(_value);
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + "[" + _value + "]";
     }
 }

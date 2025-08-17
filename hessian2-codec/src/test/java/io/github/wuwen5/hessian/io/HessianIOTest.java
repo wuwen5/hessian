@@ -233,6 +233,17 @@ public class HessianIOTest extends SerializeTestBase {
     }
 
     @Test
+    public void testByte() throws IOException {
+        // Test byte
+        byte value = 1;
+
+        byte ret = (byte) hessianIO(output -> Try.run(() -> output.writeObject(value)), i -> Try.of(i::readObject)
+                .get());
+
+        assertEquals(value, ret);
+    }
+
+    @Test
     public void testInvalidType() {
         byte[] invalidData = {'X'};
         Hessian2Input input = new Hessian2Input(new ByteArrayInputStream(invalidData));

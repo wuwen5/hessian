@@ -82,9 +82,9 @@ public class EnumSerializer extends AbstractSerializer {
             cl = cl.getSuperclass();
         }
 
-        String name;
+        String value;
         try {
-            name = (String) this.name.invoke(obj, (Object[]) null);
+            value = (String) this.name.invoke(obj, (Object[]) null);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -93,7 +93,7 @@ public class EnumSerializer extends AbstractSerializer {
 
         if (ref < -1) {
             out.writeString("name");
-            out.writeString(name);
+            out.writeString(value);
             out.writeMapEnd();
         } else {
             if (ref == -1) {
@@ -102,7 +102,7 @@ public class EnumSerializer extends AbstractSerializer {
                 out.writeObjectBegin(cl.getName());
             }
 
-            out.writeString(name);
+            out.writeString(value);
         }
     }
 }

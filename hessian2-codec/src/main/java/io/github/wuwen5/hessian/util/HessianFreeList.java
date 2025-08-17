@@ -78,10 +78,10 @@ public final class HessianFreeList<T> {
      * @return the new object or null.
      */
     public T allocate() {
-        int top = this.top.get();
+        int i = this.top.get();
 
-        if (top > 0 && this.top.compareAndSet(top, top - 1)) {
-            return freeStack.getAndSet(top - 1, null);
+        if (i > 0 && this.top.compareAndSet(i, i - 1)) {
+            return freeStack.getAndSet(i - 1, null);
         } else {
             return null;
         }
@@ -94,12 +94,12 @@ public final class HessianFreeList<T> {
      * @param obj the object to be freed.
      */
     public boolean free(T obj) {
-        int top = this.top.get();
+        int i = this.top.get();
 
-        if (top < freeStack.length()) {
-            boolean isFree = freeStack.compareAndSet(top, null, obj);
+        if (i < freeStack.length()) {
+            boolean isFree = freeStack.compareAndSet(i, null, obj);
 
-            this.top.compareAndSet(top, top + 1);
+            this.top.compareAndSet(i, i + 1);
 
             return isFree;
         } else {
@@ -129,9 +129,9 @@ public final class HessianFreeList<T> {
      * Debugging to see if the object has already been freed.
      */
     public boolean checkDuplicate(T obj) {
-        int top = this.top.get();
+        int i1 = this.top.get();
 
-        for (int i = top - 1; i >= 0; i--) {
+        for (int i = i1 - 1; i >= 0; i--) {
             if (freeStack.get(i) == obj) {
                 return true;
             }

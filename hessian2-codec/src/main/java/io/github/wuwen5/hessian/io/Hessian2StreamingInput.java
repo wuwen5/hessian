@@ -51,7 +51,7 @@ package io.github.wuwen5.hessian.io;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.logging.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Input stream for Hessian 2 streaming requests using WebSocket.
@@ -63,8 +63,8 @@ import java.util.logging.*;
  * </code>
  * </pre>
  */
+@Slf4j
 public class Hessian2StreamingInput {
-    private static final Logger log = Logger.getLogger(Hessian2StreamingInput.class.getName());
 
     private final StreamingInputStream is;
     private final HessianDecoder in;
@@ -85,9 +85,7 @@ public class Hessian2StreamingInput {
     }
 
     public boolean isDataAvailable() {
-        StreamingInputStream is = this.is;
-
-        return is != null && is.isDataAvailable();
+        return this.is.isDataAvailable();
     }
 
     public HessianDecoder startPacket() throws IOException {
@@ -95,7 +93,9 @@ public class Hessian2StreamingInput {
             in.resetReferences();
             in.resetBuffer(); // XXX:
             return in;
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     public void endPacket() throws IOException {
@@ -141,7 +141,7 @@ public class Hessian2StreamingInput {
             try {
                 return is != null && is.available() > 0;
             } catch (IOException e) {
-                log.log(Level.FINER, e.toString(), e);
+                log.trace(e.toString(), e);
 
                 return true;
             }
@@ -178,7 +178,6 @@ public class Hessian2StreamingInput {
 
         @Override
         public int read() throws IOException {
-            InputStream is = this.is;
 
             if (length == 0) {
                 if (isPacketEnd) {
@@ -199,7 +198,6 @@ public class Hessian2StreamingInput {
 
         @Override
         public int read(byte[] buffer, int offset, int length) throws IOException {
-            InputStream is = this.is;
 
             if (this.length <= 0) {
                 if (isPacketEnd) {
@@ -255,15 +253,15 @@ public class Hessian2StreamingInput {
                 }
                 return ((hi & 0xff) << 8) | (lo & 0xff);
             } else {
-                long length = 0;
+                long l = 0;
                 for (int i = 0; i < 8; i++) {
                     int b = is.read();
                     if (b < 0) {
                         throw new EOFException("Unexpected end of stream in large chunk length");
                     }
-                    length = (length << 8) | (b & 0xff);
+                    l = (l << 8) | (b & 0xff);
                 }
-                return length;
+                return l;
             }
         }
     }

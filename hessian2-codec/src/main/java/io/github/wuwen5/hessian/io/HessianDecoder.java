@@ -77,7 +77,6 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
     private static final int END_OF_DATA = -2;
 
     private static final int SIZE = 1024;
-    private static final int GAP = 16;
 
     /**
      * standard, unmodified factory for deserializing objects
@@ -177,11 +176,11 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
         factory.allow(pattern);
     }
 
-    public void setCloseStreamOnClose(boolean isClose) {
+    public static void setCloseStreamOnClose(boolean isClose) {
         isCloseStreamOnClose = isClose;
     }
 
-    public boolean isCloseStreamOnClose() {
+    public static boolean isCloseStreamOnClose() {
         return isCloseStreamOnClose;
     }
 
@@ -1032,9 +1031,8 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
 
         switch (tag) {
             case BC_NULL:
-                return 0;
-
             case BC_FALSE:
+            case BC_DOUBLE_ZERO:
                 return 0;
 
             case BC_TRUE:
@@ -1204,9 +1202,6 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
 
             case 'L':
                 return (double) parseLong();
-
-            case BC_DOUBLE_ZERO:
-                return 0;
 
             case BC_DOUBLE_ONE:
                 return 1;
@@ -1782,20 +1777,20 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
                 isLastChunk = true;
                 chunkLength = tag - 0x20;
 
-                byte[] buffer = new byte[chunkLength];
+                byte[] bytes = new byte[chunkLength];
 
-                int offset = 0;
-                while (offset < chunkLength) {
-                    int sublen = read(buffer, 0, chunkLength - offset);
+                int i = 0;
+                while (i < chunkLength) {
+                    int sublen = read(bytes, 0, chunkLength - i);
 
                     if (sublen <= 0) {
                         break;
                     }
 
-                    offset += sublen;
+                    i += sublen;
                 }
 
-                return buffer;
+                return bytes;
             }
 
             case 0x34:
@@ -1805,20 +1800,20 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
                 isLastChunk = true;
                 chunkLength = (tag - 0x34) * 256 + read();
 
-                byte[] buffer = new byte[chunkLength];
+                byte[] bytes = new byte[chunkLength];
 
-                int offset = 0;
-                while (offset < chunkLength) {
-                    int sublen = read(buffer, 0, chunkLength - offset);
+                int i = 0;
+                while (i < chunkLength) {
+                    int sublen = read(bytes, 0, chunkLength - i);
 
                     if (sublen <= 0) {
                         break;
                     }
 
-                    offset += sublen;
+                    i += sublen;
                 }
 
-                return buffer;
+                return bytes;
             }
 
             default:
@@ -2051,7 +2046,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             }
 
             case BC_OBJECT_DEF: {
-                readObjectDefinition(cl);
+                readObjectDefinition();
 
                 return readObject(cl);
             }
@@ -2101,21 +2096,17 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
                 Deserializer reader;
                 reader = findSerializerFactory().getListDeserializer(type, cl);
 
-                Object v = reader.readList(this, -1);
-
-                return v;
+                return reader.readList(this, -1);
             }
 
             case BC_LIST_FIXED: {
                 String type = readType();
-                int length = readInt();
+                int len = readInt();
 
                 Deserializer reader;
                 reader = findSerializerFactory().getListDeserializer(type, cl);
 
-                Object v = reader.readLengthList(this, length);
-
-                return v;
+                return reader.readLengthList(this, len);
             }
 
             case 0x70:
@@ -2126,36 +2117,30 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case 0x75:
             case 0x76:
             case 0x77: {
-                int length = tag - 0x70;
+                int i = tag - 0x70;
 
                 String type = readType();
 
                 Deserializer reader;
                 reader = findSerializerFactory().getListDeserializer(type, cl);
 
-                Object v = reader.readLengthList(this, length);
-
-                return v;
+                return reader.readLengthList(this, i);
             }
 
             case BC_LIST_VARIABLE_UNTYPED: {
                 Deserializer reader;
                 reader = findSerializerFactory().getListDeserializer(null, cl);
 
-                Object v = reader.readList(this, -1);
-
-                return v;
+                return reader.readList(this, -1);
             }
 
             case BC_LIST_FIXED_UNTYPED: {
-                int length = readInt();
+                int len = readInt();
 
                 Deserializer reader;
                 reader = findSerializerFactory().getListDeserializer(null, cl);
 
-                Object v = reader.readLengthList(this, length);
-
-                return v;
+                return reader.readLengthList(this, len);
             }
 
             case 0x78:
@@ -2166,14 +2151,12 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case 0x7d:
             case 0x7e:
             case 0x7f: {
-                int length = tag - 0x78;
+                int i = tag - 0x78;
 
                 Deserializer reader;
                 reader = findSerializerFactory().getListDeserializer(null, cl);
 
-                Object v = reader.readLengthList(this, length);
-
-                return v;
+                return reader.readLengthList(this, i);
             }
 
             case BC_REF: {
@@ -2187,8 +2170,6 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             offset--;
         }
 
-        // hessian/3b2i vs hessian/3406
-        // return readObject();
         return findSerializerFactory().getDeserializer(cl).readObject(this);
     }
 
@@ -2278,7 +2259,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case 0xbd:
             case 0xbe:
             case 0xbf:
-                return Integer.valueOf(tag - BC_INT_ZERO);
+                return tag - BC_INT_ZERO;
 
                 /* byte int */
             case 0xc0:
@@ -2297,7 +2278,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case 0xcd:
             case 0xce:
             case 0xcf:
-                return Integer.valueOf(((tag - BC_INT_BYTE_ZERO) << 8) + read());
+                return ((tag - BC_INT_BYTE_ZERO) << 8) + read();
 
                 /* short int */
             case 0xd0:
@@ -2308,10 +2289,10 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case 0xd5:
             case 0xd6:
             case 0xd7:
-                return Integer.valueOf(((tag - BC_INT_SHORT_ZERO) << 16) + 256 * read() + read());
+                return ((tag - BC_INT_SHORT_ZERO) << 16) + 256 * read() + read();
 
             case BC_INT:
-                return Integer.valueOf(parseInt());
+                return parseInt();
 
                 // direct long
             case 0xd8:
@@ -2339,7 +2320,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case 0xed:
             case 0xee:
             case 0xef:
-                return Long.valueOf(tag - BC_LONG_ZERO);
+                return (long) (tag - BC_LONG_ZERO);
 
                 /* byte long */
             case 0xf0:
@@ -2358,7 +2339,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case 0xfd:
             case 0xfe:
             case 0xff:
-                return Long.valueOf(((tag - BC_LONG_BYTE_ZERO) << 8) + read());
+                return (long) (((tag - BC_LONG_BYTE_ZERO) << 8) + read());
 
                 /* short long */
             case 0x38:
@@ -2369,34 +2350,34 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case 0x3d:
             case 0x3e:
             case 0x3f:
-                return Long.valueOf(((tag - BC_LONG_SHORT_ZERO) << 16) + 256 * read() + read());
+                return ((tag - BC_LONG_SHORT_ZERO) << 16) + 256L * read() + read();
 
             case BC_LONG_INT:
-                return Long.valueOf(parseInt());
+                return (long) parseInt();
 
             case BC_LONG:
-                return Long.valueOf(parseLong());
+                return parseLong();
 
             case BC_DOUBLE_ZERO:
-                return Double.valueOf(0);
+                return (double) 0;
 
             case BC_DOUBLE_ONE:
-                return Double.valueOf(1);
+                return 1.0;
 
             case BC_DOUBLE_BYTE:
-                return Double.valueOf((byte) read());
+                return (double) (byte) read();
 
             case BC_DOUBLE_SHORT:
-                return Double.valueOf((short) (256 * read() + read()));
+                return (double) (short) (256 * read() + read());
 
             case BC_DOUBLE_MILL: {
                 int mills = parseInt();
 
-                return Double.valueOf(0.001 * mills);
+                return 0.001 * mills;
             }
 
             case BC_DOUBLE:
-                return Double.valueOf(parseDouble());
+                return parseDouble();
 
             case BC_DATE:
                 return new Date(parseLong());
@@ -2450,7 +2431,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case 0x1e:
             case 0x1f: {
                 isLastChunk = true;
-                chunkLength = tag - 0x00;
+                chunkLength = tag;
 
                 sbuf.setLength(0);
 
@@ -2525,13 +2506,13 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
                 int len = (tag - 0x34) * 256 + read();
                 chunkLength = 0;
 
-                byte[] buffer = new byte[len];
+                byte[] bytes = new byte[len];
 
                 for (int i = 0; i < len; i++) {
-                    buffer[i] = (byte) read();
+                    bytes[i] = (byte) read();
                 }
 
-                return buffer;
+                return bytes;
             }
 
             case BC_LIST_VARIABLE: {
@@ -2548,22 +2529,22 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case BC_LIST_FIXED: {
                 // fixed length lists
                 String type = readType();
-                int length = readInt();
+                int len = readInt();
 
                 Deserializer reader;
                 reader = findSerializerFactory().getListDeserializer(type, null);
 
-                return reader.readLengthList(this, length);
+                return reader.readLengthList(this, len);
             }
 
             case BC_LIST_FIXED_UNTYPED: {
                 // fixed length lists
-                int length = readInt();
+                int len = readInt();
 
                 Deserializer reader;
                 reader = findSerializerFactory().getListDeserializer(null, null);
 
-                return reader.readLengthList(this, length);
+                return reader.readLengthList(this, len);
             }
 
                 // compact fixed list
@@ -2577,12 +2558,12 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case 0x77: {
                 // fixed length lists
                 String type = readType();
-                int length = tag - 0x70;
+                int len = tag - 0x70;
 
                 Deserializer reader;
                 reader = findSerializerFactory().getListDeserializer(type, null);
 
-                return reader.readLengthList(this, length);
+                return reader.readLengthList(this, len);
             }
 
                 // compact fixed untyped list
@@ -2595,12 +2576,12 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case 0x7e:
             case 0x7f: {
                 // fixed length lists
-                int length = tag - 0x78;
+                int len = tag - 0x78;
 
                 Deserializer reader;
                 reader = findSerializerFactory().getListDeserializer(null, null);
 
-                return reader.readLengthList(this, length);
+                return reader.readLengthList(this, len);
             }
 
             case BC_MAP_UNTYPED: {
@@ -2614,7 +2595,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             }
 
             case BC_OBJECT_DEF: {
-                readObjectDefinition(null);
+                readObjectDefinition();
 
                 return readObject();
             }
@@ -2679,7 +2660,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
      * O string <int> (string)* <value>*
      * </pre>
      */
-    private void readObjectDefinition(Class<?> cl) throws IOException {
+    private void readObjectDefinition() throws IOException {
         String type = readString();
         int len = readInt();
 
@@ -2853,14 +2834,14 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
     }
 
     public void resetBuffer() {
-        int offset = this.offset;
+        int i = this.offset;
         this.offset = 0;
 
-        int length = this.length;
+        int len = this.length;
         this.length = 0;
 
-        if (length > 0 && offset != length) {
-            throw new IllegalStateException("offset=" + offset + " length=" + length);
+        if (len > 0 && i != len) {
+            throw new IllegalStateException("offset=" + i + " length=" + len);
         }
     }
 
@@ -2983,17 +2964,17 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
      * </pre>
      */
     private int parseInt() throws IOException {
-        int offset = this.offset;
+        int i = this.offset;
 
-        if (offset + 3 < length) {
-            byte[] buffer = this.buffer;
+        if (i + 3 < length) {
+            byte[] buf = this.buffer;
 
-            int b32 = buffer[offset + 0] & 0xff;
-            int b24 = buffer[offset + 1] & 0xff;
-            int b16 = buffer[offset + 2] & 0xff;
-            int b8 = buffer[offset + 3] & 0xff;
+            int b32 = buf[i] & 0xff;
+            int b24 = buf[i + 1] & 0xff;
+            int b16 = buf[i + 2] & 0xff;
+            int b8 = buf[i + 3] & 0xff;
 
-            this.offset = offset + 4;
+            this.offset = i + 4;
 
             return (b32 << 24) + (b24 << 16) + (b16 << 8) + b8;
         } else {
@@ -3045,16 +3026,14 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
 
     private void parseString(StringBuilder sbuf) throws IOException {
         while (true) {
-            if (chunkLength <= 0) {
-                if (!parseChunkLength()) {
-                    return;
-                }
+            if (chunkLength <= 0 && !parseChunkLength()) {
+                return;
             }
 
-            int length = chunkLength;
+            int i = chunkLength;
             chunkLength = 0;
 
-            while (length-- > 0) {
+            while (i-- > 0) {
                 sbuf.append((char) parseUTF8Char());
             }
         }
@@ -3292,7 +3271,9 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
 
         while (length > 0) {
             while (chunkLength <= 0) {
-                if (isLastChunk) return readLength == 0 ? -1 : readLength;
+                if (isLastChunk) {
+                    return readLength == 0 ? -1 : readLength;
+                }
 
                 int code = read();
 
@@ -3389,27 +3370,26 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
     }
 
     private boolean readBuffer() throws IOException {
-        byte[] buffer = this.buffer;
-        int offset = this.offset;
-        int length = this.length;
+        byte[] bytes = this.buffer;
+        int i = this.offset;
 
-        if (offset < length) {
-            System.arraycopy(buffer, offset, buffer, 0, length - offset);
-            offset = length - offset;
+        if (i < length) {
+            System.arraycopy(bytes, i, bytes, 0, length - i);
+            i = length - i;
         } else {
-            offset = 0;
+            i = 0;
         }
 
-        int len = is.read(buffer, offset, SIZE - offset);
+        int len = is.read(bytes, i, SIZE - i);
 
         if (len <= 0) {
-            this.length = offset;
+            this.length = i;
             this.offset = 0;
 
-            return offset > 0;
+            return i > 0;
         }
 
-        this.length = offset + len;
+        this.length = i + len;
         this.offset = 0;
 
         return true;
@@ -3426,7 +3406,6 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             offset--;
 
             try {
-                int offset = this.offset;
                 String context = buildDebugContext(buffer, 0, length, offset);
 
                 Object obj = readObject();
@@ -3435,7 +3414,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
                     return error("expected " + expect
                             + " at 0x" + Integer.toHexString(ch & 0xff)
                             + " " + obj.getClass().getName() + " (" + obj + ")"
-                            + "\n  " + context + "");
+                            + "\n  " + context);
                 } else {
                     return error("expected " + expect + " at 0x" + Integer.toHexString(ch & 0xff) + " null");
                 }

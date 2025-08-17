@@ -84,7 +84,7 @@ public class JavaDeserializer extends AbstractMapDeserializer {
         Constructor<?>[] constructors = cl.getDeclaredConstructors();
         long bestCost = Long.MAX_VALUE;
 
-        Constructor<?> constructor = null;
+        Constructor<?> constructorVar = null;
 
         for (Constructor<?> value : constructors) {
             Class<?>[] param = value.getParameterTypes();
@@ -115,30 +115,30 @@ public class JavaDeserializer extends AbstractMapDeserializer {
             cost += (long) param.length << 48;
 
             if (cost < bestCost) {
-                constructor = value;
+                constructorVar = value;
                 bestCost = cost;
             }
         }
 
-        if (constructor != null) {
-            constructor.setAccessible(true);
+        if (constructorVar != null) {
+            constructorVar.setAccessible(true);
         }
 
-        return constructor;
+        return constructorVar;
     }
 
     protected Object[] getConstructorArgs(Constructor<?> constructor) {
-        Object[] constructorArgs = null;
+        Object[] objects = null;
 
         if (constructor != null) {
             Class<?>[] params = constructor.getParameterTypes();
-            constructorArgs = new Object[params.length];
+            objects = new Object[params.length];
             for (int i = 0; i < params.length; i++) {
-                constructorArgs[i] = getParamArg(params[i]);
+                objects[i] = getParamArg(params[i]);
             }
         }
 
-        return constructorArgs;
+        return objects;
     }
 
     @Override
@@ -365,19 +365,19 @@ public class JavaDeserializer extends AbstractMapDeserializer {
         } else if (boolean.class.equals(cl)) {
             return Boolean.FALSE;
         } else if (byte.class.equals(cl)) {
-            return new Byte((byte) 0);
+            return (byte) 0;
         } else if (short.class.equals(cl)) {
-            return new Short((short) 0);
+            return (short) 0;
         } else if (char.class.equals(cl)) {
-            return new Character((char) 0);
+            return (char) 0;
         } else if (int.class.equals(cl)) {
-            return Integer.valueOf(0);
+            return 0;
         } else if (long.class.equals(cl)) {
-            return Long.valueOf(0);
+            return 0L;
         } else if (float.class.equals(cl)) {
-            return Float.valueOf(0);
+            return (float) 0;
         } else if (double.class.equals(cl)) {
-            return Double.valueOf(0);
+            return (double) 0;
         } else {
             throw new UnsupportedOperationException();
         }

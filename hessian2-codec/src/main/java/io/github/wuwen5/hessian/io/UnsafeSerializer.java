@@ -108,9 +108,8 @@ public class UnsafeSerializer extends AbstractSerializer {
         ArrayList<Field> compoundFields = new ArrayList<>();
 
         for (; cl != null; cl = cl.getSuperclass()) {
-            Field[] fields = cl.getDeclaredFields();
 
-            for (Field field : fields) {
+            for (Field field : cl.getDeclaredFields()) {
                 if (Modifier.isTransient(field.getModifiers()) || Modifier.isStatic(field.getModifiers())) {
                     continue;
                 }
@@ -125,12 +124,12 @@ public class UnsafeSerializer extends AbstractSerializer {
             }
         }
 
-        ArrayList<Field> fields = new ArrayList<Field>();
-        fields.addAll(primitiveFields);
-        fields.addAll(compoundFields);
+        ArrayList<Field> fieldArrayList = new ArrayList<>();
+        fieldArrayList.addAll(primitiveFields);
+        fieldArrayList.addAll(compoundFields);
 
-        this.fields = new Field[fields.size()];
-        fields.toArray(this.fields);
+        this.fields = new Field[fieldArrayList.size()];
+        fieldArrayList.toArray(this.fields);
 
         fieldSerializers = new FieldSerializer[this.fields.length];
 
@@ -184,10 +183,7 @@ public class UnsafeSerializer extends AbstractSerializer {
     @Override
     public final void writeInstance(Object obj, AbstractHessianEncoder out) throws IOException {
         try {
-            FieldSerializer[] fieldSerializers = this.fieldSerializers;
-            int length = fieldSerializers.length;
-
-            for (FieldSerializer fieldSerializer : fieldSerializers) {
+            for (FieldSerializer fieldSerializer : this.fieldSerializers) {
                 fieldSerializer.serialize(out, obj);
             }
         } catch (RuntimeException e) {
@@ -268,11 +264,9 @@ public class UnsafeSerializer extends AbstractSerializer {
     }
 
     static final class BooleanFieldSerializer extends FieldSerializer {
-        private final Field field;
         private final long offset;
 
         BooleanFieldSerializer(Field field) {
-            this.field = field;
             offset = UNSAFE.objectFieldOffset(field);
 
             if (offset == Unsafe.INVALID_FIELD_OFFSET) {
@@ -289,11 +283,9 @@ public class UnsafeSerializer extends AbstractSerializer {
     }
 
     static final class ByteFieldSerializer extends FieldSerializer {
-        private final Field field;
         private final long offset;
 
         ByteFieldSerializer(Field field) {
-            this.field = field;
             offset = UNSAFE.objectFieldOffset(field);
 
             if (offset == Unsafe.INVALID_FIELD_OFFSET) {
@@ -310,11 +302,9 @@ public class UnsafeSerializer extends AbstractSerializer {
     }
 
     static final class CharFieldSerializer extends FieldSerializer {
-        private final Field field;
         private final long offset;
 
         CharFieldSerializer(Field field) {
-            this.field = field;
             offset = UNSAFE.objectFieldOffset(field);
 
             if (offset == Unsafe.INVALID_FIELD_OFFSET) {
@@ -331,11 +321,9 @@ public class UnsafeSerializer extends AbstractSerializer {
     }
 
     static final class ShortFieldSerializer extends FieldSerializer {
-        private final Field field;
         private final long offset;
 
         ShortFieldSerializer(Field field) {
-            this.field = field;
             offset = UNSAFE.objectFieldOffset(field);
 
             if (offset == Unsafe.INVALID_FIELD_OFFSET) {
@@ -352,11 +340,9 @@ public class UnsafeSerializer extends AbstractSerializer {
     }
 
     static final class IntFieldSerializer extends FieldSerializer {
-        private final Field field;
         private final long offset;
 
         IntFieldSerializer(Field field) {
-            this.field = field;
             offset = UNSAFE.objectFieldOffset(field);
 
             if (offset == Unsafe.INVALID_FIELD_OFFSET) {
@@ -373,11 +359,9 @@ public class UnsafeSerializer extends AbstractSerializer {
     }
 
     static final class LongFieldSerializer extends FieldSerializer {
-        private final Field field;
         private final long offset;
 
         LongFieldSerializer(Field field) {
-            this.field = field;
             offset = UNSAFE.objectFieldOffset(field);
 
             if (offset == Unsafe.INVALID_FIELD_OFFSET) {
@@ -394,11 +378,9 @@ public class UnsafeSerializer extends AbstractSerializer {
     }
 
     static final class FloatFieldSerializer extends FieldSerializer {
-        private final Field field;
         private final long offset;
 
         FloatFieldSerializer(Field field) {
-            this.field = field;
             offset = UNSAFE.objectFieldOffset(field);
 
             if (offset == Unsafe.INVALID_FIELD_OFFSET) {
@@ -415,11 +397,9 @@ public class UnsafeSerializer extends AbstractSerializer {
     }
 
     static final class DoubleFieldSerializer extends FieldSerializer {
-        private final Field field;
         private final long offset;
 
         DoubleFieldSerializer(Field field) {
-            this.field = field;
             offset = UNSAFE.objectFieldOffset(field);
 
             if (offset == Unsafe.INVALID_FIELD_OFFSET) throw new IllegalStateException();
@@ -434,11 +414,9 @@ public class UnsafeSerializer extends AbstractSerializer {
     }
 
     static final class StringFieldSerializer extends FieldSerializer {
-        private final Field field;
         private final long offset;
 
         StringFieldSerializer(Field field) {
-            this.field = field;
             offset = UNSAFE.objectFieldOffset(field);
 
             if (offset == Unsafe.INVALID_FIELD_OFFSET) {
@@ -455,11 +433,9 @@ public class UnsafeSerializer extends AbstractSerializer {
     }
 
     static final class DateFieldSerializer extends FieldSerializer {
-        private final Field field;
         private final long offset;
 
         DateFieldSerializer(Field field) {
-            this.field = field;
             offset = UNSAFE.objectFieldOffset(field);
 
             if (offset == Unsafe.INVALID_FIELD_OFFSET) {

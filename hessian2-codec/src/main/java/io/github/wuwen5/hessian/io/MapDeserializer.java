@@ -66,10 +66,9 @@ public class MapDeserializer extends AbstractMapDeserializer {
 
         this.type = type;
 
-        Constructor<?>[] ctors = type.getConstructors();
-        for (Constructor<?> ctor : ctors) {
-            if (ctor.getParameterTypes().length == 0) {
-                this.ctor = ctor;
+        for (Constructor<?> constructor : type.getConstructors()) {
+            if (constructor.getParameterTypes().length == 0) {
+                this.ctor = constructor;
             }
         }
 

@@ -77,15 +77,14 @@ public class BeanDeserializer extends AbstractMapDeserializer {
         Constructor<?>[] constructors = cl.getConstructors();
         int bestLength = Integer.MAX_VALUE;
 
-        for (Constructor<?> constructor : constructors) {
-            if (constructor.getParameterTypes().length < bestLength) {
-                this.constructor = constructor;
+        for (Constructor<?> c : constructors) {
+            if (c.getParameterTypes().length < bestLength) {
+                this.constructor = c;
                 bestLength = this.constructor.getParameterTypes().length;
             }
         }
 
         if (constructor != null) {
-            constructor.setAccessible(true);
             Class<?>[] params = constructor.getParameterTypes();
             constructorArgs = new Object[params.length];
             for (int i = 0; i < params.length; i++) {
@@ -256,13 +255,6 @@ public class BeanDeserializer extends AbstractMapDeserializer {
                 if (isCandidateWriteMethod(method)) {
 
                     String name = method.getName();
-
-                    // XXX: could parameterize the handler to only deal with public
-                    try {
-                        method.setAccessible(true);
-                    } catch (Throwable e) {
-                        log.trace("Failed to set method {} accessible", method, e);
-                    }
 
                     name = name.substring(3);
 

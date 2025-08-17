@@ -78,9 +78,9 @@ public class BeanSerializer extends AbstractSerializer {
         List<Method> compoundMethods = new ArrayList<>();
 
         for (; cl != null; cl = cl.getSuperclass()) {
-            Method[] methods = cl.getDeclaredMethods();
+            Method[] declaredMethods = cl.getDeclaredMethods();
 
-            for (Method method : methods) {
+            for (Method method : declaredMethods) {
 
                 String name = method.getName();
                 Class<?> type = method.getReturnType();
@@ -88,10 +88,7 @@ public class BeanSerializer extends AbstractSerializer {
                         && !type.equals(void.class)
                         && method.getParameterTypes().length == 0) {
                     boolean isGetter = name.startsWith("get") || name.startsWith("is");
-                    if (isGetter && existsSetter(methods, name, type)) {
-
-                        // XXX: could parameterize the handler to only deal with public
-                        method.setAccessible(true);
+                    if (isGetter && existsSetter(declaredMethods, name, type)) {
 
                         if (type.isPrimitive()
                                 || type.getName().startsWith("java.lang.") && !type.equals(Object.class)) {
@@ -147,12 +144,11 @@ public class BeanSerializer extends AbstractSerializer {
 
             Object serializerObject = serializerClass.getDeclaredConstructor().newInstance();
 
-            Method writeReplace = getWriteReplace(serializerClass, cl);
+            Method method = getWriteReplace(serializerClass, cl);
 
-            if (writeReplace != null) {
+            if (method != null) {
                 writeReplaceFactory = serializerObject;
-                this.writeReplace = writeReplace;
-
+                this.writeReplace = method;
                 return;
             }
         } catch (ClassNotFoundException ignored) {
@@ -168,9 +164,7 @@ public class BeanSerializer extends AbstractSerializer {
      */
     protected Method getWriteReplace(Class<?> cl) {
         for (; cl != null; cl = cl.getSuperclass()) {
-            Method[] methods = cl.getDeclaredMethods();
-
-            for (Method method : methods) {
+            for (Method method : cl.getDeclaredMethods()) {
                 if ("writeReplace".equals(method.getName()) && method.getParameterTypes().length == 0) {
                     return method;
                 }

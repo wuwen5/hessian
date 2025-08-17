@@ -78,11 +78,11 @@ public class WriteReplaceSerializer extends AbstractSerializer {
 
             Object serializerObject = serializerClass.getDeclaredConstructor().newInstance();
 
-            Method writeReplace = getWriteReplace(serializerClass, cl);
+            Method writeReplaceMethod = getWriteReplace(serializerClass, cl);
 
-            if (writeReplace != null) {
+            if (writeReplaceMethod != null) {
                 writeReplaceFactory = serializerObject;
-                this.writeReplace = writeReplace;
+                this.writeReplace = writeReplaceMethod;
             }
         } catch (ClassNotFoundException ignored) {
         } catch (Exception e) {

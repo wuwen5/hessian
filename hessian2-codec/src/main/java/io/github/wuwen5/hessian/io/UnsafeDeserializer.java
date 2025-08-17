@@ -54,15 +54,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import sun.misc.Unsafe;
 
 /**
  * Serializing an object for known object types.
  */
+@Slf4j
 public class UnsafeDeserializer extends AbstractMapDeserializer {
-    private static final Logger log = Logger.getLogger(JavaDeserializer.class.getName());
 
     private static boolean isEnabled;
 
@@ -70,7 +70,7 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
     private static Unsafe unsafe;
 
     private final Class<?> type;
-    private final HashMap<String, FieldDeserializer2> fieldMap;
+    private final Map<String, FieldDeserializer2> fieldMap;
     private final Method readResolve;
 
     public UnsafeDeserializer(Class<?> cl, FieldDeserializer2Factory fieldFactory) {
@@ -275,23 +275,23 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
     /**
      * Creates a map of the classes fields.
      */
-    protected HashMap<String, FieldDeserializer2> getFieldMap(Class<?> cl, FieldDeserializer2Factory fieldFactory) {
-        HashMap<String, FieldDeserializer2> fieldMap = new HashMap<>();
+    protected Map<String, FieldDeserializer2> getFieldMap(Class<?> cl, FieldDeserializer2Factory fieldFactory) {
+        Map<String, FieldDeserializer2> map = new HashMap<>();
 
         for (; cl != null; cl = cl.getSuperclass()) {
             Field[] fields = cl.getDeclaredFields();
             for (Field field : fields) {
                 if (!Modifier.isTransient(field.getModifiers())
                         && !Modifier.isStatic(field.getModifiers())
-                        && fieldMap.get(field.getName()) == null) {
+                        && map.get(field.getName()) == null) {
                     FieldDeserializer2 deser = fieldFactory.create(field);
 
-                    fieldMap.put(field.getName(), deser);
+                    map.put(field.getName(), deser);
                 }
             }
         }
 
-        return fieldMap;
+        return map;
     }
 
     static void logDeserializeError(Field field, Object obj, Object value, Throwable e) throws IOException {
@@ -339,7 +339,7 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
                 isEnabled = false;
             }
         } catch (Throwable e) {
-            log.log(Level.FINER, e.toString(), e);
+            log.trace(e.toString(), e);
         }
 
         UnsafeDeserializer.isEnabled = isEnabled;

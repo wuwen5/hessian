@@ -113,8 +113,7 @@ public class JavaSerializer extends AbstractSerializer {
         ArrayList<Field> compoundFields = new ArrayList<>();
 
         for (; cl != null; cl = cl.getSuperclass()) {
-            Field[] fields = cl.getDeclaredFields();
-            for (Field field : fields) {
+            for (Field field : cl.getDeclaredFields()) {
                 if (Modifier.isTransient(field.getModifiers()) || Modifier.isStatic(field.getModifiers())) {
                     continue;
                 }
@@ -132,12 +131,12 @@ public class JavaSerializer extends AbstractSerializer {
             }
         }
 
-        ArrayList<Field> fields = new ArrayList<>();
-        fields.addAll(primitiveFields);
-        fields.addAll(compoundFields);
+        ArrayList<Field> fieldArrayList = new ArrayList<>();
+        fieldArrayList.addAll(primitiveFields);
+        fieldArrayList.addAll(compoundFields);
 
-        this.fields = new Field[fields.size()];
-        fields.toArray(this.fields);
+        this.fields = new Field[fieldArrayList.size()];
+        fieldArrayList.toArray(this.fields);
 
         fieldSerializers = new FieldSerializer[this.fields.length];
 
@@ -197,12 +196,6 @@ public class JavaSerializer extends AbstractSerializer {
                 } else {
                     repl = writeReplace.invoke(obj);
                 }
-
-                /*
-                out.writeObject(repl);
-
-                out.replaceRef(repl, obj);
-                */
 
                 // hessian/3a5a
                 int ref = out.writeObjectBegin(cl.getName());

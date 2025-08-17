@@ -414,7 +414,7 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
      * Writes the tail of the object definition to the stream.
      */
     @Override
-    public void writeObjectEnd() throws IOException {}
+    public void writeObjectEnd() {}
 
     /**
      * <pre>
@@ -487,32 +487,31 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
      */
     @Override
     public void writeInt(int value) throws IOException {
-        int offset = this.offset;
-        byte[] buffer = this.buffer;
+        int i = this.offset;
 
-        if (SIZE <= offset + 16) {
+        if (SIZE <= i + 16) {
             flushBuffer();
-            offset = this.offset;
+            i = this.offset;
         }
 
         if (INT_DIRECT_MIN <= value && value <= INT_DIRECT_MAX) {
-            buffer[offset++] = (byte) (value + BC_INT_ZERO);
+            buffer[i++] = (byte) (value + BC_INT_ZERO);
         } else if (INT_BYTE_MIN <= value && value <= INT_BYTE_MAX) {
-            buffer[offset++] = (byte) (BC_INT_BYTE_ZERO + (value >> 8));
-            buffer[offset++] = (byte) (value);
+            buffer[i++] = (byte) (BC_INT_BYTE_ZERO + (value >> 8));
+            buffer[i++] = (byte) (value);
         } else if (INT_SHORT_MIN <= value && value <= INT_SHORT_MAX) {
-            buffer[offset++] = (byte) (BC_INT_SHORT_ZERO + (value >> 16));
-            buffer[offset++] = (byte) (value >> 8);
-            buffer[offset++] = (byte) (value);
+            buffer[i++] = (byte) (BC_INT_SHORT_ZERO + (value >> 16));
+            buffer[i++] = (byte) (value >> 8);
+            buffer[i++] = (byte) (value);
         } else {
-            buffer[offset++] = (byte) ('I');
-            buffer[offset++] = (byte) (value >> 24);
-            buffer[offset++] = (byte) (value >> 16);
-            buffer[offset++] = (byte) (value >> 8);
-            buffer[offset++] = (byte) (value);
+            buffer[i++] = (byte) ('I');
+            buffer[i++] = (byte) (value >> 24);
+            buffer[i++] = (byte) (value >> 16);
+            buffer[i++] = (byte) (value >> 8);
+            buffer[i++] = (byte) (value);
         }
 
-        this.offset = offset;
+        this.offset = i;
     }
 
     /**
@@ -528,46 +527,45 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
      */
     @Override
     public void writeLong(long value) throws IOException {
-        int offset = this.offset;
-        byte[] buffer = this.buffer;
+        int i = this.offset;
 
-        if (SIZE <= offset + 16) {
+        if (SIZE <= i + 16) {
             flushBuffer();
-            offset = this.offset;
+            i = this.offset;
         }
 
         if (LONG_DIRECT_MIN <= value && value <= LONG_DIRECT_MAX) {
-            buffer[offset++] = (byte) (value + BC_LONG_ZERO);
+            buffer[i++] = (byte) (value + BC_LONG_ZERO);
         } else if (LONG_BYTE_MIN <= value && value <= LONG_BYTE_MAX) {
-            buffer[offset++] = (byte) (BC_LONG_BYTE_ZERO + (value >> 8));
-            buffer[offset++] = (byte) (value);
+            buffer[i++] = (byte) (BC_LONG_BYTE_ZERO + (value >> 8));
+            buffer[i++] = (byte) (value);
         } else if (LONG_SHORT_MIN <= value && value <= LONG_SHORT_MAX) {
-            buffer[offset++] = (byte) (BC_LONG_SHORT_ZERO + (value >> 16));
-            buffer[offset++] = (byte) (value >> 8);
-            buffer[offset++] = (byte) (value);
+            buffer[i++] = (byte) (BC_LONG_SHORT_ZERO + (value >> 16));
+            buffer[i++] = (byte) (value >> 8);
+            buffer[i++] = (byte) (value);
         } else if (-0x80000000L <= value && value <= 0x7fffffffL) {
-            buffer[offset] = (byte) BC_LONG_INT;
-            buffer[offset + 1] = (byte) (value >> 24);
-            buffer[offset + 2] = (byte) (value >> 16);
-            buffer[offset + 3] = (byte) (value >> 8);
-            buffer[offset + 4] = (byte) (value);
+            buffer[i] = (byte) BC_LONG_INT;
+            buffer[i + 1] = (byte) (value >> 24);
+            buffer[i + 2] = (byte) (value >> 16);
+            buffer[i + 3] = (byte) (value >> 8);
+            buffer[i + 4] = (byte) (value);
 
-            offset += 5;
+            i += 5;
         } else {
-            buffer[offset] = (byte) 'L';
-            buffer[offset + 1] = (byte) (value >> 56);
-            buffer[offset + 2] = (byte) (value >> 48);
-            buffer[offset + 3] = (byte) (value >> 40);
-            buffer[offset + 4] = (byte) (value >> 32);
-            buffer[offset + 5] = (byte) (value >> 24);
-            buffer[offset + 6] = (byte) (value >> 16);
-            buffer[offset + 7] = (byte) (value >> 8);
-            buffer[offset + 8] = (byte) (value);
+            buffer[i] = (byte) 'L';
+            buffer[i + 1] = (byte) (value >> 56);
+            buffer[i + 2] = (byte) (value >> 48);
+            buffer[i + 3] = (byte) (value >> 40);
+            buffer[i + 4] = (byte) (value >> 32);
+            buffer[i + 5] = (byte) (value >> 24);
+            buffer[i + 6] = (byte) (value >> 16);
+            buffer[i + 7] = (byte) (value >> 8);
+            buffer[i + 8] = (byte) (value);
 
-            offset += 9;
+            i += 9;
         }
 
-        this.offset = offset;
+        this.offset = i;
     }
 
     /**
@@ -584,42 +582,41 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
      */
     @Override
     public void writeDouble(double value) throws IOException {
-        int offset = this.offset;
-        byte[] buffer = this.buffer;
+        int i = this.offset;
 
-        if (SIZE <= offset + 16) {
+        if (SIZE <= i + 16) {
             flushBuffer();
-            offset = this.offset;
+            i = this.offset;
         }
 
         int intValue = (int) value;
 
         if (intValue == value) {
             if (intValue == 0) {
-                buffer[offset++] = (byte) BC_DOUBLE_ZERO;
+                buffer[i++] = (byte) BC_DOUBLE_ZERO;
 
-                this.offset = offset;
+                this.offset = i;
 
                 return;
             } else if (intValue == 1) {
-                buffer[offset++] = (byte) BC_DOUBLE_ONE;
+                buffer[i++] = (byte) BC_DOUBLE_ONE;
 
-                this.offset = offset;
+                this.offset = i;
 
                 return;
             } else if (-0x80 <= intValue && intValue < 0x80) {
-                buffer[offset++] = (byte) BC_DOUBLE_BYTE;
-                buffer[offset++] = (byte) intValue;
+                buffer[i++] = (byte) BC_DOUBLE_BYTE;
+                buffer[i++] = (byte) intValue;
 
-                this.offset = offset;
+                this.offset = i;
 
                 return;
             } else if (-0x8000 <= intValue && intValue < 0x8000) {
-                buffer[offset] = (byte) BC_DOUBLE_SHORT;
-                buffer[offset + 1] = (byte) (intValue >> 8);
-                buffer[offset + 2] = (byte) intValue;
+                buffer[i] = (byte) BC_DOUBLE_SHORT;
+                buffer[i + 1] = (byte) (intValue >> 8);
+                buffer[i + 2] = (byte) intValue;
 
-                this.offset = offset + 3;
+                this.offset = i + 3;
 
                 return;
             }
@@ -628,30 +625,30 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
         int mills = (int) (value * 1000);
 
         if (0.001 * mills == value) {
-            buffer[offset] = (byte) (BC_DOUBLE_MILL);
-            buffer[offset + 1] = (byte) (mills >> 24);
-            buffer[offset + 2] = (byte) (mills >> 16);
-            buffer[offset + 3] = (byte) (mills >> 8);
-            buffer[offset + 4] = (byte) (mills);
+            buffer[i] = (byte) (BC_DOUBLE_MILL);
+            buffer[i + 1] = (byte) (mills >> 24);
+            buffer[i + 2] = (byte) (mills >> 16);
+            buffer[i + 3] = (byte) (mills >> 8);
+            buffer[i + 4] = (byte) (mills);
 
-            this.offset = offset + 5;
+            this.offset = i + 5;
 
             return;
         }
 
         long bits = Double.doubleToLongBits(value);
 
-        buffer[offset] = (byte) 'D';
-        buffer[offset + 1] = (byte) (bits >> 56);
-        buffer[offset + 2] = (byte) (bits >> 48);
-        buffer[offset + 3] = (byte) (bits >> 40);
-        buffer[offset + 4] = (byte) (bits >> 32);
-        buffer[offset + 5] = (byte) (bits >> 24);
-        buffer[offset + 6] = (byte) (bits >> 16);
-        buffer[offset + 7] = (byte) (bits >> 8);
-        buffer[offset + 8] = (byte) (bits);
+        buffer[i] = (byte) 'D';
+        buffer[i + 1] = (byte) (bits >> 56);
+        buffer[i + 2] = (byte) (bits >> 48);
+        buffer[i + 3] = (byte) (bits >> 40);
+        buffer[i + 4] = (byte) (bits >> 32);
+        buffer[i + 5] = (byte) (bits >> 24);
+        buffer[i + 6] = (byte) (bits >> 16);
+        buffer[i + 7] = (byte) (bits >> 8);
+        buffer[i + 8] = (byte) (bits);
 
-        this.offset = offset + 9;
+        this.offset = i + 9;
     }
 
     /**
@@ -667,10 +664,11 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
      */
     @Override
     public void writeUTCDate(long time) throws IOException {
-        if (SIZE < offset + 32) flushBuffer();
+        if (SIZE < offset + 32) {
+            flushBuffer();
+        }
 
-        int offset = this.offset;
-        byte[] buffer = this.buffer;
+        int i = this.offset;
 
         if (time % 60000L == 0) {
             // compact date ::= x65 b3 b2 b1 b0
@@ -678,28 +676,28 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
             long minutes = time / 60000L;
 
             if ((minutes >> 31) == 0 || (minutes >> 31) == -1) {
-                buffer[offset++] = (byte) BC_DATE_MINUTE;
-                buffer[offset++] = ((byte) (minutes >> 24));
-                buffer[offset++] = ((byte) (minutes >> 16));
-                buffer[offset++] = ((byte) (minutes >> 8));
-                buffer[offset++] = ((byte) (minutes >> 0));
+                buffer[i++] = (byte) BC_DATE_MINUTE;
+                buffer[i++] = ((byte) (minutes >> 24));
+                buffer[i++] = ((byte) (minutes >> 16));
+                buffer[i++] = ((byte) (minutes >> 8));
+                buffer[i++] = ((byte) (minutes >> 0));
 
-                this.offset = offset;
+                this.offset = i;
                 return;
             }
         }
 
-        buffer[offset++] = (byte) BC_DATE;
-        buffer[offset++] = ((byte) (time >> 56));
-        buffer[offset++] = ((byte) (time >> 48));
-        buffer[offset++] = ((byte) (time >> 40));
-        buffer[offset++] = ((byte) (time >> 32));
-        buffer[offset++] = ((byte) (time >> 24));
-        buffer[offset++] = ((byte) (time >> 16));
-        buffer[offset++] = ((byte) (time >> 8));
-        buffer[offset++] = ((byte) (time));
+        buffer[i++] = (byte) BC_DATE;
+        buffer[i++] = ((byte) (time >> 56));
+        buffer[i++] = ((byte) (time >> 48));
+        buffer[i++] = ((byte) (time >> 40));
+        buffer[i++] = ((byte) (time >> 32));
+        buffer[i++] = ((byte) (time >> 24));
+        buffer[i++] = ((byte) (time >> 16));
+        buffer[i++] = ((byte) (time >> 8));
+        buffer[i++] = ((byte) (time));
 
-        this.offset = offset;
+        this.offset = i;
     }
 
     /**
@@ -713,17 +711,16 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
      */
     @Override
     public void writeNull() throws IOException {
-        int offset = this.offset;
-        byte[] buffer = this.buffer;
+        int i = this.offset;
 
-        if (SIZE <= offset + 16) {
+        if (SIZE <= i + 16) {
             flushBuffer();
-            offset = this.offset;
+            i = this.offset;
         }
 
-        buffer[offset++] = 'N';
+        buffer[i++] = 'N';
 
-        this.offset = offset;
+        this.offset = i;
     }
 
     /**
@@ -743,18 +740,17 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
      */
     @Override
     public void writeString(String value) throws IOException {
-        int offset = this.offset;
-        byte[] buffer = this.buffer;
+        int i = this.offset;
 
-        if (SIZE <= offset + 16) {
+        if (SIZE <= i + 16) {
             flushBuffer();
-            offset = this.offset;
+            i = this.offset;
         }
 
         if (value == null) {
-            buffer[offset++] = (byte) 'N';
+            buffer[i++] = (byte) 'N';
 
-            this.offset = offset;
+            this.offset = i;
         } else {
             int length = value.length();
             int strOffset = 0;
@@ -762,11 +758,11 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
             while (length > 0x8000) {
                 int sublen = 0x8000;
 
-                offset = this.offset;
+                i = this.offset;
 
-                if (SIZE <= offset + 16) {
+                if (SIZE <= i + 16) {
                     flushBuffer();
-                    offset = this.offset;
+                    i = this.offset;
                 }
 
                 // chunk can't end in high surrogate
@@ -776,11 +772,11 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
                     sublen--;
                 }
 
-                buffer[offset] = (byte) BC_STRING_CHUNK;
-                buffer[offset + 1] = (byte) (sublen >> 8);
-                buffer[offset + 2] = (byte) (sublen);
+                buffer[i] = (byte) BC_STRING_CHUNK;
+                buffer[i + 1] = (byte) (sublen >> 8);
+                buffer[i + 2] = (byte) (sublen);
 
-                this.offset = offset + 3;
+                this.offset = i + 3;
 
                 printString(value, strOffset, sublen);
 
@@ -788,25 +784,25 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
                 strOffset += sublen;
             }
 
-            offset = this.offset;
+            i = this.offset;
 
-            if (SIZE <= offset + 16) {
+            if (SIZE <= i + 16) {
                 flushBuffer();
-                offset = this.offset;
+                i = this.offset;
             }
 
             if (length <= STRING_DIRECT_MAX) {
-                buffer[offset++] = (byte) (BC_STRING_DIRECT + length);
+                buffer[i++] = (byte) (BC_STRING_DIRECT + length);
             } else if (length <= STRING_SHORT_MAX) {
-                buffer[offset++] = (byte) (BC_STRING_SHORT + (length >> 8));
-                buffer[offset++] = (byte) (length);
+                buffer[i++] = (byte) (BC_STRING_SHORT + (length >> 8));
+                buffer[i++] = (byte) (length);
             } else {
-                buffer[offset++] = (byte) ('S');
-                buffer[offset++] = (byte) (length >> 8);
-                buffer[offset++] = (byte) (length);
+                buffer[i++] = (byte) ('S');
+                buffer[i++] = (byte) (length >> 8);
+                buffer[i++] = (byte) (length);
             }
 
-            this.offset = offset;
+            this.offset = i;
 
             printString(value, strOffset, length);
         }
@@ -978,7 +974,7 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
      * Writes a byte buffer to the stream.
      */
     @Override
-    public void writeByteBufferStart() throws IOException {}
+    public void writeByteBufferStart() {}
 
     /**
      * Writes a byte buffer to the stream.
@@ -1194,16 +1190,14 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
     }
 
     public void endPacket() throws IOException {
-        int offset = this.offset;
-
-        OutputStream os = this.os;
+        int i = this.offset;
 
         if (os == null) {
             this.offset = 0;
             return;
         }
 
-        int len = offset - 4;
+        int len = i - 4;
 
         if (len < 0x7e) {
             buffer[2] = buffer[0];
@@ -1217,9 +1211,9 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
         this.offset = 0;
 
         if (len < 0x7e) {
-            os.write(buffer, 2, offset - 2);
+            os.write(buffer, 2, i - 2);
         } else {
-            os.write(buffer, 0, offset);
+            os.write(buffer, 0, i);
         }
     }
 
@@ -1260,31 +1254,30 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
      * @param v the string to print.
      */
     public void printString(String v, int strOffset, int length) throws IOException {
-        int offset = this.offset;
-        byte[] buffer = this.buffer;
+        int ioffset = this.offset;
 
         for (int i = 0; i < length; i++) {
-            if (SIZE <= offset + 16) {
-                this.offset = offset;
+            if (SIZE <= ioffset + 16) {
+                this.offset = ioffset;
                 flushBuffer();
-                offset = this.offset;
+                ioffset = this.offset;
             }
 
             char ch = v.charAt(i + strOffset);
 
             if (ch < 0x80) {
-                buffer[offset++] = (byte) (ch);
+                buffer[ioffset++] = (byte) (ch);
             } else if (ch < 0x800) {
-                buffer[offset++] = (byte) (0xc0 + ((ch >> 6) & 0x1f));
-                buffer[offset++] = (byte) (0x80 + (ch & 0x3f));
+                buffer[ioffset++] = (byte) (0xc0 + ((ch >> 6) & 0x1f));
+                buffer[ioffset++] = (byte) (0x80 + (ch & 0x3f));
             } else {
-                buffer[offset++] = (byte) (0xe0 + ((ch >> 12) & 0xf));
-                buffer[offset++] = (byte) (0x80 + ((ch >> 6) & 0x3f));
-                buffer[offset++] = (byte) (0x80 + (ch & 0x3f));
+                buffer[ioffset++] = (byte) (0xe0 + ((ch >> 12) & 0xf));
+                buffer[ioffset++] = (byte) (0x80 + ((ch >> 6) & 0x3f));
+                buffer[ioffset++] = (byte) (0x80 + (ch & 0x3f));
             }
         }
 
-        this.offset = offset;
+        this.offset = ioffset;
     }
 
     /**
@@ -1293,35 +1286,33 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
      * @param v the string to print.
      */
     public void printString(char[] v, int strOffset, int length) throws IOException {
-        int offset = this.offset;
-        byte[] buffer = this.buffer;
+        int ioffset = this.offset;
 
         for (int i = 0; i < length; i++) {
-            if (SIZE <= offset + 16) {
-                this.offset = offset;
+            if (SIZE <= ioffset + 16) {
+                this.offset = ioffset;
                 flushBuffer();
-                offset = this.offset;
+                ioffset = this.offset;
             }
 
             char ch = v[i + strOffset];
 
             if (ch < 0x80) {
-                buffer[offset++] = (byte) (ch);
+                buffer[ioffset++] = (byte) (ch);
             } else if (ch < 0x800) {
-                buffer[offset++] = (byte) (0xc0 + ((ch >> 6) & 0x1f));
-                buffer[offset++] = (byte) (0x80 + (ch & 0x3f));
+                buffer[ioffset++] = (byte) (0xc0 + ((ch >> 6) & 0x1f));
+                buffer[ioffset++] = (byte) (0x80 + (ch & 0x3f));
             } else {
-                buffer[offset++] = (byte) (0xe0 + ((ch >> 12) & 0xf));
-                buffer[offset++] = (byte) (0x80 + ((ch >> 6) & 0x3f));
-                buffer[offset++] = (byte) (0x80 + (ch & 0x3f));
+                buffer[ioffset++] = (byte) (0xe0 + ((ch >> 12) & 0xf));
+                buffer[ioffset++] = (byte) (0x80 + ((ch >> 6) & 0x3f));
+                buffer[ioffset++] = (byte) (0x80 + (ch & 0x3f));
             }
         }
 
-        this.offset = offset;
+        this.offset = ioffset;
     }
 
     protected final void flushIfFull() throws IOException {
-        int offset = this.offset;
 
         if (SIZE < offset + 32) {
             flushBuffer();
@@ -1338,17 +1329,15 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
     }
 
     public final void flushBuffer() throws IOException {
-        int offset = this.offset;
+        int ioffset = this.offset;
 
-        OutputStream os = this.os;
-
-        if (!isPacket && offset > 0) {
+        if (!isPacket && ioffset > 0) {
             this.offset = 0;
             if (os != null) {
-                os.write(buffer, 0, offset);
+                os.write(buffer, 0, ioffset);
             }
-        } else if (isPacket && offset > 4) {
-            int len = offset - 4;
+        } else if (isPacket && ioffset > 4) {
+            int len = ioffset - 4;
 
             buffer[0] |= (byte) 0x80;
             buffer[1] = (byte) (0x7e);
@@ -1357,7 +1346,7 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
             this.offset = 4;
 
             if (os != null) {
-                os.write(buffer, 0, offset);
+                os.write(buffer, 0, ioffset);
             }
 
             buffer[0] = (byte) 0x00;
@@ -1375,10 +1364,8 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
         OutputStream los = this.os;
         this.os = null;
 
-        if (los != null) {
-            if (isCloseStreamOnClose) {
-                los.close();
-            }
+        if (los != null && isCloseStreamOnClose) {
+            los.close();
         }
     }
 
@@ -1476,18 +1463,18 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
 
         @Override
         public void close() throws IOException {
-            int startOffset = this.startOffset;
+            int i = this.startOffset;
             this.startOffset = -1;
 
-            if (startOffset < 0) {
+            if (i < 0) {
                 return;
             }
 
-            int length = (offset - startOffset) - 3;
+            int length = (offset - i) - 3;
 
-            buffer[startOffset] = (byte) 'B';
-            buffer[startOffset + 1] = (byte) (length >> 8);
-            buffer[startOffset + 2] = (byte) (length);
+            buffer[i] = (byte) 'B';
+            buffer[i + 1] = (byte) (length >> 8);
+            buffer[i + 2] = (byte) (length);
 
             HessianEncoder.this.flushBuffer();
         }

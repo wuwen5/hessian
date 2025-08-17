@@ -83,7 +83,7 @@ public class BasicDeserializer extends BaseDeserializer {
     public static final int STRING_ARRAY = BasicSerializer.STRING_ARRAY;
     public static final int OBJECT_ARRAY = BasicSerializer.OBJECT_ARRAY;
 
-    private int code;
+    private final int code;
 
     public BasicDeserializer(int code) {
         this.code = code;
@@ -222,9 +222,9 @@ public class BasicDeserializer extends BaseDeserializer {
             case FLOAT_ARRAY:
             case DOUBLE_ARRAY:
             case STRING_ARRAY: {
-                int code = in.readListStart();
+                int i = in.readListStart();
 
-                switch (code) {
+                switch (i) {
                     case 'N':
                         return null;
 
@@ -244,7 +244,7 @@ public class BasicDeserializer extends BaseDeserializer {
                     case 0x1d:
                     case 0x1e:
                     case 0x1f:
-                        int length = code - 0x10;
+                        int length = i - 0x10;
                         in.readInt();
 
                         return readLengthList(in, length);
