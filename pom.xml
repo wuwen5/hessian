@@ -6,7 +6,8 @@
   <artifactId>hessian</artifactId>
   <version>0.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <description>This project is a refactored and modularized version of the original [Hessian](http://hessian.caucho.com/)
+  <description>This project is a refactored and modularized version of the original
+        [Hessian](http://hessian.caucho.com/)
         repository
         It focuses solely on maintaining and enhancing the **Hessian2 serialization protocol**.</description>
 
@@ -40,7 +41,7 @@
     <connection>scm:git:${git.url}</connection>
     <developerConnection>scm:git:${git.url}</developerConnection>
     <tag>HEAD</tag>
-    <url>${git.url}</url>
+    <url>https://github.com/wuwen5/hessian</url>
   </scm>
 
   <issueManagement>
@@ -69,6 +70,7 @@
     <palantirJavaFormat.version>2.38.0</palantirJavaFormat.version>
     <sonar.exclusions>burlap-rpc/**,hessian-services/**,hessian-rpc/**</sonar.exclusions>
     <sonar.plugin>5.1.0.4751</sonar.plugin>
+    <sonar.organization>wuwen5</sonar.organization>
 
     <slf4j.version>2.0.17</slf4j.version>
     <lombok.version>1.18.38</lombok.version>
