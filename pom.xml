@@ -67,6 +67,8 @@
     <spotless-maven-plugin.version>2.46.1</spotless-maven-plugin.version>
     <spotless.action>check</spotless.action>
     <palantirJavaFormat.version>2.38.0</palantirJavaFormat.version>
+    <sonar.exclusions>burlap-rpc/**,hessian-services/**,hessian-rpc/**</sonar.exclusions>
+    <sonar.plugin>5.1.0.4751</sonar.plugin>
 
     <slf4j.version>2.0.17</slf4j.version>
     <lombok.version>1.18.38</lombok.version>
@@ -250,6 +252,11 @@
               <phase>test</phase>
             </execution>
           </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.sonarsource.scanner.maven</groupId>
+          <artifactId>sonar-maven-plugin</artifactId>
+          <version>${sonar.plugin}</version>
         </plugin>
       </plugins>
     </pluginManagement>

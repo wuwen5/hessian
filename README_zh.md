@@ -2,6 +2,8 @@
 
 [![Java CI](https://github.com/wuwen5/hessian/actions/workflows/ci.yml/badge.svg)](https://github.com/wuwen5/hessian/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/wuwen5/hessian/branch/main/graph/badge.svg)](https://codecov.io/gh/wuwen5/hessian)
+[![Coverage Status](https://coveralls.io/repos/github/wuwen5/hessian/badge.svg?branch=main)](https://coveralls.io/github/wuwen5/hessian?branch=main)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=wuwen5_hessian&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=wuwen5_hessian)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.wuwen5.hessian/hessian/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.wuwen5.hessian/hessian/)
 [![GitHub release](https://img.shields.io/github/release/wuwen5/hessian.svg)](https://github.com/wuwen5/hessian/releases)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
