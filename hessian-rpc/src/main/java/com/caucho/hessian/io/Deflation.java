@@ -48,6 +48,7 @@
 
 package com.caucho.hessian.io;
 
+import io.github.wuwen5.hessian.io.HessianDecoder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -57,6 +58,7 @@ import java.util.zip.InflaterInputStream;
 public class Deflation extends HessianEnvelope {
     public Deflation() {}
 
+    @Override
     public HessianRpcOutput wrap(HessianRpcOutput out) throws IOException {
         OutputStream os = new DeflateOutputStream(out);
 
@@ -67,6 +69,7 @@ public class Deflation extends HessianEnvelope {
         return filterOut;
     }
 
+    @Override
     public HessianRpcInput unwrap(HessianRpcInput in) throws IOException {
         int version = in.readEnvelope();
 
@@ -79,48 +82,52 @@ public class Deflation extends HessianEnvelope {
         return unwrapHeaders(in);
     }
 
+    @Override
     public HessianRpcInput unwrapHeaders(HessianRpcInput in) throws IOException {
         InputStream is = new DeflateInputStream(in);
 
         HessianRpcInput filter = new HessianRpcInput(is);
 
-        filter.setCloseStreamOnClose(true);
+        HessianDecoder.setCloseStreamOnClose(true);
 
         return filter;
     }
 
     static class DeflateOutputStream extends OutputStream {
-        private HessianRpcOutput _out;
-        private OutputStream _bodyOut;
-        private DeflaterOutputStream _deflateOut;
+        private HessianRpcOutput out;
+        private final OutputStream bodyOut;
+        private final DeflaterOutputStream deflateOut;
 
         DeflateOutputStream(HessianRpcOutput out) throws IOException {
-            _out = out;
+            this.out = out;
 
-            _out.startEnvelope(Deflation.class.getName());
+            this.out.startEnvelope(Deflation.class.getName());
 
-            _out.writeInt(0);
+            this.out.writeInt(0);
 
-            _bodyOut = _out.getBytesOutputStream();
+            bodyOut = this.out.getBytesOutputStream();
 
-            _deflateOut = new DeflaterOutputStream(_bodyOut);
+            deflateOut = new DeflaterOutputStream(bodyOut);
         }
 
+        @Override
         public void write(int ch) throws IOException {
-            _deflateOut.write(ch);
+            deflateOut.write(ch);
         }
 
+        @Override
         public void write(byte[] buffer, int offset, int length) throws IOException {
-            _deflateOut.write(buffer, offset, length);
+            deflateOut.write(buffer, offset, length);
         }
 
+        @Override
         public void close() throws IOException {
-            HessianRpcOutput out = _out;
-            _out = null;
+            HessianRpcOutput out = this.out;
+            this.out = null;
 
             if (out != null) {
-                _deflateOut.close();
-                _bodyOut.close();
+                deflateOut.close();
+                bodyOut.close();
 
                 out.writeInt(0);
 
@@ -132,44 +139,51 @@ public class Deflation extends HessianEnvelope {
     }
 
     static class DeflateInputStream extends InputStream {
-        private Hessian2Input _in;
+        private Hessian2Input in;
 
-        private InputStream _bodyIn;
-        private InflaterInputStream _inflateIn;
+        private final InputStream bodyIn;
+        private final InflaterInputStream inflateIn;
 
         DeflateInputStream(Hessian2Input in) throws IOException {
-            _in = in;
+            this.in = in;
 
             int len = in.readInt();
 
-            if (len != 0) throw new IOException("expected no headers");
+            if (len != 0) {
+                throw new IOException("expected no headers");
+            }
 
-            _bodyIn = _in.readInputStream();
+            bodyIn = this.in.readInputStream();
 
-            _inflateIn = new InflaterInputStream(_bodyIn);
+            inflateIn = new InflaterInputStream(bodyIn);
         }
 
+        @Override
         public int read() throws IOException {
-            return _inflateIn.read();
+            return inflateIn.read();
         }
 
+        @Override
         public int read(byte[] buffer, int offset, int length) throws IOException {
-            return _inflateIn.read(buffer, offset, length);
+            return inflateIn.read(buffer, offset, length);
         }
 
+        @Override
         public void close() throws IOException {
-            Hessian2Input in = _in;
-            _in = null;
+            Hessian2Input in = this.in;
+            this.in = null;
 
             if (in != null) {
-                _inflateIn.close();
-                _bodyIn.close();
+                inflateIn.close();
+                bodyIn.close();
 
                 int len = in.readInt();
 
-                if (len != 0) throw new IOException("Unexpected footer");
+                if (len != 0) {
+                    throw new IOException("Unexpected footer");
+                }
 
-                in.completeEnvelope();
+                ((HessianRpcInput) in).completeEnvelope();
 
                 in.close();
             }

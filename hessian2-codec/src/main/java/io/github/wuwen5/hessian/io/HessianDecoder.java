@@ -207,50 +207,6 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
         resetReferences();
     }
 
-    /**
-     * Starts reading the envelope
-     *
-     * <pre>
-     * E major minor
-     * </pre>
-     */
-    public int readEnvelope() throws IOException {
-        int tag = read();
-        int version = 0;
-
-        if (tag == 'H') {
-            int major = read();
-            int minor = read();
-
-            version = (major << 16) + minor;
-
-            tag = read();
-        }
-
-        if (tag != 'E') {
-            throw error("expected hessian Envelope ('E') at " + codeName(tag));
-        }
-
-        return version;
-    }
-
-    /**
-     * Completes reading the envelope
-     *
-     * <p>A successful completion will have a single value:
-     *
-     * <pre>
-     * Z
-     * </pre>
-     */
-    public void completeEnvelope() throws IOException {
-        int tag = read();
-
-        if (tag != 'Z') {
-            error("expected end of envelope at " + codeName(tag));
-        }
-    }
-
     public Object[] readArguments() throws IOException {
         int len = readInt();
 
@@ -261,60 +217,6 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
         }
 
         return args;
-    }
-
-    /**
-     * Completes reading the call
-     *
-     * <p>A successful completion will have a single value:
-     *
-     * <pre>
-     * z
-     * </pre>
-     */
-    public void completeValueReply() throws IOException {
-        int tag = read();
-
-        if (tag != 'Z') {
-            error("expected end of reply at " + codeName(tag));
-        }
-    }
-
-    /**
-     * Starts reading a packet
-     *
-     * <pre>
-     * p major minor
-     * </pre>
-     */
-    public int startMessage() throws IOException {
-        int tag = read();
-
-        if (tag != 'p' && tag != 'P') {
-            throw error("expected Hessian message ('p') at " + codeName(tag));
-        }
-
-        int major = read();
-        int minor = read();
-
-        return (major << 16) + minor;
-    }
-
-    /**
-     * Completes reading the message
-     *
-     * <p>A successful completion will have a single value:
-     *
-     * <pre>
-     * z
-     * </pre>
-     */
-    public void completeMessage() throws IOException {
-        int tag = read();
-
-        if (tag != 'Z') {
-            error("expected end of message at " + codeName(tag));
-        }
     }
 
     /**
@@ -3018,10 +2920,6 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
         long bits = parseLong();
 
         return Double.longBitsToDouble(bits);
-    }
-
-    org.w3c.dom.Node parseXML() throws IOException {
-        throw new UnsupportedOperationException();
     }
 
     private void parseString(StringBuilder sbuf) throws IOException {

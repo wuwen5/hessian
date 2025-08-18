@@ -52,21 +52,50 @@ import com.caucho.hessian.io.Hessian2Input;
 import com.caucho.hessian.io.HessianEnvelope;
 import com.caucho.hessian.io.HessianRpcInput;
 import com.caucho.hessian.io.HessianRpcOutput;
+import io.github.wuwen5.hessian.io.HessianDecoder;
 import java.io.*;
 import java.security.*;
 import java.security.cert.*;
 import javax.crypto.*;
+import lombok.Getter;
+import lombok.Setter;
 
 public class X509Encryption extends HessianEnvelope {
-    private String _algorithm = "AES";
+    /**
+     * -- GETTER --
+     *  Gets the encryption algorithm for the content.
+     */
+    @Getter
+    private String algorithm = "AES";
 
-    // certificate for encryption/decryption
-    private X509Certificate _cert;
+    /**
+     * certificate for encryption/decryption
+     */
+    private X509Certificate cert;
 
-    // private key for decryption
-    private PrivateKey _privateKey;
+    /**
+     * private key for decryption
+     * -- GETTER --
+     *  The private key for decryption.
+     * -- SETTER --
+     *  The X509 certificate to obtain the public key of the recipient.
+     *
+     *
+     */
+    @Setter
+    @Getter
+    private PrivateKey privateKey;
 
-    private SecureRandom _secureRandom;
+    /**
+     * -- GETTER --
+     *  The random number generator for the shared secrets.
+     * -- SETTER --
+     *  The random number generator for the shared secrets.
+     *
+     */
+    @Setter
+    @Getter
+    private SecureRandom secureRandom;
 
     public X509Encryption() {}
 
@@ -74,62 +103,32 @@ public class X509Encryption extends HessianEnvelope {
      * Sets the encryption algorithm for the content.
      */
     public void setAlgorithm(String algorithm) {
-        if (algorithm == null) throw new NullPointerException();
+        if (algorithm == null) {
+            throw new NullPointerException();
+        }
 
-        _algorithm = algorithm;
-    }
-
-    /**
-     * Gets the encryption algorithm for the content.
-     */
-    public String getAlgorithm() {
-        return _algorithm;
+        this.algorithm = algorithm;
     }
 
     /**
      * The X509 certificate to obtain the public key of the recipient.
      */
     public X509Certificate getCertificate() {
-        return _cert;
+        return cert;
     }
 
     /**
      * The X509 certificate to obtain the public key of the recipient.
      */
     public void setCertificate(X509Certificate cert) {
-        _cert = cert;
+        this.cert = cert;
     }
 
-    /**
-     * The private key for decryption.
-     */
-    public PrivateKey getPrivateKey() {
-        return _privateKey;
-    }
-
-    /**
-     * The X509 certificate to obtain the public key of the recipient.
-     */
-    public void setPrivateKey(PrivateKey privateKey) {
-        _privateKey = privateKey;
-    }
-
-    /**
-     * The random number generator for the shared secrets.
-     */
-    public SecureRandom getSecureRandom() {
-        return _secureRandom;
-    }
-
-    /**
-     * The random number generator for the shared secrets.
-     */
-    public void setSecureRandom(SecureRandom random) {
-        _secureRandom = random;
-    }
-
+    @Override
     public HessianRpcOutput wrap(HessianRpcOutput out) throws IOException {
-        if (_cert == null) throw new IOException("X509Encryption.wrap requires a certificate");
+        if (cert == null) {
+            throw new IOException("X509Encryption.wrap requires a certificate");
+        }
 
         OutputStream os = new EncryptOutputStream(out);
 
@@ -140,58 +139,70 @@ public class X509Encryption extends HessianEnvelope {
         return filterOut;
     }
 
+    @Override
     public HessianRpcInput unwrap(HessianRpcInput in) throws IOException {
-        if (_privateKey == null) throw new IOException("X509Encryption.unwrap requires a private key");
+        if (privateKey == null) {
+            throw new IOException("X509Encryption.unwrap requires a private key");
+        }
 
-        if (_cert == null) throw new IOException("X509Encryption.unwrap requires a certificate");
+        if (cert == null) {
+            throw new IOException("X509Encryption.unwrap requires a certificate");
+        }
 
         int version = in.readEnvelope();
 
         String method = in.readMethod();
 
-        if (!method.equals(getClass().getName()))
+        if (!method.equals(getClass().getName())) {
             throw new IOException(
                     "expected hessian Envelope method '" + getClass().getName() + "' at '" + method + "'");
+        }
 
         return unwrapHeaders(in);
     }
 
+    @Override
     public HessianRpcInput unwrapHeaders(HessianRpcInput in) throws IOException {
-        if (_privateKey == null) throw new IOException("X509Encryption.unwrap requires a private key");
+        if (privateKey == null) {
+            throw new IOException("X509Encryption.unwrap requires a private key");
+        }
 
-        if (_cert == null) throw new IOException("X509Encryption.unwrap requires a certificate");
+        if (cert == null) {
+            throw new IOException("X509Encryption.unwrap requires a certificate");
+        }
 
         InputStream is = new EncryptInputStream(in);
 
         HessianRpcInput filter = new HessianRpcInput(is);
 
-        filter.setCloseStreamOnClose(true);
+        HessianDecoder.setCloseStreamOnClose(true);
 
         return filter;
     }
 
     class EncryptOutputStream extends OutputStream {
-        private HessianRpcOutput _out;
+        private HessianRpcOutput out;
 
-        private Cipher _cipher;
-        private OutputStream _bodyOut;
-        private CipherOutputStream _cipherOut;
+        private final OutputStream bodyOut;
+        private final CipherOutputStream cipherOut;
 
         EncryptOutputStream(HessianRpcOutput out) throws IOException {
             try {
-                _out = out;
+                this.out = out;
 
-                KeyGenerator keyGen = KeyGenerator.getInstance(_algorithm);
+                KeyGenerator keyGen = KeyGenerator.getInstance(algorithm);
 
-                if (_secureRandom != null) keyGen.init(_secureRandom);
+                if (secureRandom != null) {
+                    keyGen.init(secureRandom);
+                }
 
                 SecretKey sharedKey = keyGen.generateKey();
 
-                _out = out;
+                this.out = out;
 
-                _out.startEnvelope(X509Encryption.class.getName());
+                this.out.startEnvelope(X509Encryption.class.getName());
 
-                PublicKey publicKey = _cert.getPublicKey();
+                PublicKey publicKey = cert.getPublicKey();
 
                 byte[] encoded = publicKey.getEncoded();
                 MessageDigest md = MessageDigest.getInstance("SHA1");
@@ -200,53 +211,60 @@ public class X509Encryption extends HessianEnvelope {
 
                 String keyAlgorithm = publicKey.getAlgorithm();
                 Cipher keyCipher = Cipher.getInstance(keyAlgorithm);
-                if (_secureRandom != null) keyCipher.init(Cipher.WRAP_MODE, _cert, _secureRandom);
-                else keyCipher.init(Cipher.WRAP_MODE, _cert);
+                if (secureRandom != null) {
+                    keyCipher.init(Cipher.WRAP_MODE, cert, secureRandom);
+                } else {
+                    keyCipher.init(Cipher.WRAP_MODE, cert);
+                }
 
                 byte[] encKey = keyCipher.wrap(sharedKey);
 
-                _out.writeInt(4);
+                this.out.writeInt(4);
 
-                _out.writeString("algorithm");
-                _out.writeString(_algorithm);
-                _out.writeString("fingerprint");
-                _out.writeBytes(fingerprint);
-                _out.writeString("key-algorithm");
-                _out.writeString(keyAlgorithm);
-                _out.writeString("key");
-                _out.writeBytes(encKey);
+                this.out.writeString("algorithm");
+                this.out.writeString(algorithm);
+                this.out.writeString("fingerprint");
+                this.out.writeBytes(fingerprint);
+                this.out.writeString("key-algorithm");
+                this.out.writeString(keyAlgorithm);
+                this.out.writeString("key");
+                this.out.writeBytes(encKey);
 
-                _bodyOut = _out.getBytesOutputStream();
+                bodyOut = this.out.getBytesOutputStream();
 
-                _cipher = Cipher.getInstance(_algorithm);
-                if (_secureRandom != null) _cipher.init(Cipher.ENCRYPT_MODE, sharedKey, _secureRandom);
-                else _cipher.init(Cipher.ENCRYPT_MODE, sharedKey);
+                Cipher cipher = Cipher.getInstance(algorithm);
+                if (secureRandom != null) {
+                    cipher.init(Cipher.ENCRYPT_MODE, sharedKey, secureRandom);
+                } else {
+                    cipher.init(Cipher.ENCRYPT_MODE, sharedKey);
+                }
 
-                _cipherOut = new CipherOutputStream(_bodyOut, _cipher);
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (IOException e) {
+                cipherOut = new CipherOutputStream(bodyOut, cipher);
+            } catch (RuntimeException | IOException e) {
                 throw e;
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
 
+        @Override
         public void write(int ch) throws IOException {
-            _cipherOut.write(ch);
+            cipherOut.write(ch);
         }
 
+        @Override
         public void write(byte[] buffer, int offset, int length) throws IOException {
-            _cipherOut.write(buffer, offset, length);
+            cipherOut.write(buffer, offset, length);
         }
 
+        @Override
         public void close() throws IOException {
-            HessianRpcOutput out = _out;
-            _out = null;
+            HessianRpcOutput out = this.out;
+            this.out = null;
 
             if (out != null) {
-                _cipherOut.close();
-                _bodyOut.close();
+                cipherOut.close();
+                bodyOut.close();
 
                 out.writeInt(0);
                 out.completeEnvelope();
@@ -256,17 +274,15 @@ public class X509Encryption extends HessianEnvelope {
     }
 
     class EncryptInputStream extends InputStream {
-        private Hessian2Input _in;
+        private Hessian2Input in;
 
-        private Cipher _cipher;
-        private InputStream _bodyIn;
-        private CipherInputStream _cipherIn;
+        private final InputStream bodyIn;
+        private final CipherInputStream cipherIn;
 
         EncryptInputStream(Hessian2Input in) throws IOException {
             try {
-                _in = in;
+                this.in = in;
 
-                byte[] fingerprint = null;
                 String keyAlgorithm = null;
                 String algorithm = null;
                 byte[] encKey = null;
@@ -276,53 +292,66 @@ public class X509Encryption extends HessianEnvelope {
                 for (int i = 0; i < len; i++) {
                     String header = in.readString();
 
-                    if ("fingerprint".equals(header)) fingerprint = in.readBytes();
-                    else if ("key-algorithm".equals(header)) keyAlgorithm = in.readString();
-                    else if ("algorithm".equals(header)) algorithm = in.readString();
-                    else if ("key".equals(header)) encKey = in.readBytes();
-                    else throw new IOException("'" + header + "' is an unexpected header");
+                    if ("fingerprint".equals(header)) {
+                        in.readBytes();
+                    } else if ("key-algorithm".equals(header)) {
+                        keyAlgorithm = in.readString();
+                    } else if ("algorithm".equals(header)) {
+                        algorithm = in.readString();
+                    } else if ("key".equals(header)) {
+                        encKey = in.readBytes();
+                    } else {
+                        throw new IOException("'" + header + "' is an unexpected header");
+                    }
+                }
+
+                if (keyAlgorithm == null || algorithm == null) {
+                    throw new IOException("X509Encryption: missing key-algorithm or algorithm header");
                 }
 
                 Cipher keyCipher = Cipher.getInstance(keyAlgorithm);
-                keyCipher.init(Cipher.UNWRAP_MODE, _privateKey);
+                keyCipher.init(Cipher.UNWRAP_MODE, privateKey);
 
                 Key key = keyCipher.unwrap(encKey, algorithm, Cipher.SECRET_KEY);
-                _bodyIn = _in.readInputStream();
+                bodyIn = this.in.readInputStream();
 
-                _cipher = Cipher.getInstance(algorithm);
-                _cipher.init(Cipher.DECRYPT_MODE, key);
+                Cipher cipher = Cipher.getInstance(algorithm);
+                cipher.init(Cipher.DECRYPT_MODE, key);
 
-                _cipherIn = new CipherInputStream(_bodyIn, _cipher);
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (IOException e) {
+                cipherIn = new CipherInputStream(bodyIn, cipher);
+            } catch (RuntimeException | IOException e) {
                 throw e;
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
 
+        @Override
         public int read() throws IOException {
-            return _cipherIn.read();
+            return cipherIn.read();
         }
 
+        @Override
         public int read(byte[] buffer, int offset, int length) throws IOException {
-            return _cipherIn.read(buffer, offset, length);
+            return cipherIn.read(buffer, offset, length);
         }
 
+        @Override
         public void close() throws IOException {
-            Hessian2Input in = _in;
-            _in = null;
+            Hessian2Input in = this.in;
+            this.in = null;
 
             if (in != null) {
-                _cipherIn.close();
-                _bodyIn.close();
+                cipherIn.close();
+                bodyIn.close();
 
                 int len = in.readInt();
 
-                if (len != 0) throw new IOException("Unexpected footer");
+                if (len != 0) {
+                    throw new IOException("Unexpected footer");
+                }
 
-                in.completeEnvelope();
+                ((HessianRpcInput) in).completeEnvelope();
 
                 in.close();
             }

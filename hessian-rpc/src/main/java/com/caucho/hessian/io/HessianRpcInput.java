@@ -120,6 +120,104 @@ public class HessianRpcInput extends Hessian2Input implements AbstractHessianInp
         readReply(Object.class);
     }
 
+    /**
+     * Starts reading the envelope
+     *
+     * <pre>
+     * E major minor
+     * </pre>
+     */
+    public int readEnvelope() throws IOException {
+        int tag = read();
+        int version = 0;
+
+        if (tag == 'H') {
+            int major = read();
+            int minor = read();
+
+            version = (major << 16) + minor;
+
+            tag = read();
+        }
+
+        if (tag != 'E') {
+            throw error("expected hessian Envelope ('E') at " + codeName(tag));
+        }
+
+        return version;
+    }
+
+    /**
+     * Completes reading the envelope
+     *
+     * <p>A successful completion will have a single value:
+     *
+     * <pre>
+     * Z
+     * </pre>
+     */
+    public void completeEnvelope() throws IOException {
+        int tag = read();
+
+        if (tag != 'Z') {
+            error("expected end of envelope at " + codeName(tag));
+        }
+    }
+
+    /**
+     * Completes reading the message
+     *
+     * <p>A successful completion will have a single value:
+     *
+     * <pre>
+     * z
+     * </pre>
+     */
+    public void completeMessage() throws IOException {
+        int tag = read();
+
+        if (tag != 'Z') {
+            error("expected end of message at " + codeName(tag));
+        }
+    }
+
+    /**
+     * Completes reading the call
+     *
+     * <p>A successful completion will have a single value:
+     *
+     * <pre>
+     * z
+     * </pre>
+     */
+    public void completeValueReply() throws IOException {
+        int tag = read();
+
+        if (tag != 'Z') {
+            error("expected end of reply at " + codeName(tag));
+        }
+    }
+
+    /**
+     * Starts reading a packet
+     *
+     * <pre>
+     * p major minor
+     * </pre>
+     */
+    public int startMessage() throws IOException {
+        int tag = read();
+
+        if (tag != 'p' && tag != 'P') {
+            throw error("expected Hessian message ('p') at " + codeName(tag));
+        }
+
+        int major = read();
+        int minor = read();
+
+        return (major << 16) + minor;
+    }
+
     @Override
     public void setRemoteResolver(HessianRemoteResolver resolver) {
         super.setRemoteResolver(resolver);
