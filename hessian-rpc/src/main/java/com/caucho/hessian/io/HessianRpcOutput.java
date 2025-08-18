@@ -207,11 +207,9 @@ public class HessianRpcOutput extends Hessian2Output implements AbstractHessianO
      * @param method the method name to call.
      */
     public void startEnvelope(String method) throws IOException {
-        int offset = this.offset;
 
         if (SIZE < offset + 32) {
             flushBuffer();
-            offset = this.offset;
         }
 
         buffer[this.offset++] = (byte) 'E';
@@ -231,6 +229,89 @@ public class HessianRpcOutput extends Hessian2Output implements AbstractHessianO
     public void completeEnvelope() throws IOException {
         flushIfFull();
 
+        buffer[offset++] = (byte) 'Z';
+    }
+
+    /**
+     * Starts a packet
+     *
+     * <p>A message contains several objects encapsulated by a length</p>
+     *
+     * <pre>
+     * p x02 x00
+     * </pre>
+     */
+    public void startMessage() throws IOException {
+        flushIfFull();
+
+        buffer[offset++] = (byte) 'p';
+        buffer[offset++] = (byte) 2;
+        buffer[offset++] = (byte) 0;
+    }
+
+    /**
+     * Completes reading the message
+     *
+     * <p>A successful completion will have a single value:
+     *
+     * <pre>
+     * z
+     * </pre>
+     */
+    public void completeMessage() throws IOException {
+        flushIfFull();
+
+        buffer[offset++] = (byte) 'z';
+    }
+
+    /**
+     * Writes a fault.  The fault will be written
+     * as a descriptive string followed by an object:
+     *<pre>
+     * <code>
+     * F map
+     * </code>
+     *
+     * <code>
+     * F H
+     * \x04code
+     * \x10the fault code
+     *
+     * \x07message
+     * \x11the fault message
+     *
+     * \x06detail
+     * M\xnnjavax.ejb.FinderException
+     *     ...
+     * Z
+     * Z
+     * </code>
+     * </pre>
+     *
+     * @param code the fault code, a three digit
+     */
+    public void writeFault(String code, String message, Object detail) throws IOException {
+        flushIfFull();
+
+        writeVersion();
+
+        buffer[offset++] = (byte) 'F';
+        buffer[offset++] = (byte) 'H';
+
+        registerRef(new Object(), false);
+
+        writeString("code");
+        writeString(code);
+
+        writeString("message");
+        writeString(message);
+
+        if (detail != null) {
+            writeString("detail");
+            writeObject(detail);
+        }
+
+        flushIfFull();
         buffer[offset++] = (byte) 'Z';
     }
 }

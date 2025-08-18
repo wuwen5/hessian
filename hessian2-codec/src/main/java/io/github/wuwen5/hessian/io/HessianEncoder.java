@@ -170,89 +170,6 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
     }
 
     /**
-     * Starts a packet
-     *
-     * <p>A message contains several objects encapsulated by a length</p>
-     *
-     * <pre>
-     * p x02 x00
-     * </pre>
-     */
-    public void startMessage() throws IOException {
-        flushIfFull();
-
-        buffer[offset++] = (byte) 'p';
-        buffer[offset++] = (byte) 2;
-        buffer[offset++] = (byte) 0;
-    }
-
-    /**
-     * Completes reading the message
-     *
-     * <p>A successful completion will have a single value:
-     *
-     * <pre>
-     * z
-     * </pre>
-     */
-    public void completeMessage() throws IOException {
-        flushIfFull();
-
-        buffer[offset++] = (byte) 'z';
-    }
-
-    /**
-     * Writes a fault.  The fault will be written
-     * as a descriptive string followed by an object:
-     *<pre>
-     * <code>
-     * F map
-     * </code>
-     *
-     * <code>
-     * F H
-     * \x04code
-     * \x10the fault code
-     *
-     * \x07message
-     * \x11the fault message
-     *
-     * \x06detail
-     * M\xnnjavax.ejb.FinderException
-     *     ...
-     * Z
-     * Z
-     * </code>
-     * </pre>
-     *
-     * @param code the fault code, a three digit
-     */
-    public void writeFault(String code, String message, Object detail) throws IOException {
-        flushIfFull();
-
-        writeVersion();
-
-        buffer[offset++] = (byte) 'F';
-        buffer[offset++] = (byte) 'H';
-
-        addRef(new Object(), refCount++, false);
-
-        writeString("code");
-        writeString(code);
-
-        writeString("message");
-        writeString(message);
-
-        if (detail != null) {
-            writeString("detail");
-            writeObject(detail);
-        }
-
-        flushIfFull();
-        buffer[offset++] = (byte) 'Z';
-    }
-
-    /**
      * Writes any object to the output stream.
      */
     @Override
@@ -1148,6 +1065,10 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
     private int addRef(Object value, int newRef, boolean isReplace) {
 
         return refs.put(value, newRef, isReplace);
+    }
+
+    protected void registerRef(Object obj, boolean flag) {
+        addRef(obj, refCount++, flag);
     }
 
     /**
