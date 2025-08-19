@@ -27,6 +27,9 @@ jobs:
           distribution: ${{ matrix.distribution }}
           cache: maven
       - name: Build with Maven
+        env:
+          TZ: UTC
+          JAVA_TOOL_OPTIONS: "-Duser.timezone=UTC"
         run: ./mvnw -B clean verify javadoc:javadoc --file pom.xml
       - name: Upload coverage to Codecov
         if: matrix.os == 'ubuntu-latest' && matrix.java == '11'
