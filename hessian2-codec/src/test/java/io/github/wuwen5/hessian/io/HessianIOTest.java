@@ -12,6 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.caucho.hessian.io.Hessian2Input;
 import com.caucho.hessian.io.Hessian2Output;
+import io.github.wuwen5.hessian.io.beans.BaseUser;
+import io.github.wuwen5.hessian.io.beans.black.DenyObj;
 import io.vavr.control.Try;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -22,11 +24,14 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -131,6 +136,10 @@ public class HessianIOTest extends SerializeTestBase {
         ret = hessianIO(output -> Try.run(() -> output.writeBoolean(true)), input -> Try.of(input::readDouble)
                 .get());
         assertEquals(1, ret);
+
+        Float ret1 = hessianIO(output -> Try.run(() -> output.writeDouble(1.0f)), input -> Try.of(input::readFloat)
+                .get());
+        assertEquals(1f, ret1);
     }
 
     @Test
@@ -175,12 +184,22 @@ public class HessianIOTest extends SerializeTestBase {
         Date o = (Date)
                 hessianIO(output -> Try.run(() -> output.writeObject(new Date(now))), input -> Try.of(input::readObject)
                         .get());
+
+        // truncate minutes
+        Instant instant = Instant.now().truncatedTo(ChronoUnit.MINUTES);
+        Date date = Date.from(instant);
+        long timestamp = date.getTime();
+        Date dm = (Date) hessianIO(
+                output -> Try.run(() -> output.writeObject(new Date(timestamp))),
+                input -> Try.of(input::readObject).get());
+
         java.sql.Date sqlDate = (java.sql.Date) hessianIO(
                 output -> Try.run(() -> output.writeObject(new java.sql.Date(now))),
                 input -> Try.of(input::readObject).get());
         assertEquals(now, l);
         assertEquals(now, o.getTime());
         assertEquals(now, sqlDate.getTime());
+        assertEquals(timestamp, dm.getTime());
     }
 
     /**
@@ -297,6 +316,57 @@ public class HessianIOTest extends SerializeTestBase {
                 input -> Try.of(input::readObject).get());
 
         assertEquals("test123", ((TestAnnotation) annotation).value());
+    }
+
+    @Test
+    public void testBlackWhiteList() throws IOException {
+        SerializerFactory factory = new SerializerFactory();
+
+        factory.getClassFactory().allow("io.github.wuwen5.hessian.io.HessianIOTest*");
+        factory.getClassFactory().deny("io.github.wuwen5.hessian.io.beans.black.*");
+
+        Object o = hessianIOBeanSerializeFactory(
+                output -> Try.run(() -> output.writeObject(new DenyObj().setName("abc"))),
+                input -> Try.of(input::readObject).get(),
+                factory);
+        Object o2 = hessianIOBeanSerializeFactory(
+                output -> Try.run(() -> output.writeObject(new TestObject("a", 1))),
+                input -> Try.of(input::readObject).get(),
+                factory);
+        Object o3 = hessianIOBeanSerializeFactory(
+                output -> Try.run(() -> output.writeObject(new BaseUser())),
+                input -> Try.of(input::readObject).get(),
+                factory);
+
+        Assertions.assertInstanceOf(Map.class, o);
+        Assertions.assertInstanceOf(TestObject.class, o2);
+        Assertions.assertInstanceOf(Map.class, o3);
+    }
+
+    @Test
+    public void testBlackWhiteList2() throws IOException {
+        Object o = hessianIO(
+                output -> Try.run(() -> output.writeObject(new DenyObj().setName("abc"))), input -> Try.of(() -> {
+                            input.allow("io.github.wuwen5.hessian.io.HessianIOTest*");
+                            return input.readObject();
+                        })
+                        .get());
+
+        Object o2 =
+                hessianIO(output -> Try.run(() -> output.writeObject(new TestObject("a", 1))), input -> Try.of(() -> {
+                            input.allow("io.github.wuwen5.hessian.io.HessianIOTest*");
+                            return input.readObject();
+                        })
+                        .get());
+        Object o3 = hessianIO(output -> Try.run(() -> output.writeObject(new BaseUser())), input -> Try.of(() -> {
+                    input.allow("io.github.wuwen5.hessian.io.HessianIOTest*");
+                    return input.readObject();
+                })
+                .get());
+
+        Assertions.assertInstanceOf(Map.class, o);
+        Assertions.assertInstanceOf(TestObject.class, o2);
+        Assertions.assertInstanceOf(Map.class, o3);
     }
 
     @TestAnnotation("test123")
