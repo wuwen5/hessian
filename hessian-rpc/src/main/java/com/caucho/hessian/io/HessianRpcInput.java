@@ -60,6 +60,18 @@ public class HessianRpcInput extends Hessian2Input implements AbstractHessianInp
         return method;
     }
 
+    public Object[] readArguments() throws IOException {
+        int len = readInt();
+
+        Object[] args = new Object[len];
+
+        for (int i = 0; i < len; i++) {
+            args[i] = readObject();
+        }
+
+        return args;
+    }
+
     /**
      * Returns the number of method arguments
      *
