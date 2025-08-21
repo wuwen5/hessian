@@ -105,10 +105,6 @@ public class HessianDebugInputStream extends InputStream {
         state.startTop2();
     }
 
-    public void startData1() {
-        state.startData1();
-    }
-
     public void startStreaming() {
         state.startStreaming();
     }

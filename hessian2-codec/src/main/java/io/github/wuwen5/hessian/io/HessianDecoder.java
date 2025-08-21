@@ -207,18 +207,6 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
         resetReferences();
     }
 
-    public Object[] readArguments() throws IOException {
-        int len = readInt();
-
-        Object[] args = new Object[len];
-
-        for (int i = 0; i < len; i++) {
-            args[i] = readObject();
-        }
-
-        return args;
-    }
-
     /**
      * Reads a null
      *
@@ -348,7 +336,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
                 return true;
 
                 // INT_SHORT = 0
-            case 0xd4:
+            case BC_INT_SHORT_ZERO:
                 return (256 * read() + read()) != 0;
 
                 // INT_SHORT != 0
@@ -394,7 +382,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
                 return tag != BC_LONG_ZERO;
 
                 // LONG_BYTE = 0
-            case 0xf8:
+            case BC_LONG_BYTE_ZERO:
                 return read() != 0;
 
                 // LONG_BYTE != 0
@@ -416,11 +404,11 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
                 read();
                 return true;
 
-                // INT_SHORT = 0
-            case 0x3c:
+                // LONG_SHORT = 0
+            case BC_LONG_SHORT_ZERO:
                 return (256 * read() + read()) != 0;
 
-                // INT_SHORT != 0
+                // LONG_SHORT != 0
             case 0x38:
             case 0x39:
             case 0x3a:
@@ -1102,7 +1090,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case 0x3f:
                 return ((tag - BC_LONG_SHORT_ZERO) << 16) + 256 * read() + read();
 
-            case 'L':
+            case BC_LONG:
                 return (double) parseLong();
 
             case BC_DOUBLE_ONE:

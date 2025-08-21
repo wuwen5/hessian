@@ -635,7 +635,7 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
             i = this.offset;
         }
 
-        buffer[i++] = 'N';
+        buffer[i++] = BC_NULL;
 
         this.offset = i;
     }
@@ -665,7 +665,7 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
         }
 
         if (value == null) {
-            buffer[i++] = (byte) 'N';
+            buffer[i++] = (byte) BC_NULL;
 
             this.offset = i;
         } else {
@@ -746,7 +746,7 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
                 flushBuffer();
             }
 
-            this.buffer[this.offset++] = (byte) ('N');
+            this.buffer[this.offset++] = (byte) (BC_NULL);
         } else {
             while (length > 0x8000) {
                 int sublen = 0x8000;
@@ -812,7 +812,7 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
                 flushBuffer();
             }
 
-            this.buffer[offset++] = 'N';
+            this.buffer[offset++] = BC_NULL;
         } else {
             writeBytes(buffer, 0, buffer.length);
         }
@@ -838,7 +838,7 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
                 flushBuffer();
             }
 
-            this.buffer[this.offset++] = (byte) 'N';
+            this.buffer[this.offset++] = (byte) BC_NULL;
         } else {
             while (SIZE - this.offset - 3 < length) {
                 int sublen = SIZE - this.offset - 3;
