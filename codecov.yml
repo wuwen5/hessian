@@ -1,6 +1,12 @@
 codecov:
   max_report_age: off
   branch: main
+coverage:
+  status:
+    # pull-requests only
+    patch:
+      default:
+        threshold: 0.1%
 ignore:
   - ./burlap-rpc/**/*
   - ./hessian-rpc/**/*
