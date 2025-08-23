@@ -1,7 +1,10 @@
 package io.github.wuwen5.hessian.io.beans;
 
 import java.io.Serializable;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +25,9 @@ public class BasicTypeBean implements Serializable {
     private int anInt;
     private long aLong;
     private double aDouble;
+    private double[] aDoubleArray;
     private float aFloat;
+    private float[] aFloatArray;
     private boolean aBoolean;
     private String aString;
     private byte[] aByteArray;
@@ -30,6 +35,7 @@ public class BasicTypeBean implements Serializable {
     private Byte byteObject;
     private char aChar;
     private short aShort;
+    private short[] aShortArray;
     private Integer anInteger;
     private Long aLongObject;
     private Double aDoubleObject;
@@ -38,6 +44,20 @@ public class BasicTypeBean implements Serializable {
     private List<String> aList;
     private Map<String, String> map;
     private Date date;
+    private java.sql.Date sqlDate;
+    private BaseUser baseUser;
+    private BaseUser[] baseUsers;
+    private Number number;
+    private Character[] character;
+    private char[] chars;
+    private String[] stringArray;
+    private boolean[] booleanArray;
+    private int[] intArray;
+    private Boolean[] booleans;
+    private List<Boolean> booleanList;
+    private Time time;
+    private Timestamp timestamp;
+    private Calendar calendar;
 
     public static BasicTypeBean create() {
         BasicTypeBean bean = new BasicTypeBean();
@@ -49,12 +69,15 @@ public class BasicTypeBean implements Serializable {
         bean.setAnInt(1)
                 .setALong(2L)
                 .setADouble(3.0)
+                .setADoubleArray(new double[] {1.0, 2.0, 3.0})
                 .setAFloat(4.0f)
+                .setAFloatArray(new float[] {1.0f, 2.0f, 3.0f})
                 .setABoolean(true)
                 .setAString("test")
                 .setAByteArray(new byte[] {1, 2, 3})
                 .setAChar('c')
                 .setAShort((short) 5)
+                .setAShortArray(new short[] {1, 2, 3})
                 .setAnInteger(6)
                 .setALongObject(7L)
                 .setADoubleObject(8.0)
@@ -63,7 +86,26 @@ public class BasicTypeBean implements Serializable {
                 .setAList(list)
                 .setMap(map)
                 .setDate(new Date())
+                .setSqlDate(new java.sql.Date(System.currentTimeMillis()))
                 .setAByte((byte) 1)
+                .setBaseUser(new BaseUser())
+                .setBaseUsers(new BaseUser[] {new BaseUser(), new BaseUser()})
+                .setNumber(10)
+                .setIntArray(new int[] {1, 2, 3})
+                .setCharacter(new Character[] {'a', 'b', 'c'})
+                .setChars(new char[] {'x', 'y', 'z'})
+                .setStringArray(new String[] {"str1", "str2", "str3"})
+                .setBooleanArray(new boolean[] {true, false, true})
+                .setBooleans(new Boolean[] {true, false, true})
+                .setTime(new Time(System.currentTimeMillis()))
+                .setTimestamp(new Timestamp(System.currentTimeMillis()))
+                .setCalendar(Calendar.getInstance())
+                .setBooleanList(new ArrayList<>() {
+                    {
+                        add(true);
+                        add(false);
+                    }
+                })
                 .setByteObject(Byte.valueOf("1"));
         return bean;
     }

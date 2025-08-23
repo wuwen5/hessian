@@ -2508,8 +2508,9 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case 0x6f: {
                 int ref = tag - 0x60;
 
-                if (classDefs.size() <= ref)
+                if (classDefs.size() <= ref) {
                     throw error("No classes defined at reference '" + Integer.toHexString(tag) + "'");
+                }
 
                 ObjectDefinition def = classDefs.get(ref);
 

@@ -29,12 +29,14 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -143,6 +145,11 @@ public class HessianIOTest extends SerializeTestBase {
 
         // LONG_SHORT != 0
         ret = hessianIO(output -> Try.run(() -> output.writeLong(-262144)), input -> Try.of(input::readBoolean)
+                .get());
+        assertTrue(ret);
+
+        // BC_LONG_SHORT_ZERO
+        ret = hessianIO(output -> Try.run(() -> output.writeLong(65535)), input -> Try.of(input::readBoolean)
                 .get());
         assertTrue(ret);
 
@@ -341,6 +348,14 @@ public class HessianIOTest extends SerializeTestBase {
                 hessianIO(output -> Try.run(() -> output.writeDouble(1.123456)), input -> Try.of(input::readObject)
                         .get());
         assertEquals(1.123456, dret);
+
+        // BC_LONG_BYTE
+        ret = hessianIO(output -> Try.run(() -> output.writeLong(48)), input -> Try.of(input::readLong)
+                .get());
+        assertEquals(48, ret);
+        ret = hessianIO(output -> Try.run(() -> output.writeLong(262143)), input -> Try.of(input::readLong)
+                .get());
+        assertEquals(262143, ret);
     }
 
     @Test
@@ -560,6 +575,14 @@ public class HessianIOTest extends SerializeTestBase {
         bytes = hessianIO(
                 output -> Try.run(output::writeNull), i -> Try.of(i::readBytes).get());
         assertNull(bytes);
+
+        bytes = hessianIO(output -> Try.run(() -> output.writeBytes(null)), i -> Try.of(i::readBytes)
+                .get());
+        assertNull(bytes);
+
+        bytes = hessianIO(output -> Try.run(() -> output.writeBytes(null, 0, 0)), i -> Try.of(i::readBytes)
+                .get());
+        assertNull(bytes);
     }
 
     @Test
@@ -579,7 +602,7 @@ public class HessianIOTest extends SerializeTestBase {
         Hessian2Input input = new Hessian2Input(new ByteArrayInputStream(invalidData));
 
         // Should throw IOException
-        assertThrows(IOException.class, () -> input.readBoolean());
+        assertThrows(IOException.class, input::readBoolean);
     }
 
     @Test
@@ -781,12 +804,21 @@ public class HessianIOTest extends SerializeTestBase {
 
             assertArrayEquals(data, result.toByteArray());
         }
+
+        // test null
+        bos.reset();
+        out.writeNull();
+        out.close();
+        bis = new ByteArrayInputStream(bos.toByteArray());
+        in = new HessianDecoder(bis);
+        assertNull(in.readInputStream());
     }
 
     @Test
     public void testInitPacket() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Hessian2Output out = new Hessian2Output(baos);
+        Hessian2Output out = new Hessian2Output();
+        out.initPacket(baos);
         out.writeObject("hello hessian");
         out.close();
 
@@ -827,7 +859,14 @@ public class HessianIOTest extends SerializeTestBase {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Hessian2Output out = new Hessian2Output(baos);
-        out.getBytesOutputStream().write(longString.getBytes(), 0, longString.length());
+        OutputStream bytesOutputStream = out.getBytesOutputStream();
+        bytesOutputStream.write(longString.getBytes(), 0, longString.length() - 100);
+
+        for (int i = longString.length() - 100; i < longString.length(); i++) {
+            bytesOutputStream.write(longString.charAt(i));
+        }
+
+        bytesOutputStream.close();
         out.close();
 
         byte[] byteArray = baos.toByteArray();
@@ -853,7 +892,7 @@ public class HessianIOTest extends SerializeTestBase {
                 bytes[idx++] = (byte) i;
             }
 
-            String result = new String(bytes, 0, idx, "UTF-8");
+            String result = new String(bytes, 0, idx, StandardCharsets.UTF_8);
             assertEquals(longString, result);
         }
     }
@@ -892,6 +931,322 @@ public class HessianIOTest extends SerializeTestBase {
 
             assertEquals(inputStr, sb.toString());
         }
+
+        Integer i = hessianIO(output -> Try.run(output::writeNull), input -> Try.of(input::readChar)
+                .get());
+
+        assertEquals(-1, i);
+        i = hessianIO(output -> Try.run(output::writeNull), input -> Try.of(input::readByte)
+                .get());
+
+        assertEquals(-1, i);
+
+        String s = hessianIO(output -> Try.run(output::writeNull), input -> Try.of(() -> {
+                    char[] buf = new char[8];
+                    StringBuilder sb = new StringBuilder();
+                    int len;
+                    while ((len = input.readString(buf, 0, buf.length)) > 0) {
+                        sb.append(buf, 0, len);
+                    }
+                    return sb.toString();
+                })
+                .get());
+        assertEquals("", s);
+    }
+
+    @Test
+    void testShortString() throws IOException {
+        String s = "short";
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Hessian2Output out = new Hessian2Output(baos);
+        out.writeString(s);
+        out.flush();
+
+        Hessian2Input in = new Hessian2Input(new ByteArrayInputStream(baos.toByteArray()));
+        char[] buf = new char[10];
+        int len = in.readString(buf, 0, buf.length);
+        assertEquals(s.length(), len);
+        assertEquals(s, new String(buf, 0, len));
+
+        // short string write char array
+        baos.reset();
+        out.writeString(s.toCharArray(), 0, s.length());
+        out.flush();
+
+        in = new Hessian2Input(new ByteArrayInputStream(baos.toByteArray()));
+        buf = new char[10];
+        len = in.readString(buf, 0, buf.length);
+        assertEquals(s.length(), len);
+        assertEquals(s, new String(buf, 0, len));
+
+        // test bytes
+        baos.reset();
+        out.writeBytes(s.getBytes());
+        out.flush();
+        in = new Hessian2Input(new ByteArrayInputStream(baos.toByteArray()));
+
+        int i;
+        int idx = 0;
+
+        byte[] bytes = new byte[s.length()];
+
+        while ((i = in.readByte()) != -1) {
+            bytes[idx++] = (byte) i;
+        }
+
+        assertEquals(s.length(), idx);
+        String result = new String(bytes);
+        assertEquals(s, result);
+    }
+
+    @Test
+    void testMediumString() throws IOException {
+        // 长度 40 -> 触发 0x30-0x33 分支
+        String s = "a".repeat(40);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Hessian2Output out = new Hessian2Output(baos);
+        out.writeString(s);
+        out.flush();
+
+        Hessian2Input in = new Hessian2Input(new ByteArrayInputStream(baos.toByteArray()));
+        char[] buf = new char[100];
+        int len = in.readString(buf, 0, buf.length);
+        assertEquals(s.length(), len);
+        assertTrue(new String(buf).startsWith("aa"));
+
+        // char array
+        baos.reset();
+        out.writeString(s.toCharArray(), 0, s.length());
+        out.flush();
+
+        in = new Hessian2Input(new ByteArrayInputStream(baos.toByteArray()));
+        buf = new char[100];
+        len = in.readString(buf, 0, buf.length);
+        assertEquals(s.length(), len);
+        assertTrue(new String(buf).startsWith("aa"));
+
+        // test readObject
+        baos.reset();
+        out.writeString(s);
+        out.flush();
+        in = new Hessian2Input(new ByteArrayInputStream(baos.toByteArray()));
+
+        Object o = in.readObject();
+        assertEquals(s, o);
+
+        // test write char array
+        baos.reset();
+        String str = "a".repeat(2048);
+        out.writeString(str.toCharArray(), 0, str.length());
+        out.flush();
+        in = new Hessian2Input(new ByteArrayInputStream(baos.toByteArray()));
+
+        o = in.readObject();
+        assertEquals(str, o);
+    }
+
+    @Test
+    void readString_entersElse_and_readsNextTag_toLastChunk() throws Exception {
+
+        // 长度 > 0x8000，确保会分块：第一块是 BC_STRING_CHUNK，最后一块是 BC_STRING
+        String s = "x".repeat(0x8000 + 10);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Hessian2Output out = new Hessian2Output(baos);
+        out.writeString(s);
+        out.flush();
+
+        Hessian2Input in = new Hessian2Input(new ByteArrayInputStream(baos.toByteArray()));
+
+        // 缓冲区要“足够大”，一次 readString 跨越多个 chunk
+        char[] buf = new char[s.length()];
+        int n = in.readString(buf, 0, buf.length);
+
+        assertEquals(s.length(), n);
+        assertEquals(s, new String(buf, 0, n));
+        in.close();
+
+        // write char array
+        baos.reset();
+        out.writeString(s.toCharArray(), 0, s.length());
+        out.flush();
+
+        in = new Hessian2Input(new ByteArrayInputStream(baos.toByteArray()));
+
+        // 缓冲区要“足够大”，一次 readString 跨越多个 chunk
+        buf = new char[100];
+        in.readString(buf, 0, buf.length);
+
+        assertTrue(new String(buf).startsWith("xx"));
+        in.close();
+
+        // test bytes
+        baos.reset();
+        out.writeBytes(s.getBytes());
+        out.flush();
+        in = new Hessian2Input(new ByteArrayInputStream(baos.toByteArray()));
+
+        int i;
+        int idx = 0;
+
+        byte[] bytes = new byte[s.length()];
+
+        while ((i = in.readByte()) != -1) {
+            bytes[idx++] = (byte) i;
+        }
+
+        assertEquals(s.length(), idx);
+        String result = new String(bytes);
+        assertEquals(s, result);
+    }
+
+    @Test
+    void readString_entersElse_multipleTimes_readsChunk_thenLast() throws Exception {
+
+        disableLog(HessianDecoder.class);
+
+        try {
+
+            // 三段：0x8000 + 0x8000 + 5
+            String s = "y".repeat(0x8000 * 2 + 5);
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            Hessian2Output out = new Hessian2Output(baos);
+            out.writeString(s);
+            out.flush();
+
+            Hessian2Input in = new Hessian2Input(new ByteArrayInputStream(baos.toByteArray()));
+
+            char[] buf = new char[s.length()];
+            int n = in.readString(buf, 0, buf.length);
+
+            assertEquals(s.length(), n);
+            assertEquals(s, new String(buf, 0, n));
+
+            baos.reset();
+            out.writeString(s.toCharArray(), 0, s.length());
+            out.flush();
+
+            in = new Hessian2Input(new ByteArrayInputStream(baos.toByteArray()));
+
+            buf = new char[s.length()];
+            n = in.readString(buf, 0, buf.length);
+
+            assertEquals(s.length(), n);
+            assertEquals(s, new String(buf, 0, n));
+
+            baos.reset();
+            byte[] bytes = s.getBytes();
+            out.writeBytes(bytes, 0, bytes.length);
+            out.flush();
+
+            in = new Hessian2Input(new ByteArrayInputStream(baos.toByteArray()));
+
+            byte[] bytes1 = in.readBytes();
+
+            assertEquals(bytes.length, bytes1.length);
+            assertEquals(s, new String(bytes1));
+
+            // test bytes
+            baos.reset();
+            out.writeBytes(s.getBytes());
+            out.flush();
+            in = new Hessian2Input(new ByteArrayInputStream(baos.toByteArray()));
+
+            int i;
+            int idx = 0;
+
+            bytes = new byte[s.length()];
+
+            while ((i = in.readByte()) != -1) {
+                bytes[idx++] = (byte) i;
+            }
+
+            assertEquals(s.length(), idx);
+            String result = new String(bytes);
+            assertEquals(s, result);
+
+            // test readObject
+            baos.reset();
+            out.writeBytes(s.getBytes());
+            out.flush();
+            in = new Hessian2Input(new ByteArrayInputStream(baos.toByteArray()));
+
+            assertEquals(s, new String((byte[]) in.readObject()));
+
+            // test null
+            baos.reset();
+            out.writeString(null, 0, 0);
+            out.flush();
+
+            in = new Hessian2Input(new ByteArrayInputStream(baos.toByteArray()));
+            assertNull(in.readObject());
+        } finally {
+            enableLog(HessianDecoder.class);
+        }
+    }
+
+    @Test
+    void testInvalidTag() {
+        // 手工构造一个非法 tag 0x7f
+        byte[] invalid = {(byte) 0x7f};
+        Hessian2Input in = new Hessian2Input(new ByteArrayInputStream(invalid));
+        char[] buf = new char[10];
+        assertThrows(IOException.class, () -> in.readString(buf, 0, buf.length));
+    }
+
+    @Test
+    void testWriteVersion() throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Hessian2Output output = new Hessian2Output(outputStream);
+        output.writeVersion();
+        output.close();
+
+        Hessian2Input input = new Hessian2Input(new ByteArrayInputStream(outputStream.toByteArray()));
+        int read = input.read();
+        int read1 = input.read();
+        int read2 = input.read();
+
+        assertEquals('H', read);
+        assertEquals(2, read1);
+        assertEquals(0, read2);
+    }
+
+    @Test
+    void testPrintLenStringNormal() throws IOException {
+        String value = "Hello";
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Hessian2Output output = new Hessian2Output(baos);
+        output.printLenString(value);
+        output.flush();
+
+        try (Hessian2Input input = new Hessian2Input(new ByteArrayInputStream(baos.toByteArray()))) {
+
+            input.read();
+            byte[] result = baos.toByteArray();
+            // 长度写在前两个字节
+            int len = ((result[0] & 0xFF) << 8) | (result[1] & 0xFF);
+            assertEquals(value.length(), len);
+
+            assertEquals(value, input.readString());
+        }
+
+        baos.reset();
+        output.printLenString(null);
+        try (Hessian2Input input = new Hessian2Input(new ByteArrayInputStream(baos.toByteArray()))) {
+            assertEquals(-1, input.read());
+            assertThrows(HessianProtocolException.class, input::readString);
+        }
+    }
+
+    @Test
+    void testPrintStringNormal() throws IOException {
+        String value = "Hello";
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Hessian2Output output = new Hessian2Output(baos);
+        output.printString(value);
+        output.close();
+        assertEquals(value, baos.toString());
     }
 
     enum Enum {

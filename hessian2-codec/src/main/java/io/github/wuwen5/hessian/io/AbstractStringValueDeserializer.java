@@ -54,8 +54,21 @@ import java.io.IOException;
  * Deserializes a string-valued object like BigDecimal.
  */
 public abstract class AbstractStringValueDeserializer extends BaseDeserializer {
+
+    /**
+     * Creates an object from a string value.
+     * @param value the string value to create the object from
+     * @return the created object
+     * @throws IOException if an error occurs during creation
+     */
     protected abstract Object create(String value) throws IOException;
 
+    /**
+     * Deserializes a map from the Hessian input stream.
+     * @param in the Hessian decoder
+     * @return the deserialized object
+     * @throws IOException if an error occurs during deserialization
+     */
     @Override
     public Object readMap(AbstractHessianDecoder in) throws IOException {
         String value = null;
@@ -63,8 +76,11 @@ public abstract class AbstractStringValueDeserializer extends BaseDeserializer {
         while (!in.isEnd()) {
             String key = in.readString();
 
-            if (key.equals("value")) value = in.readString();
-            else in.readObject();
+            if ("value".equals(key)) {
+                value = in.readString();
+            } else {
+                in.readObject();
+            }
         }
 
         in.readMapEnd();
@@ -82,9 +98,12 @@ public abstract class AbstractStringValueDeserializer extends BaseDeserializer {
 
         String value = null;
 
-        for (int i = 0; i < fieldNames.length; i++) {
-            if ("value".equals(fieldNames[i])) value = in.readString();
-            else in.readObject();
+        for (String fieldName : fieldNames) {
+            if ("value".equals(fieldName)) {
+                value = in.readString();
+            } else {
+                in.readObject();
+            }
         }
 
         Object object = create(value);

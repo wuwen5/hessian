@@ -48,12 +48,24 @@
 
 package io.github.wuwen5.hessian.io;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
+
 /**
  * Encapsulates a remote address when no stub is available, e.g. for
  * Java MicroEdition.
  */
+@EqualsAndHashCode(of = "url")
+@ToString
 public class HessianRemote implements java.io.Serializable {
+    /**
+     * -- GETTER --
+     *  Returns the remote api class name.
+     */
+    @Getter
     private String type;
+
     private String url;
 
     /**
@@ -73,13 +85,6 @@ public class HessianRemote implements java.io.Serializable {
     public HessianRemote() {}
 
     /**
-     * Returns the remote api class name.
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
      * Returns the remote URL.
      */
     public String getURL() {
@@ -91,30 +96,5 @@ public class HessianRemote implements java.io.Serializable {
      */
     public void setURL(String url) {
         this.url = url;
-    }
-
-    /**
-     * Defines the hashcode.
-     */
-    public int hashCode() {
-        return url.hashCode();
-    }
-
-    /**
-     * Defines equality
-     */
-    public boolean equals(Object obj) {
-        if (!(obj instanceof HessianRemote)) return false;
-
-        HessianRemote remote = (HessianRemote) obj;
-
-        return url.equals(remote.url);
-    }
-
-    /**
-     * Readable version of the remote.
-     */
-    public String toString() {
-        return "HessianRemote[" + url + "]";
     }
 }

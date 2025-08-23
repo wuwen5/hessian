@@ -13,6 +13,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,13 +25,11 @@ class HessianFactoryTest {
 
     private HessianFactory hessianFactory;
     private InputStream inputStream;
-    private ByteArrayOutputStream outputStream;
 
     @BeforeEach
     void setUp() {
         hessianFactory = new HessianFactory();
         inputStream = new ByteArrayInputStream(new byte[0]);
-        outputStream = new ByteArrayOutputStream();
     }
 
     @Test
@@ -108,6 +107,7 @@ class HessianFactoryTest {
 
     @Test
     void testCreateHessian2DebugOutput() throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         List<String> list = new ArrayList<>();
         Consumer<String> logConsumer = list::add;
         HessianDebugOutputStream debugOutput =
@@ -127,6 +127,45 @@ class HessianFactoryTest {
         assertEquals(BasicTypeBean.class, o.getClass());
         assertEquals(testBean, o);
         assertFalse(list.isEmpty());
+    }
+
+    @Test
+    void testUnsafeSerializer() throws IOException, NoSuchFieldException, IllegalAccessException {
+        // UnsafeSerializer.isEnabled
+
+        Field unsafeSerializerField = UnsafeSerializer.class.getDeclaredField("isEnabled");
+        Field unsafeDeserializerField = UnsafeDeserializer.class.getDeclaredField("isEnabled");
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        try {
+
+            unsafeSerializerField.setAccessible(true);
+            unsafeSerializerField.set(UnsafeSerializer.class, false);
+            unsafeDeserializerField.setAccessible(true);
+            unsafeDeserializerField.set(UnsafeDeserializer.class, false);
+
+            List<String> list = new ArrayList<>();
+            Consumer<String> logConsumer = list::add;
+            HessianDebugOutputStream debugOutput =
+                    (HessianDebugOutputStream) hessianFactory.createHessian2DebugOutput(outputStream, logConsumer);
+
+            BasicTypeBean testBean = BasicTypeBean.create();
+            try (HessianEncoder output = hessianFactory.createHessian2Output(debugOutput)) {
+                output.writeObject(testBean);
+            }
+
+            HessianDebugInputStream debugInputStream = new HessianDebugInputStream(
+                    new ByteArrayInputStream(outputStream.toByteArray()), System.out::println);
+
+            HessianDecoder hessian2Input = hessianFactory.createHessian2Input(debugInputStream);
+            Object o = hessian2Input.readObject();
+
+            assertEquals(BasicTypeBean.class, o.getClass());
+            assertEquals(testBean, o);
+            assertFalse(list.isEmpty());
+        } finally {
+            unsafeSerializerField.set(UnsafeSerializer.class, true);
+            unsafeDeserializerField.set(UnsafeDeserializer.class, true);
+        }
     }
 
     @Test

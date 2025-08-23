@@ -61,6 +61,8 @@ public class TreeMapTest extends SerializeTestBase {
 
         TreeMap<Integer, Integer> result = baseHessian2Serialize(originalMap);
         Assertions.assertEquals(originalMap, result);
+        TreeMap<Integer, Integer> result2 = baseHessian2Serialize(originalMap, TreeMap.class);
+        Assertions.assertEquals(originalMap, result2);
 
         originalMap.put(3, 3);
         result.put(3, 3);

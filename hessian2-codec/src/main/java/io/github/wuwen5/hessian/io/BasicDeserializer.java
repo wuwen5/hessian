@@ -206,8 +206,9 @@ public class BasicDeserializer extends BaseDeserializer {
             case CHARACTER_ARRAY: {
                 String s = in.readString();
 
-                if (s == null) return null;
-                else {
+                if (s == null) {
+                    return null;
+                } else {
                     int len = s.length();
                     char[] chars = new char[len];
                     s.getChars(0, len, chars, 0);

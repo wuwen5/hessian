@@ -6,15 +6,50 @@ import io.vavr.control.Try;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.function.Function;
+import org.slf4j.spi.LocationAwareLogger;
 
 /**
  * @author wuwen
  */
 public abstract class SerializeTestBase {
 
+    void enableLog(Class<?> cls) {
+        try {
+            Field log = cls.getDeclaredField("log");
+            log.setAccessible(true);
+            Object simpleLogger = log.get(cls);
+            // currentLogLevel
+            Field currentLogLevel = simpleLogger.getClass().getDeclaredField("currentLogLevel");
+            currentLogLevel.setAccessible(true);
+            currentLogLevel.set(simpleLogger, LocationAwareLogger.TRACE_INT);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    void disableLog(Class<?> cls) {
+        try {
+            Field log = cls.getDeclaredField("log");
+            log.setAccessible(true);
+            Object simpleLogger = log.get(cls);
+            // currentLogLevel
+            Field currentLogLevel = simpleLogger.getClass().getDeclaredField("currentLogLevel");
+            currentLogLevel.setAccessible(true);
+            currentLogLevel.set(simpleLogger, LocationAwareLogger.WARN_INT);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     protected <T> T baseHessian2Serialize(T data) throws IOException {
         return hessianIO(out -> Try.run(() -> out.writeObject(data)), in -> Try.of(() -> (T) in.readObject())
+                .get());
+    }
+
+    protected <T> T baseHessian2Serialize(T data, Class<T> cls) throws IOException {
+        return hessianIO(out -> Try.run(() -> out.writeObject(data)), in -> Try.of(() -> (T) in.readObject(cls))
                 .get());
     }
 

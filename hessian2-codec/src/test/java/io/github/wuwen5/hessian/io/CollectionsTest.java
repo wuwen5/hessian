@@ -37,6 +37,8 @@ public class CollectionsTest extends SerializeTestBase {
         // jdk 21 TODO
         List<Integer> unmodifiableList = Collections.unmodifiableList(list);
         Assertions.assertEquals(unmodifiableList, baseHessian2Serialize(unmodifiableList));
+
+        Assertions.assertEquals(unmodifiableList, baseHessian2Serialize(unmodifiableList, List.class));
     }
 
     @Test
