@@ -88,31 +88,7 @@ public class JavaDeserializer extends AbstractMapDeserializer {
 
         for (Constructor<?> value : constructors) {
             Class<?>[] param = value.getParameterTypes();
-            long cost = 0;
-
-            for (Class<?> aClass : param) {
-                cost = 4 * cost;
-
-                if (Object.class.equals(aClass)) {
-                    cost += 1;
-                } else if (String.class.equals(aClass)) {
-                    cost += 2;
-                } else if (int.class.equals(aClass)) {
-                    cost += 3;
-                } else if (long.class.equals(aClass)) {
-                    cost += 4;
-                } else if (aClass.isPrimitive()) {
-                    cost += 5;
-                } else {
-                    cost += 6;
-                }
-            }
-
-            if (cost < 0 || cost > (1 << 48)) {
-                cost = 1 << 48;
-            }
-
-            cost += (long) param.length << 48;
+            long cost = getCost(param);
 
             if (cost < bestCost) {
                 constructorVar = value;
@@ -125,6 +101,35 @@ public class JavaDeserializer extends AbstractMapDeserializer {
         }
 
         return constructorVar;
+    }
+
+    private static long getCost(Class<?>[] param) {
+        long cost = 0;
+
+        for (Class<?> aClass : param) {
+            cost = 4 * cost;
+
+            if (Object.class.equals(aClass)) {
+                cost += 1;
+            } else if (String.class.equals(aClass)) {
+                cost += 2;
+            } else if (int.class.equals(aClass)) {
+                cost += 3;
+            } else if (long.class.equals(aClass)) {
+                cost += 4;
+            } else if (aClass.isPrimitive()) {
+                cost += 5;
+            } else {
+                cost += 6;
+            }
+        }
+
+        if (cost < 0 || cost > (1L << 48)) {
+            cost = 1L << 48;
+        }
+
+        cost += (long) param.length << 48;
+        return cost;
     }
 
     protected Object[] getConstructorArgs(Constructor<?> constructor) {
@@ -380,26 +385,6 @@ public class JavaDeserializer extends AbstractMapDeserializer {
             return (double) 0;
         } else {
             throw new UnsupportedOperationException();
-        }
-    }
-
-    static void logDeserializeError(Field field, Object obj, Object value, Throwable e) throws IOException {
-        String fieldName = (field.getDeclaringClass().getName() + "." + field.getName());
-
-        if (e instanceof HessianFieldException) {
-            throw (HessianFieldException) e;
-        } else if (e instanceof IOException) {
-            throw new HessianFieldException(fieldName + ": " + e.getMessage(), e);
-        }
-
-        if (value != null) {
-            throw new HessianFieldException(
-                    fieldName + ": " + value.getClass().getName() + " (" + value + ")" + " cannot be assigned to '"
-                            + field.getType().getName() + "'",
-                    e);
-        } else {
-            throw new HessianFieldException(
-                    fieldName + ": " + field.getType().getName() + " cannot be assigned from null", e);
         }
     }
 }
