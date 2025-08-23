@@ -876,7 +876,7 @@ public class HessianIOTest extends SerializeTestBase {
 
             byte[] bytes = new byte[longString.length()];
             in.readBytes(bytes, 0, longString.length());
-            assertEquals(longString, new String(bytes));
+            assertEquals(longString, new String(bytes, StandardCharsets.UTF_8));
         }
 
         try (ByteArrayInputStream bais = new ByteArrayInputStream(byteArray);
@@ -995,7 +995,7 @@ public class HessianIOTest extends SerializeTestBase {
         }
 
         assertEquals(s.length(), idx);
-        String result = new String(bytes);
+        String result = new String(bytes, StandardCharsets.UTF_8);
         assertEquals(s, result);
     }
 
@@ -1048,6 +1048,7 @@ public class HessianIOTest extends SerializeTestBase {
     @Test
     void readString_entersElse_and_readsNextTag_toLastChunk() throws Exception {
 
+        disableLog(HessianDecoder.class);
         // 长度 > 0x8000，确保会分块：第一块是 BC_STRING_CHUNK，最后一块是 BC_STRING
         String s = "x".repeat(0x8000 + 10);
 
@@ -1096,17 +1097,16 @@ public class HessianIOTest extends SerializeTestBase {
         }
 
         assertEquals(s.length(), idx);
-        String result = new String(bytes);
+        String result = new String(bytes, StandardCharsets.UTF_8);
         assertEquals(s, result);
+        enableLog(HessianDecoder.class);
     }
 
     @Test
     void readString_entersElse_multipleTimes_readsChunk_thenLast() throws Exception {
 
         disableLog(HessianDecoder.class);
-
         try {
-
             // 三段：0x8000 + 0x8000 + 5
             String s = "y".repeat(0x8000 * 2 + 5);
 
@@ -1145,7 +1145,7 @@ public class HessianIOTest extends SerializeTestBase {
             byte[] bytes1 = in.readBytes();
 
             assertEquals(bytes.length, bytes1.length);
-            assertEquals(s, new String(bytes1));
+            assertEquals(s, new String(bytes1, StandardCharsets.UTF_8));
 
             // test bytes
             baos.reset();
@@ -1163,7 +1163,7 @@ public class HessianIOTest extends SerializeTestBase {
             }
 
             assertEquals(s.length(), idx);
-            String result = new String(bytes);
+            String result = new String(bytes, StandardCharsets.UTF_8);
             assertEquals(s, result);
 
             // test readObject
@@ -1172,7 +1172,7 @@ public class HessianIOTest extends SerializeTestBase {
             out.flush();
             in = new Hessian2Input(new ByteArrayInputStream(baos.toByteArray()));
 
-            assertEquals(s, new String((byte[]) in.readObject()));
+            assertEquals(s, new String((byte[]) in.readObject(), StandardCharsets.UTF_8));
 
             // test null
             baos.reset();

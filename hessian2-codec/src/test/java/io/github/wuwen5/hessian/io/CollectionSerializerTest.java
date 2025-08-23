@@ -17,7 +17,6 @@
 package io.github.wuwen5.hessian.io;
 
 import io.github.wuwen5.hessian.io.beans.SubUser;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -42,7 +41,7 @@ public class CollectionSerializerTest extends SerializeTestBase {
     }
 
     @Test
-    public void testSubUser() throws IOException {
+    public void testSubUser() {
         int times = 100;
         disableLog(HessianDecoder.class);
         final CountDownLatch latch = new CountDownLatch(times);

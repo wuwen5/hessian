@@ -15,7 +15,7 @@ import org.slf4j.spi.LocationAwareLogger;
  */
 public abstract class SerializeTestBase {
 
-    void enableLog(Class<?> cls) {
+    public void enableLog(Class<?> cls) {
         try {
             Field log = cls.getDeclaredField("log");
             log.setAccessible(true);
@@ -29,7 +29,7 @@ public abstract class SerializeTestBase {
         }
     }
 
-    void disableLog(Class<?> cls) {
+    public void disableLog(Class<?> cls) {
         try {
             Field log = cls.getDeclaredField("log");
             log.setAccessible(true);
