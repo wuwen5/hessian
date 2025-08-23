@@ -8,7 +8,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -59,8 +58,7 @@ public class BasicTypeBean implements Serializable {
     private Time time;
     private Timestamp timestamp;
     private Calendar calendar;
-    private Calendar japaneseCalendar;
-    private Calendar buddhistCalendar;
+    private Calendar myCalendar;
 
     public static BasicTypeBean create() {
         BasicTypeBean bean = new BasicTypeBean();
@@ -103,8 +101,7 @@ public class BasicTypeBean implements Serializable {
                 .setTime(new Time(System.currentTimeMillis()))
                 .setTimestamp(new Timestamp(System.currentTimeMillis()))
                 .setCalendar(Calendar.getInstance())
-                .setJapaneseCalendar(Calendar.getInstance(Locale.JAPAN))
-                .setBuddhistCalendar(Calendar.getInstance(new Locale("th", "TH")))
+                .setMyCalendar(new MyCalendar())
                 .setBooleanList(new ArrayList<>() {
                     {
                         add(true);
@@ -113,5 +110,47 @@ public class BasicTypeBean implements Serializable {
                 })
                 .setByteObject(Byte.valueOf("1"));
         return bean;
+    }
+
+    public static class MyCalendar extends Calendar {
+        private static final long serialVersionUID = 6733329372790268463L;
+
+        @Override
+        protected void computeTime() {
+            setTimeInMillis(System.currentTimeMillis());
+        }
+
+        @Override
+        protected void computeFields() {}
+
+        @Override
+        public void add(int field, int amount) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void roll(int field, boolean up) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int getMinimum(int field) {
+            return 0;
+        }
+
+        @Override
+        public int getMaximum(int field) {
+            return 0;
+        }
+
+        @Override
+        public int getGreatestMinimum(int field) {
+            return 0;
+        }
+
+        @Override
+        public int getLeastMaximum(int field) {
+            return 0;
+        }
     }
 }
