@@ -101,7 +101,7 @@ public class CollectionDeserializer extends AbstractListDeserializer {
             list = new ArrayList<>();
         } else if (!type.isInterface()) {
             try {
-                list = (Collection) type.newInstance();
+                list = (Collection) type.getDeclaredConstructor().newInstance();
             } catch (Exception ignored) {
             }
         }
@@ -117,7 +117,7 @@ public class CollectionDeserializer extends AbstractListDeserializer {
                 list = new ArrayList<>();
             } else {
                 try {
-                    list = (Collection) type.newInstance();
+                    list = (Collection) type.getDeclaredConstructor().newInstance();
                 } catch (Exception e) {
                     throw new IOExceptionWrapper(e);
                 }

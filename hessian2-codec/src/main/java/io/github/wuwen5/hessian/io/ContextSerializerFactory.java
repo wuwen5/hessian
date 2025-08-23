@@ -183,7 +183,7 @@ public class ContextSerializerFactory {
         try {
             Class<?> serClass = Class.forName(cl.getName() + "HessianSerializer", false, cl.getClassLoader());
 
-            Serializer ser = (Serializer) serClass.newInstance();
+            Serializer ser = (Serializer) serClass.getDeclaredConstructor().newInstance();
 
             customSerializerMap.put(cl.getName(), ser);
 
@@ -237,7 +237,7 @@ public class ContextSerializerFactory {
         try {
             Class<?> serClass = Class.forName(cl.getName() + "HessianDeserializer", false, cl.getClassLoader());
 
-            Deserializer ser = (Deserializer) serClass.newInstance();
+            Deserializer ser = (Deserializer) serClass.getDeclaredConstructor().newInstance();
 
             customDeserializerMap.put(cl.getName(), ser);
 
@@ -276,7 +276,8 @@ public class ContextSerializerFactory {
 
         for (Map.Entry<Class<?>, Class<?>> entry : classMap.entrySet()) {
             try {
-                Serializer ser = (Serializer) entry.getValue().newInstance();
+                Serializer ser =
+                        (Serializer) entry.getValue().getDeclaredConstructor().newInstance();
 
                 if (entry.getKey().isInterface()) {
                     serializerInterfaceMap.put(entry.getKey(), ser);
@@ -293,7 +294,8 @@ public class ContextSerializerFactory {
 
         for (Map.Entry<Class<?>, Class<?>> entry : classMap.entrySet()) {
             try {
-                Deserializer ser = (Deserializer) entry.getValue().newInstance();
+                Deserializer ser =
+                        (Deserializer) entry.getValue().getDeclaredConstructor().newInstance();
 
                 if (entry.getKey().isInterface()) {
                     deserializerInterfaceMap.put(entry.getKey().getName(), ser);

@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -58,6 +59,8 @@ public class BasicTypeBean implements Serializable {
     private Time time;
     private Timestamp timestamp;
     private Calendar calendar;
+    private Calendar japaneseCalendar;
+    private Calendar buddhistCalendar;
 
     public static BasicTypeBean create() {
         BasicTypeBean bean = new BasicTypeBean();
@@ -100,6 +103,8 @@ public class BasicTypeBean implements Serializable {
                 .setTime(new Time(System.currentTimeMillis()))
                 .setTimestamp(new Timestamp(System.currentTimeMillis()))
                 .setCalendar(Calendar.getInstance())
+                .setJapaneseCalendar(Calendar.getInstance(Locale.JAPAN))
+                .setBuddhistCalendar(Calendar.getInstance(new Locale("th", "TH")))
                 .setBooleanList(new ArrayList<>() {
                     {
                         add(true);
