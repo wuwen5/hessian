@@ -32,6 +32,7 @@ public class HessianDebugStreamTest {
         try (HessianDebugInputStream debugIn = new HessianDebugInputStream(
                 new ByteArrayInputStream(bos.toByteArray()), new PrintWriter(debugWriter))) {
             debugIn.startTop2();
+            debugIn.startStreaming();
             HessianDecoder decoder = new HessianDecoder(debugIn);
             String s = decoder.readString();
             assertEquals("ABC", s);

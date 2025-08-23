@@ -695,8 +695,6 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
 
         switch (tag) {
             case BC_NULL:
-                return 0;
-
             case BC_FALSE:
                 return 0;
 
@@ -771,7 +769,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case 0xbd:
             case 0xbe:
             case 0xbf:
-                return tag - BC_INT_ZERO;
+                return (long) tag - BC_INT_ZERO;
 
                 /* byte int */
             case 0xc0:
@@ -790,7 +788,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case 0xcd:
             case 0xce:
             case 0xcf:
-                return ((tag - BC_INT_BYTE_ZERO) << 8) + read();
+                return (long) ((tag - BC_INT_BYTE_ZERO) << 8) + read();
 
                 /* short int */
             case 0xd0:
@@ -801,7 +799,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case 0xd5:
             case 0xd6:
             case 0xd7:
-                return ((tag - BC_INT_SHORT_ZERO) << 16) + 256 * read() + read();
+                return ((tag - BC_INT_SHORT_ZERO) << 16) + 256L * read() + read();
 
                 // case LONG_BYTE:
             case BC_DOUBLE_BYTE:
@@ -842,7 +840,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case 0xed:
             case 0xee:
             case 0xef:
-                return tag - BC_LONG_ZERO;
+                return (long) tag - BC_LONG_ZERO;
 
                 /* byte long */
             case 0xf0:
@@ -861,7 +859,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case 0xfd:
             case 0xfe:
             case 0xff:
-                return ((tag - BC_LONG_BYTE_ZERO) << 8) + read();
+                return ((tag - BC_LONG_BYTE_ZERO) << 8) + (long) read();
 
                 /* short long */
             case 0x38:
@@ -872,7 +870,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case 0x3d:
             case 0x3e:
             case 0x3f:
-                return ((tag - BC_LONG_SHORT_ZERO) << 16) + 256 * read() + read();
+                return ((tag - BC_LONG_SHORT_ZERO) << 16) + 256L * read() + read();
 
             case 'L':
                 return parseLong();
@@ -926,6 +924,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
                 return 0;
 
             case BC_TRUE:
+            case BC_DOUBLE_ONE:
                 return 1;
 
                 // direct integer
@@ -996,7 +995,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case 0xbd:
             case 0xbe:
             case 0xbf:
-                return tag - 0x90;
+                return (double) tag - 0x90;
 
                 /* byte int */
             case 0xc0:
@@ -1015,7 +1014,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case 0xcd:
             case 0xce:
             case 0xcf:
-                return ((tag - BC_INT_BYTE_ZERO) << 8) + read();
+                return ((tag - BC_INT_BYTE_ZERO) << 8) + (double) read();
 
                 /* short int */
             case 0xd0:
@@ -1026,7 +1025,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case 0xd5:
             case 0xd6:
             case 0xd7:
-                return ((tag - BC_INT_SHORT_ZERO) << 16) + 256 * read() + read();
+                return ((tag - BC_INT_SHORT_ZERO) << 16) + 256 * read() + (double) read();
 
             case BC_INT:
             case BC_LONG_INT:
@@ -1058,7 +1057,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case 0xed:
             case 0xee:
             case 0xef:
-                return tag - BC_LONG_ZERO;
+                return tag - (double) BC_LONG_ZERO;
 
                 /* byte long */
             case 0xf0:
@@ -1077,7 +1076,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case 0xfd:
             case 0xfe:
             case 0xff:
-                return ((tag - BC_LONG_BYTE_ZERO) << 8) + read();
+                return ((tag - BC_LONG_BYTE_ZERO) << 8) + (double) read();
 
                 /* short long */
             case 0x38:
@@ -1088,13 +1087,10 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case 0x3d:
             case 0x3e:
             case 0x3f:
-                return ((tag - BC_LONG_SHORT_ZERO) << 16) + 256 * read() + read();
+                return ((tag - BC_LONG_SHORT_ZERO) << 16) + 256 * read() + (double) read();
 
             case BC_LONG:
-                return (double) parseLong();
-
-            case BC_DOUBLE_ONE:
-                return 1;
+                return parseLong();
 
             case BC_DOUBLE_BYTE:
                 return (byte) (offset < length ? buffer[offset++] : read());
