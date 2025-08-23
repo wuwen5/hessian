@@ -48,14 +48,7 @@
 
 package io.github.wuwen5.hessian.io;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Input stream for Hessian requests, deserializing objects using the
@@ -102,78 +95,5 @@ public class HessianSerializerInput extends HessianDecoder {
      */
     public HessianSerializerInput() {
         super(null);
-    }
-
-    /**
-     * Reads an object from the input stream.  cl is known not to be
-     * a Map.
-     */
-    public Object readObjectImpl(Class<?> cl) throws IOException {
-        try {
-            Object obj = cl.getDeclaredConstructor().newInstance();
-
-            if (refs == null) {
-                refs = new ArrayList<>();
-            }
-            refs.add(obj);
-
-            Map<String, Field> fieldMap = getFieldMap(cl);
-
-            int code = read();
-            for (; code >= 0 && code != 'z'; code = read()) {
-                unread();
-
-                Object key = readObject();
-
-                Field field = fieldMap.get(key);
-
-                if (field != null) {
-                    Object value = readObject(field.getType());
-                    field.set(obj, value);
-                } else {
-                    readObject();
-                }
-            }
-
-            if (code != 'z') {
-                throw expect("map", code);
-            }
-
-            // if there's a readResolve method, call it
-            try {
-                Method method = cl.getMethod("readResolve");
-                return method.invoke(obj);
-            } catch (Exception ignored) {
-            }
-
-            return obj;
-        } catch (IOException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new IOExceptionWrapper(e);
-        }
-    }
-
-    /**
-     * Creates a map of the classes fields.
-     */
-    protected Map<String, Field> getFieldMap(Class<?> cl) {
-        Map<String, Field> fieldMap = new HashMap<>();
-
-        for (; cl != null; cl = cl.getSuperclass()) {
-            Field[] fields = cl.getDeclaredFields();
-            for (Field field : fields) {
-                if (Modifier.isTransient(field.getModifiers()) || Modifier.isStatic(field.getModifiers())) {
-                    continue;
-                }
-
-                // XXX: could parameterize the handler to only deal with public
-                field.setAccessible(true);
-
-                fieldMap.put(field.getName(), field);
-            }
-        }
-
-        return fieldMap;
     }
 }
