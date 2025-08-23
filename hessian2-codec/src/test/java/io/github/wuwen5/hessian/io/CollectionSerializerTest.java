@@ -44,6 +44,7 @@ public class CollectionSerializerTest extends SerializeTestBase {
     @Test
     public void testSubUser() throws IOException {
         int times = 100;
+        disableLog(HessianDecoder.class);
         final CountDownLatch latch = new CountDownLatch(times);
         final AtomicInteger error = new AtomicInteger();
         for (int i = 0; i < times; i++) {
@@ -80,6 +81,7 @@ public class CollectionSerializerTest extends SerializeTestBase {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        enableLog(HessianDecoder.class);
     }
 
     @Test
