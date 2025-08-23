@@ -48,11 +48,7 @@
 
 package io.github.wuwen5.hessian.io;
 
-import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 
 /**
  * Output stream for Hessian requests.
@@ -98,44 +94,5 @@ public class HessianSerializerOutput extends HessianEncoder {
      */
     public HessianSerializerOutput() {
         super(null);
-    }
-
-    /**
-     * Applications which override this can do custom serialization.
-     *
-     * @param obj the object to write.
-     */
-    public void writeObjectImpl(Object obj) throws IOException {
-        Class<?> cl = obj.getClass();
-
-        try {
-            Method method = cl.getMethod("writeReplace");
-            Object repl = method.invoke(obj);
-
-            writeObject(repl);
-            return;
-        } catch (Exception ignored) {
-        }
-
-        try {
-            writeMapBegin(cl.getName());
-            for (; cl != null; cl = cl.getSuperclass()) {
-                Field[] fields = cl.getDeclaredFields();
-                for (Field field : fields) {
-                    if (Modifier.isTransient(field.getModifiers()) || Modifier.isStatic(field.getModifiers())) {
-                        continue;
-                    }
-
-                    // XXX: could parameterize the handler to only deal with public
-                    field.setAccessible(true);
-
-                    writeString(field.getName());
-                    writeObject(field.get(obj));
-                }
-            }
-            writeMapEnd();
-        } catch (IllegalAccessException e) {
-            throw new IOExceptionWrapper(e);
-        }
     }
 }
