@@ -32,8 +32,23 @@ public class BitSetSerializerTest extends SerializeTestBase {
         assertBitSet(null);
         assertBitSet(new BitSet());
         assertBitSet(new BitSet(1));
-        // TODO
-        // assertBitSet(BitSet.valueOf(words));
+        assertBitSet(BitSet.valueOf(words));
+
+        // Additional comprehensive tests
+        BitSet largeBitSet = new BitSet(1000);
+        largeBitSet.set(100);
+        largeBitSet.set(500);
+        largeBitSet.set(999);
+        assertBitSet(largeBitSet);
+
+        // Test single bit
+        BitSet singleBit = new BitSet();
+        singleBit.set(42);
+        assertBitSet(singleBit);
+
+        // Test BitSet created from different sources
+        BitSet fromBytes = BitSet.valueOf(new byte[] {(byte) 0xFF, (byte) 0xAA});
+        assertBitSet(fromBytes);
     }
 
     private void assertBitSet(BitSet bitSet) throws IOException {
