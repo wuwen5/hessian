@@ -64,7 +64,7 @@ public class StackTraceElementDeserializer extends JavaDeserializer {
     }
 
     @Override
-    protected Object instantiate() throws Exception {
+    protected Object instantiate() {
         return new StackTraceElement("", "", "", 0);
     }
 }

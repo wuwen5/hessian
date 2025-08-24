@@ -55,16 +55,14 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.WeakHashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import lombok.extern.slf4j.Slf4j;
 import sun.misc.Unsafe;
 
 /**
  * Serializing an object for known object types.
  */
+@Slf4j
 public class UnsafeSerializer extends AbstractSerializer {
-    private static final Logger log = Logger.getLogger(UnsafeSerializer.class.getName());
-
     private static boolean isEnabled;
     private static final Unsafe UNSAFE;
 
@@ -187,7 +185,7 @@ public class UnsafeSerializer extends AbstractSerializer {
                 fieldSerializer.serialize(out, obj);
             }
         } catch (RuntimeException e) {
-            throw new RuntimeException(
+            throw new IllegalStateException(
                     e.getMessage() + "\n class: " + obj.getClass().getName() + " (object=" + obj + ")", e);
         } catch (IOException e) {
             throw new IOExceptionWrapper(
@@ -248,7 +246,7 @@ public class UnsafeSerializer extends AbstractSerializer {
 
                 out.writeObject(value);
             } catch (RuntimeException e) {
-                throw new RuntimeException(
+                throw new IllegalStateException(
                         e.getMessage() + "\n field: "
                                 + field.getDeclaringClass().getName()
                                 + '.' + field.getName(),
@@ -481,7 +479,7 @@ public class UnsafeSerializer extends AbstractSerializer {
                 isEnabled = false;
             }
         } catch (Throwable e) {
-            log.log(Level.ALL, e.toString(), e);
+            log.error(e.toString(), e);
         }
 
         UNSAFE = unsafe;

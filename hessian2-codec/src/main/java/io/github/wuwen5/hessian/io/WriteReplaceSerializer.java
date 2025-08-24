@@ -51,15 +51,13 @@ package io.github.wuwen5.hessian.io;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Serializing an object for known object types.
  */
+@Slf4j
 public class WriteReplaceSerializer extends AbstractSerializer {
-    private static final Logger log = Logger.getLogger(WriteReplaceSerializer.class.getName());
-
     private Object writeReplaceFactory;
     private Method writeReplace;
     private final Serializer baseSerializer;
@@ -86,7 +84,7 @@ public class WriteReplaceSerializer extends AbstractSerializer {
             }
         } catch (ClassNotFoundException ignored) {
         } catch (Exception e) {
-            log.log(Level.FINER, e.toString(), e);
+            log.trace(e.toString(), e);
         }
 
         writeReplace = getWriteReplace(cl);
@@ -139,30 +137,27 @@ public class WriteReplaceSerializer extends AbstractSerializer {
             return;
         }
 
-        try {
-            Object repl;
+        Object repl;
 
-            repl = writeReplace(obj);
+        repl = writeReplace(obj);
 
-            if (obj == repl) {
-                if (log.isLoggable(Level.FINE)) {
-                    log.fine(this + ": Hessian writeReplace error.  The writeReplace method (" + writeReplace
-                            + ") must not return the same object: " + obj);
-                }
-
-                baseSerializer.writeObject(obj, out);
-
-                return;
+        if (obj == repl) {
+            if (log.isDebugEnabled()) {
+                log.debug(
+                        "{}: Hessian writeReplace error.  The writeReplace method ({}) must not return the same object: {}",
+                        this,
+                        writeReplace,
+                        obj);
             }
 
-            out.writeObject(repl);
+            baseSerializer.writeObject(obj, out);
 
-            out.replaceRef(repl, obj);
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            return;
         }
+
+        out.writeObject(repl);
+
+        out.replaceRef(repl, obj);
     }
 
     @Override
@@ -173,12 +168,10 @@ public class WriteReplaceSerializer extends AbstractSerializer {
             } else {
                 return writeReplace.invoke(obj);
             }
-        } catch (RuntimeException e) {
-            throw e;
         } catch (InvocationTargetException e) {
-            throw new RuntimeException(e.getCause());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e.getCause());
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException(e);
         }
     }
 }

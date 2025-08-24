@@ -48,12 +48,23 @@
 
 package io.github.wuwen5.hessian.io;
 
+import lombok.Getter;
+
 /**
  * Exception for faults when the fault doesn't return a java exception.
  * This exception is required for MicroHessianInput.
  */
+@Getter
 public class HessianServiceException extends Exception {
+    /**
+     * -- GETTER --
+     *  Returns the code.
+     */
     private String code;
+    /**
+     * -- GETTER --
+     *  Returns the detail.
+     */
     private Object detail;
 
     /**
@@ -68,19 +79,5 @@ public class HessianServiceException extends Exception {
         super(message);
         this.code = code;
         this.detail = detail;
-    }
-
-    /**
-     * Returns the code.
-     */
-    public String getCode() {
-        return code;
-    }
-
-    /**
-     * Returns the detail.
-     */
-    public Object getDetail() {
-        return detail;
     }
 }

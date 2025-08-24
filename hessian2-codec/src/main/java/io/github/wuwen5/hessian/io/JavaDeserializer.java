@@ -327,7 +327,7 @@ public class JavaDeserializer extends AbstractMapDeserializer {
         return obj;
     }
 
-    protected Object instantiate() throws Exception {
+    protected Object instantiate() throws HessianProtocolException {
         try {
             if (constructor != null) {
                 return constructor.newInstance(constructorArgs);

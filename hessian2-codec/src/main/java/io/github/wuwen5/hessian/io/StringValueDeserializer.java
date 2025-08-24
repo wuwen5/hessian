@@ -63,8 +63,8 @@ public class StringValueDeserializer extends AbstractStringValueDeserializer {
         try {
             this.cl = cl;
             constructor = cl.getConstructor(String.class);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (NoSuchMethodException e) {
+            throw new IllegalStateException(e);
         }
     }
 

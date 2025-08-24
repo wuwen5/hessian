@@ -52,6 +52,7 @@ import io.github.wuwen5.hessian.HessianUnshared;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -213,10 +214,8 @@ public class JavaSerializer extends AbstractSerializer {
 
                 return;
             }
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (InvocationTargetException | IllegalAccessException e) {
+            throw new IllegalStateException(e);
         }
 
         int ref = out.writeObjectBegin(cl.getName());
@@ -263,7 +262,7 @@ public class JavaSerializer extends AbstractSerializer {
                 fieldSerializers[i].serialize(out, obj, field);
             }
         } catch (RuntimeException e) {
-            throw new RuntimeException(
+            throw new IllegalStateException(
                     e.getMessage() + "\n class: " + obj.getClass().getName() + " (object=" + obj + ")", e);
         } catch (IOException e) {
             throw new IOExceptionWrapper(
@@ -307,7 +306,7 @@ public class JavaSerializer extends AbstractSerializer {
             try {
                 out.writeObject(value);
             } catch (RuntimeException e) {
-                throw new RuntimeException(
+                throw new IllegalStateException(
                         e.getMessage() + "\n field: "
                                 + field.getDeclaringClass().getName()
                                 + '.' + field.getName(),
