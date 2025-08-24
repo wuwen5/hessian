@@ -33,7 +33,7 @@ public class BitSetSerializerTest extends SerializeTestBase {
         assertBitSet(new BitSet());
         assertBitSet(new BitSet(1));
         // TODO
-        // assertBitSet(BitSet.valueOf(words));
+        assertBitSet(BitSet.valueOf(words));
     }
 
     private void assertBitSet(BitSet bitSet) throws IOException {
