@@ -27,23 +27,36 @@ public class ValidationTest {
             this.items = items;
         }
 
-        public String getName() { return name; }
-        public void setName(String name) { this.name = name; }
-        
-        public int getValue() { return value; }
-        public void setValue(int value) { this.value = value; }
-        
-        public List<String> getItems() { return items; }
-        public void setItems(List<String> items) { this.items = items; }
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public void setValue(int value) {
+            this.value = value;
+        }
+
+        public List<String> getItems() {
+            return items;
+        }
+
+        public void setItems(List<String> items) {
+            this.items = items;
+        }
 
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (!(o instanceof TestData)) return false;
             TestData testData = (TestData) o;
-            return value == testData.value &&
-                   name.equals(testData.name) &&
-                   items.equals(testData.items);
+            return value == testData.value && name.equals(testData.name) && items.equals(testData.items);
         }
 
         @Override
@@ -54,7 +67,7 @@ public class ValidationTest {
 
     public static void main(String[] args) throws IOException {
         System.out.println("=== Hessian2 Serialization Validation Test ===");
-        
+
         // Create test data
         TestData original = new TestData("Hello World", 42, Arrays.asList("item1", "item2", "item3"));
         System.out.println("Original: " + original);
@@ -79,7 +92,7 @@ public class ValidationTest {
         TestData circular2 = new TestData();
         circular1.setName("circular1");
         circular2.setName("circular2");
-        
+
         // Create circular reference
         circular1.setItems(Arrays.asList("ref-to-circular2"));
         circular2.setItems(Arrays.asList("ref-to-circular1"));
@@ -91,7 +104,7 @@ public class ValidationTest {
 
         input = new Hessian2Input(new ByteArrayInputStream(outputStream.toByteArray()));
         List<?> circularResult = (List<?>) input.readObject();
-        
+
         System.out.println("Circular reference test: " + (circularResult.get(0) == circularResult.get(2)));
         System.out.println("=== All validation tests passed! ===");
     }
