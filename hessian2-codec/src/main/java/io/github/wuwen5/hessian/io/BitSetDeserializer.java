@@ -17,6 +17,7 @@
 
 package io.github.wuwen5.hessian.io;
 
+import java.io.IOException;
 import java.util.BitSet;
 
 /**
@@ -37,8 +38,15 @@ public class BitSetDeserializer extends JavaDeserializer {
     }
 
     @Override
-    protected Object resolve(AbstractHessianDecoder in, Object obj) throws Exception {
-        Object result = super.resolve(in, obj);
+    protected Object resolve(AbstractHessianDecoder in, Object obj) throws IOException {
+        Object result;
+        try {
+            result = super.resolve(in, obj);
+        } catch (IOException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new IOException("Error resolving BitSet: " + e.getMessage(), e);
+        }
 
         if (result instanceof BitSet) {
             BitSet bitSet = (BitSet) result;
