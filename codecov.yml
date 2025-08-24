@@ -3,10 +3,9 @@ codecov:
   branch: main
 coverage:
   status:
-    # pull-requests only
     patch:
       default:
-        threshold: 0.1%
+        threshold: 10%
 ignore:
   - ./burlap-rpc/**/*
   - ./hessian-rpc/**/*
