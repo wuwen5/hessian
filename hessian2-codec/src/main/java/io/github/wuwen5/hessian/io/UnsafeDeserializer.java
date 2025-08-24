@@ -268,7 +268,7 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
     }
 
     @SuppressWarnings("restriction")
-    protected Object instantiate() throws Exception {
+    protected Object instantiate() throws InstantiationException {
         return unsafe.allocateInstance(type);
     }
 

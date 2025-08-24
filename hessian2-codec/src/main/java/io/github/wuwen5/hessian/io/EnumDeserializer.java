@@ -65,13 +65,13 @@ public class EnumDeserializer extends BaseDeserializer {
         } else if (cl.getSuperclass().isEnum()) {
             enumType = cl.getSuperclass();
         } else {
-            throw new RuntimeException("Class " + cl.getName() + " is not an enum");
+            throw new IllegalArgumentException("Class " + cl.getName() + " is not an enum");
         }
 
         try {
             valueOf = enumType.getMethod("valueOf", Class.class, String.class);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 

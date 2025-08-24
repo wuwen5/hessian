@@ -326,7 +326,7 @@ public class BasicSerializer extends AbstractSerializer implements ObjectSeriali
                 break;
 
             default:
-                throw new RuntimeException(code + " unknown code for " + obj.getClass());
+                throw new IllegalStateException(code + " unknown code for " + obj.getClass());
         }
     }
 }

@@ -79,7 +79,7 @@ public class FieldDeserializer2Factory {
         // XXX: could parameterize the handler to only deal with public
         try {
             field.setAccessible(true);
-        } catch (Throwable e) {
+        } catch (RuntimeException e) {
             log.trace("Unable to set field to accessible", e);
         }
 

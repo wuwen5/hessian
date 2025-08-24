@@ -82,10 +82,8 @@ public class CalendarHandle implements java.io.Serializable, HessianHandle {
             cal.setTimeInMillis(this.date.getTime());
 
             return cal;
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("Failed to create Calendar instance for type: " + type, e);
         }
     }
 }

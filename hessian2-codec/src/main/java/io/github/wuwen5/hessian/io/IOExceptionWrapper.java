@@ -54,7 +54,7 @@ import java.io.IOException;
  * Exception wrapper for IO.
  */
 public class IOExceptionWrapper extends IOException {
-    private Throwable _cause;
+    private final Throwable _cause;
 
     public IOExceptionWrapper(Throwable cause) {
         super(cause.toString());

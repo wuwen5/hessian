@@ -66,7 +66,7 @@ public class EnumSerializer extends AbstractSerializer {
         try {
             name = cl.getMethod("name");
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -86,7 +86,7 @@ public class EnumSerializer extends AbstractSerializer {
         try {
             value = (String) this.name.invoke(obj, (Object[]) null);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
 
         int ref = out.writeObjectBegin(cl.getName());

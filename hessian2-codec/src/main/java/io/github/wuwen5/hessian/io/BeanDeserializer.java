@@ -187,7 +187,7 @@ public class BeanDeserializer extends AbstractMapDeserializer {
         return obj;
     }
 
-    protected Object instantiate() throws Exception {
+    protected Object instantiate() throws ReflectiveOperationException {
         return constructor.newInstance(constructorArgs);
     }
 
