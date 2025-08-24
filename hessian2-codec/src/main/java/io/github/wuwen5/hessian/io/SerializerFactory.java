@@ -427,6 +427,8 @@ public class SerializerFactory extends AbstractSerializerFactory {
             deserializer = new EnumDeserializer(cl);
         } else if (Class.class.equals(cl)) {
             deserializer = new ClassDeserializer(getClassLoader());
+        } else if (java.util.BitSet.class.equals(cl)) {
+            deserializer = new BitSetDeserializer(fieldDeserializer2Factory);
         } else {
             deserializer = getDefaultDeserializer(cl);
         }
