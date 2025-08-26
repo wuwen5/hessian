@@ -55,7 +55,6 @@ public class ExtendedTypeIOTest extends SerializeTestBase {
 
         assertEquals(en.toString(), en_ret.toString());
         assertEquals(zh.toString(), zh_ret.toString());
-        // TODO
-        // assertEquals(zh_CN_Hans.toString(), zhCnHansRet.toString());
+        assertEquals(zh_CN_Hans.toString(), zhCnHansRet.toString());
     }
 }
