@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.concurrent.PriorityBlockingQueue;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledForJreRange;
-import org.junit.jupiter.api.condition.JRE;
 
 public class PriorityBlockingQueueTest extends SerializeTestBase {
     @Test
@@ -44,7 +42,6 @@ public class PriorityBlockingQueueTest extends SerializeTestBase {
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     void testCompact() throws IOException {
         PriorityBlockingQueue<Integer> originalPriorityBlockingQueue =
                 new PriorityBlockingQueue<>(16, Integer::compareTo);

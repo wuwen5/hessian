@@ -23,12 +23,9 @@ import java.net.InetSocketAddress;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledForJreRange;
-import org.junit.jupiter.api.condition.JRE;
 
 public class InetSocketAddressTest extends SerializeTestBase {
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     @Disabled
     void testJdk8() throws Exception {
         // TODO fix me
@@ -86,7 +83,6 @@ public class InetSocketAddressTest extends SerializeTestBase {
      * TODO
      */
     @Test
-    @EnabledForJreRange(min = JRE.JAVA_17)
     @Disabled
     void testJdk17() throws Exception {
         InetSocketAddress inetSocketAddress = new InetSocketAddress("localhost", 8080);

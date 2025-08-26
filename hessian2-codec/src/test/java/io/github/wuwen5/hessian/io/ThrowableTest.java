@@ -19,8 +19,6 @@ package io.github.wuwen5.hessian.io;
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledForJreRange;
-import org.junit.jupiter.api.condition.JRE;
 
 public class ThrowableTest extends SerializeTestBase {
     @Test
@@ -33,7 +31,6 @@ public class ThrowableTest extends SerializeTestBase {
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     void testCompact() throws IOException {
         Throwable throwable = new Throwable("test");
 

@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledForJreRange;
-import org.junit.jupiter.api.condition.JRE;
 
 /**
  * fix hessian serialize bug:
@@ -42,7 +40,6 @@ public class Hessian2UUIDTest extends SerializeTestBase {
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     public void testUUIDObjectCompact() throws IOException {
         UUID actual = UUID.randomUUID();
         UUID deserialize = baseHessian2Serialize(actual);
@@ -59,7 +56,6 @@ public class Hessian2UUIDTest extends SerializeTestBase {
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     public void testUUIDListCompact() throws IOException {
         List<UUID> actual = new ArrayList<>(2);
         actual.add(UUID.randomUUID());
@@ -77,7 +73,6 @@ public class Hessian2UUIDTest extends SerializeTestBase {
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     public void testUUIDMapCompact() throws IOException {
         Map<UUID, Object> actual = new HashMap<>(8);
         actual.put(UUID.randomUUID(), UUID.randomUUID());

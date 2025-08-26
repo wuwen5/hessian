@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledForJreRange;
-import org.junit.jupiter.api.condition.JRE;
 
 public class ConcurrentLinkedDequeTest extends SerializeTestBase {
     @Test
@@ -44,7 +42,6 @@ public class ConcurrentLinkedDequeTest extends SerializeTestBase {
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     void testCompact() throws IOException {
         ConcurrentLinkedDeque<String> originalDeque = new ConcurrentLinkedDeque<>();
         originalDeque.add("one");

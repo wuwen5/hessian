@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.concurrent.LinkedTransferQueue;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledForJreRange;
-import org.junit.jupiter.api.condition.JRE;
 
 public class LinkedTransferQueueTest extends SerializeTestBase {
     @Test
@@ -42,7 +40,6 @@ public class LinkedTransferQueueTest extends SerializeTestBase {
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     void testCompact() throws IOException {
         LinkedTransferQueue<Integer> obj = new LinkedTransferQueue<>();
         obj.offer(1);

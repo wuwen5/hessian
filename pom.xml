@@ -62,6 +62,7 @@
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
     <allowed.build.jdks>[11,23)</allowed.build.jdks>
+    <argLine />
 
     <maven-enforcer-plugin.version>3.6.1</maven-enforcer-plugin.version>
     <extra-enforcer-rules.version>1.10.0</extra-enforcer-rules.version>
@@ -201,6 +202,7 @@
           <configuration>
             <enableOutErrElements>false</enableOutErrElements>
             <redirectTestOutputToFile>true</redirectTestOutputToFile>
+            <argLine>@{argLine}</argLine>
           </configuration>
         </plugin>
         <plugin>
@@ -338,6 +340,19 @@
   </build>
 
   <profiles>
+
+    <profile>
+      <id>jdk17+</id>
+      <activation>
+        <jdk>[17,]</jdk>
+      </activation>
+      <properties>
+        <argLine>--add-opens java.base/java.util=ALL-UNNAMED
+          --add-opens java.base/java.util.concurrent.atomic=ALL-UNNAMED
+          --add-opens java.base/java.time.temporal=ALL-UNNAMED</argLine>
+      </properties>
+    </profile>
+
     <profile>
       <id>release</id>
       <activation>

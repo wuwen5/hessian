@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.util.Properties;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledForJreRange;
-import org.junit.jupiter.api.condition.JRE;
 
 public class PropertiesTest extends SerializeTestBase {
     @Test
@@ -36,7 +34,6 @@ public class PropertiesTest extends SerializeTestBase {
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     void testCompact() throws IOException {
         Properties obj = new Properties();
         obj.setProperty("key1", "value1");

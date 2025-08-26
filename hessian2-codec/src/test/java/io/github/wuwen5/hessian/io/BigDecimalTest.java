@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledForJreRange;
-import org.junit.jupiter.api.condition.JRE;
 
 public class BigDecimalTest extends SerializeTestBase {
     @Test
@@ -34,7 +32,6 @@ public class BigDecimalTest extends SerializeTestBase {
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     void testCompact() throws IOException {
         BigDecimal obj = new BigDecimal("123.456");
         Assertions.assertEquals(obj, baseHessian2Serialize(obj));

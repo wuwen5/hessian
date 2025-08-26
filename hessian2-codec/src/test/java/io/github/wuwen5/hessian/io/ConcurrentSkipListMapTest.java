@@ -21,8 +21,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentSkipListMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledForJreRange;
-import org.junit.jupiter.api.condition.JRE;
 
 public class ConcurrentSkipListMapTest extends SerializeTestBase {
     @Test
@@ -38,7 +36,6 @@ public class ConcurrentSkipListMapTest extends SerializeTestBase {
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     void testWithCompact() throws IOException {
         ConcurrentSkipListMap<String, Integer> originalMap = new ConcurrentSkipListMap<>();
         originalMap.put("one", 1);

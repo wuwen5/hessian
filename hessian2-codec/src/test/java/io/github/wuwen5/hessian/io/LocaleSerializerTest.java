@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.util.Locale;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledForJreRange;
-import org.junit.jupiter.api.condition.JRE;
 
 public class LocaleSerializerTest extends SerializeTestBase {
 
@@ -38,7 +36,6 @@ public class LocaleSerializerTest extends SerializeTestBase {
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     public void localeCompact() throws IOException {
         assertLocaleCompact(null);
         assertLocaleCompact(new Locale(""));

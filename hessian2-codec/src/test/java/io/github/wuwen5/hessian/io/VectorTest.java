@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.util.Vector;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledForJreRange;
-import org.junit.jupiter.api.condition.JRE;
 
 public class VectorTest extends SerializeTestBase {
     @Test
@@ -42,7 +40,6 @@ public class VectorTest extends SerializeTestBase {
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     void testCompact() throws IOException {
         Vector<Integer> treeSet = new Vector<>();
         treeSet.add(1);

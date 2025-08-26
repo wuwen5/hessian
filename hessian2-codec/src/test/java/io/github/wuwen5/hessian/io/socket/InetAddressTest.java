@@ -23,15 +23,12 @@ import java.net.InetAddress;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledForJreRange;
-import org.junit.jupiter.api.condition.JRE;
 
 public class InetAddressTest extends SerializeTestBase {
     /**
      * TODO
      * */
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     @Disabled
     void testJdk8() throws Exception {
         Inet4Address inet4Address = (Inet4Address) Inet4Address.getByAddress("baidu.com", new byte[] {1, 2, 3, 4});
@@ -67,7 +64,6 @@ public class InetAddressTest extends SerializeTestBase {
     }
 
     @Test
-    @EnabledForJreRange(min = JRE.JAVA_17)
     void testJdk17() throws Exception {
         Inet4Address inet4Address = (Inet4Address) Inet4Address.getByAddress("baidu.com", new byte[] {1, 2, 3, 4});
         Assertions.assertEquals(inet4Address, baseHessian2Serialize(inet4Address));

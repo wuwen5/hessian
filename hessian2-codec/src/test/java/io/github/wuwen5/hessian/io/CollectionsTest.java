@@ -23,18 +23,14 @@ import java.util.LinkedList;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledForJreRange;
-import org.junit.jupiter.api.condition.JRE;
 
 public class CollectionsTest extends SerializeTestBase {
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     void testRandomAccessToUnmodifiableList() throws IOException {
         List<Integer> list = new ArrayList<>();
         list.add(1);
         list.add(2);
         list.add(3);
-        // jdk 21 TODO
         List<Integer> unmodifiableList = Collections.unmodifiableList(list);
         Assertions.assertEquals(unmodifiableList, baseHessian2Serialize(unmodifiableList));
 
@@ -42,7 +38,6 @@ public class CollectionsTest extends SerializeTestBase {
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     void testRandomAccessToUnmodifiableListCompact() throws IOException {
         List<Integer> list = new ArrayList<>();
         list.add(1);
@@ -63,7 +58,6 @@ public class CollectionsTest extends SerializeTestBase {
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     void testLinkedToUnmodifiableListCompact() throws IOException {
         List<Integer> list = new LinkedList<>();
         list.add(1);
@@ -74,19 +68,16 @@ public class CollectionsTest extends SerializeTestBase {
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     void testRandomAccessToSynchronizedList() throws IOException {
         List<Integer> list = new ArrayList<>();
         list.add(1);
         list.add(2);
         list.add(3);
-        // jdk 21 TODO
         List<Integer> unmodifiableList = Collections.synchronizedList(list);
         Assertions.assertEquals(unmodifiableList, baseHessian2Serialize(unmodifiableList));
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     void testRandomAccessToSynchronizedListCompact() throws IOException {
         List<Integer> list = new ArrayList<>();
         list.add(1);
@@ -107,7 +98,6 @@ public class CollectionsTest extends SerializeTestBase {
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     void testLinkedToSynchronizedListCompact() throws IOException {
         List<Integer> list = new LinkedList<>();
         list.add(1);
@@ -125,7 +115,6 @@ public class CollectionsTest extends SerializeTestBase {
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     void testCopiesListCompact() throws IOException {
         List<Integer> copiesList = Collections.nCopies(3, 1);
         Assertions.assertEquals(copiesList, baseHessian2Serialize(copiesList));
