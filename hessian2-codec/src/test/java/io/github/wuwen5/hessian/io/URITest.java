@@ -21,8 +21,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledForJreRange;
-import org.junit.jupiter.api.condition.JRE;
 
 public class URITest extends SerializeTestBase {
     @Test
@@ -36,7 +34,6 @@ public class URITest extends SerializeTestBase {
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     void testCompact() throws IOException, URISyntaxException {
         URI originalURI = new URI(
                 "http://username:password@www.example.com:8080/path/to/resource?param1=value1&param2=value2#fragment");

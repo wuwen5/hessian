@@ -22,8 +22,6 @@ import java.time.ZoneId;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledForJreRange;
-import org.junit.jupiter.api.condition.JRE;
 
 // TODO
 @Disabled
@@ -38,7 +36,6 @@ public class ClockTest extends SerializeTestBase {
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     void testCompact() throws IOException {
         Clock obj = Clock.system(ZoneId.of("Asia/Shanghai"));
         Assertions.assertEquals(obj.getZone(), baseHessian2Serialize(obj).getZone());

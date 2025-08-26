@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.math.BigInteger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledForJreRange;
-import org.junit.jupiter.api.condition.JRE;
 
 public class BigIntegerTest extends SerializeTestBase {
     @Test
@@ -34,7 +32,6 @@ public class BigIntegerTest extends SerializeTestBase {
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     void testCompact() throws IOException {
         BigInteger obj = new BigInteger("1234567890");
         Assertions.assertEquals(obj, baseHessian2Serialize(obj));

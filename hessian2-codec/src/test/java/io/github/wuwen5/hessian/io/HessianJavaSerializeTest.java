@@ -24,8 +24,6 @@ import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledForJreRange;
-import org.junit.jupiter.api.condition.JRE;
 
 /**
  * fix hessian serialize bug:
@@ -45,7 +43,6 @@ public class HessianJavaSerializeTest extends SerializeTestBase {
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     public void testGetBaseUserNameCompact() throws Exception {
 
         BaseUser baseUser = new BaseUser();
@@ -68,7 +65,6 @@ public class HessianJavaSerializeTest extends SerializeTestBase {
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     public void testGetSubUserNameCompact() throws Exception {
         SubUser subUser = new SubUser();
         subUser.setUserId(1);
@@ -76,7 +72,7 @@ public class HessianJavaSerializeTest extends SerializeTestBase {
 
         SubUser serializedUser = baseHessian2Serialize(subUser);
         // TODO
-        // Assertions.assertEquals("tom", serializedUser.getUserName());
+        //         Assertions.assertEquals("tom", serializedUser.getUserName());
     }
 
     @Test
@@ -95,7 +91,6 @@ public class HessianJavaSerializeTest extends SerializeTestBase {
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     public void testSubUserWageCompact() throws Exception {
         SubUser subUser = new SubUser();
         subUser.setUserId(1);
@@ -125,7 +120,6 @@ public class HessianJavaSerializeTest extends SerializeTestBase {
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     public void testGetGrandsonUserNameCompact() throws Exception {
         GrandsonUser grandsonUser = new GrandsonUser();
         grandsonUser.setUserId(1);

@@ -20,16 +20,12 @@ import java.io.IOException;
 import java.util.Currency;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledForJreRange;
-import org.junit.jupiter.api.condition.JRE;
 
 public class CurrencyTest extends SerializeTestBase {
 
     /**
-     * TODO java21
      * */
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     void testCurrency() throws IOException {
         Currency currency = Currency.getInstance("USD");
         Assertions.assertEquals(currency, baseHessian2Serialize(currency));
@@ -42,7 +38,6 @@ public class CurrencyTest extends SerializeTestBase {
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     void testCompact() throws IOException {
         Currency currency = Currency.getInstance("USD");
         Assertions.assertEquals(currency, baseHessian2Serialize(currency));

@@ -21,8 +21,6 @@ import java.text.NumberFormat;
 import java.util.Locale;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledForJreRange;
-import org.junit.jupiter.api.condition.JRE;
 
 public class NumberFormatTest extends SerializeTestBase {
     @Test
@@ -43,7 +41,6 @@ public class NumberFormatTest extends SerializeTestBase {
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     void testCompact() throws IOException {
         NumberFormat obj = NumberFormat.getInstance(Locale.US);
         // TODO

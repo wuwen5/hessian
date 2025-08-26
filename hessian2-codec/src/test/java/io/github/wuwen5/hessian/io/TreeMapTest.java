@@ -21,8 +21,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledForJreRange;
-import org.junit.jupiter.api.condition.JRE;
 
 public class TreeMapTest extends SerializeTestBase {
     @Test
@@ -42,7 +40,6 @@ public class TreeMapTest extends SerializeTestBase {
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     void testCompact() throws IOException {
         TreeMap<String, Integer> obj = new TreeMap<>();
         obj.put("one", 1);

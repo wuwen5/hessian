@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.util.EnumSet;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledForJreRange;
-import org.junit.jupiter.api.condition.JRE;
 
 enum TestEnumSet {
     ONE,
@@ -103,7 +101,6 @@ enum TestLargeEnumSet {
 
 public class EnumSetTest extends SerializeTestBase {
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     void test() throws IOException {
         EnumSet<TestEnumSet> originalEnumSet = EnumSet.of(TestEnumSet.ONE, TestEnumSet.TWO);
 
@@ -117,7 +114,6 @@ public class EnumSetTest extends SerializeTestBase {
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     void testJumbo() throws IOException {
         EnumSet<TestLargeEnumSet> originalEnumSet = EnumSet.of(TestLargeEnumSet.E1, TestLargeEnumSet.E2);
 
@@ -131,7 +127,6 @@ public class EnumSetTest extends SerializeTestBase {
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     void testCompactHessian3() throws IOException {
         EnumSet<TestEnumSet> enumSet = EnumSet.of(TestEnumSet.ONE, TestEnumSet.TWO);
         Assertions.assertEquals(enumSet, baseHessian2Serialize(enumSet));

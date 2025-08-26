@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.util.TreeSet;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledForJreRange;
-import org.junit.jupiter.api.condition.JRE;
 
 public class TreeSetTest extends SerializeTestBase {
     @Test
@@ -43,7 +41,6 @@ public class TreeSetTest extends SerializeTestBase {
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_11)
     void testCompact() throws IOException {
         TreeSet<Integer> treeSet = new TreeSet<>(Integer::compareTo);
         treeSet.add(1);
