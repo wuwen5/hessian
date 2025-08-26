@@ -1,72 +1,76 @@
 ## Hessian2 Serialization
 
 [![Java CI](https://github.com/wuwen5/hessian/actions/workflows/ci.yml/badge.svg)](https://github.com/wuwen5/hessian/actions/workflows/ci.yml)
+<a href="https://openjdk.java.net/"><img src="https://img.shields.io/badge/Java-11+-339933?logo=openjdk&logoColor=white" alt="JDK support"></a>
 [![codecov](https://codecov.io/gh/wuwen5/hessian/branch/main/graph/badge.svg)](https://codecov.io/gh/wuwen5/hessian)
 [![Coverage Status](https://coveralls.io/repos/github/wuwen5/hessian/badge.svg?branch=main)](https://coveralls.io/github/wuwen5/hessian?branch=main)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=wuwen5_hessian&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=wuwen5_hessian)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=wuwen5_hessian&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=wuwen5_hessian)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=wuwen5_hessian&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=wuwen5_hessian)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=wuwen5_hessian&metric=bugs)](https://sonarcloud.io/summary/new_code?id=wuwen5_hessian)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.wuwen5.hessian/hessian/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.wuwen5.hessian/hessian/)
 [![Last SNAPSHOT](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fcentral.sonatype.com%2Frepository%2Fmaven-snapshots%2Fio%2Fgithub%2Fwuwen5%2Fhessian%2Fhessian%2Fmaven-metadata.xml&label=latest%20snapshot)](https://central.sonatype.com/repository/maven-snapshots/io/github/wuwen5/hessian/hessian/maven-metadata.xml)
 [![GitHub release](https://img.shields.io/github/release/wuwen5/hessian.svg)](https://github.com/wuwen5/hessian/releases)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
-English | [简体中文](./README_zh.md) 
+[English](./README_en.md) | 简体中文 
 
-## Introduction
+## 简介
 
-This project is a refactored and modularized version of the original [Hessian](http://hessian.caucho.com/) repository, with all RPC-related logic removed. It focuses solely on maintaining and enhancing the **Hessian serialization protocol**.
+本项目基于原始 [Hessian](http://hessian.caucho.com/) 仓库进行改造，剥离了所有与 RPC 调用相关的功能，专注于 Hessian 序列化协议的持续维护与模块化改造。
 
-> The new commits are copied from the source code of `hessian-4.0.xx-sources.jar` in [https://repo1.maven.org/maven2/com/caucho/hessian/](https://repo1.maven.org/maven2/com/caucho/hessian/)
+> 本项目的初始提交来源于 [https://repo1.maven.org/maven2/com/caucho/hessian/](https://repo1.maven.org/maven2/com/caucho/hessian/) 中的 `hessian-4.0.xx-sources.jar` 源码。
 
-The Hessian serialization protocol remains widely used in practice due to the following advantages:
+Hessian 其序列化协议因以下优点，仍具有广泛的实际应用：
 
-* ⚡ **High Performance**: Fast (de)serialization
-* 📦 **Compact Size**: Efficient binary encoding
-* 🌐 **Cross-language Compatibility**: Useful in polyglot systems
-* 🛠️ **Ease of use**: simple to use, no predefined data structure required
+* ⚡ **高性能**：序列化与反序列化速度快
+* 📦 **体积小**：编码紧凑，适合网络传输
+* 🌐 **跨语言**：可用于多语言系统之间的数据交换
+* 🛠️ **易用性**：使用简单，无需预定义数据结构
 
-### ✅ Object Reference Reuse: Hessian2’s Unique Strength
+### ✅ 对象图复用：Hessian2 的独特优势
 
-Hessian2 **supports shared references and cyclic object graphs** out-of-the-box. It detects duplicated object instances and reuses them during serialization, and can correctly handle circular references without stack overflow or infinite loops.
+Hessian2 原生支持**对象引用复用**与**循环引用结构**，能自动识别和复用重复对象实例，并正确还原循环引用，适用于复杂对象图结构。
 
-In contrast:
+相比之下：
 
-| Format       | Shared References | Cyclic References | Notes                                                                  |
-| ------------ | ----------------- | ----------------- | ---------------------------------------------------------------------- |
-| **Hessian2** | ✅ Yes             | ✅ Yes             | Native support, no special handling                                    |
-| **JSON**     | ❌ No              | ❌ No              | Value copy only; circular references cause errors                      |
-| **Protobuf** | ❌ No              | ❌ No              | Tree-based, cannot represent object graphs with cycles or shared state |
+| 序列化协议        | 支持引用复用 | 支持循环引用 | 备注                 |
+| ------------ | ------ | ------ | ------------------ |
+| **Hessian2** | ✅ 是    | ✅ 是    | 原生支持，无需额外配置        |
+| **JSON**     | ❌ 否    | ❌ 否    | 仅支持值拷贝，存在循环引用会报错   |
+| **Protobuf** | ❌ 否    | ❌ 否    | 树状结构，无法表达对象共享或循环引用 |
 
-### 🌍 When Hessian2 Still Shines
+### 🌍 Hessian2 的不可替代性
 
-These features make Hessian2 ideal for scenarios such as:
+基于对象引用复用能力，Hessian2 在以下场景中依然具有不可替代的价值：
 
-* Java object persistence or caching with shared/circular references
-* Deep cloning or snapshotting of runtime state
-* Java-to-Java microservice communication with contextual state
-* RPC frameworks that demand full fidelity object reconstruction
+* 对象缓存、持久化等需要共享或循环引用还原的业务场景
+* 深度克隆、运行时状态快照
+* Java-to-Java 微服务之间上下文传递
+* 高度还原对象图的 RPC 框架数据传输
 
-Even in modern systems, **Hessian2 remains irreplaceable** in certain specialized fields due to its fidelity, compactness, and ease of integration.
+即使在现代系统中，**Hessian2 仍以其高效性、紧凑性和表达力在某些特定领域不可替代。**
 
-### Overview of Hessian2 Protocol
+### Hessian2 协议简介
 
-Hessian2 is an enhanced version of the original Hessian protocol, with the following features:
+Hessian2 是 Hessian 协议的升级版本，主要特性包括：
 
-* Binary serialization of Java primitives, collections, and custom classes
-* **Object reference support** to prevent redundant serialization
-* **Class definition caching** to reduce payload size
-* Designed for **high-efficiency data transmission**
+* 使用 **二进制紧凑格式** 表示 Java 对象、数组、Map、List 等结构
+* 支持 **对象引用**（避免重复序列化相同实例）
+* 支持 **类定义缓存**，提高传输效率
+* 可用于 Java 与其他语言之间的数据交互（如 Python、Go 社区实现）
 
-📄 **Protocol Documentation**: [Hessian2 Protocol Specification (English)](./docs/hessian-serialization.md)
+📄 **协议文档请参见**：[Hessian2 序列化协议文档（简体中文）](./docs/hessian-serialization_zh.md)
 
-### What’s Special About This Project
+### 本项目的特点
 
-* Strip the RPC-related code from the original Hessian project
-* Modularized architecture for better extensibility and maintenance
-* Supports **Hessian 2 protocol only**
-* Ideal for use as a standalone, high-efficiency serialization library
-* Supports Java 11 and above versions
+* 剥离原始 Hessian 项目的 RPC 框架代码
+* 采用模块化结构，更易于集成与扩展
+* 仅保留 **Hessian 2 协议** （本项目不再支持 Hessian1.0）
+* 适合用作轻量级、高效的数据序列化方案
+* 支持 Java 11 及以上版本
 
-Community contributions are welcome. We are committed to keeping a clean, modular, and efficient implementation of the Hessian serialization protocol in Java.
+我们欢迎社区贡献，并持续维护 Hessian 序列化协议的 Java 实现。
 
 ## Maven dependency
 
