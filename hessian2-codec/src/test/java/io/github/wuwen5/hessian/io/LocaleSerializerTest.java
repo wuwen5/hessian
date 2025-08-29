@@ -30,9 +30,7 @@ public class LocaleSerializerTest extends SerializeTestBase {
         assertLocale(new Locale(""));
         assertLocale(new Locale("zh"));
         assertLocale(new Locale("zh", "CN"));
-        // TODO
-        //        assertLocale(new Locale("zh-hant", "CN"));
-        //        assertLocale(new Locale("zh-hant", "CN", "GBK"));
+        assertLocale(new Locale("zh", "CN", "hant"));
     }
 
     @Test
@@ -41,9 +39,6 @@ public class LocaleSerializerTest extends SerializeTestBase {
         assertLocaleCompact(new Locale(""));
         assertLocaleCompact(new Locale("zh"));
         assertLocaleCompact(new Locale("zh", "CN"));
-        // TODO
-        //        assertLocaleCompact(new Locale("zh-hant", "CN"));
-        //        assertLocaleCompact(new Locale("zh-hant", "CN", "GBK"));
     }
 
     private void assertLocale(Locale locale) throws IOException {
