@@ -22,7 +22,6 @@ import io.github.wuwen5.hessian.io.beans.SubUser;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -43,36 +42,13 @@ public class HessianJavaSerializeTest extends SerializeTestBase {
     }
 
     @Test
-    public void testGetBaseUserNameCompact() throws Exception {
-
-        BaseUser baseUser = new BaseUser();
-        baseUser.setUserId(1);
-        baseUser.setUserName("tom");
-
-        BaseUser serializedUser = baseHessian2Serialize(baseUser);
-        Assertions.assertEquals("tom", serializedUser.getUserName());
-    }
-
-    @Test
     public void testGetSubUserName() throws Exception {
         SubUser subUser = new SubUser();
         subUser.setUserId(1);
         subUser.setUserName("tom");
 
-        // TODO
-        // SubUser serializedUser = baseHessian2Serialize(subUser);
-        // Assertions.assertEquals("tom", serializedUser.getUserName());
-    }
-
-    @Test
-    public void testGetSubUserNameCompact() throws Exception {
-        SubUser subUser = new SubUser();
-        subUser.setUserId(1);
-        subUser.setUserName("tom");
-
         SubUser serializedUser = baseHessian2Serialize(subUser);
-        // TODO
-        //         Assertions.assertEquals("tom", serializedUser.getUserName());
+        Assertions.assertEquals("tom", serializedUser.getUserName());
     }
 
     @Test
@@ -90,26 +66,9 @@ public class HessianJavaSerializeTest extends SerializeTestBase {
         Assertions.assertEquals(subUser.getAgeList(), serializedUser.getAgeList());
     }
 
-    @Test
-    public void testSubUserWageCompact() throws Exception {
-        SubUser subUser = new SubUser();
-        subUser.setUserId(1);
-        subUser.setUserName("tom");
-        List<Integer> list = new ArrayList<>();
-        list.add(null);
-        list.add(null);
-        list.add(3);
-        subUser.setAgeList(list);
-
-        SubUser serializedUser = baseHessian2Serialize(subUser);
-        Assertions.assertEquals(subUser.getAgeList(), serializedUser.getAgeList());
-    }
-
     /**
-     * TODO
      * */
     @Test
-    @Disabled
     public void testGetGrandsonUserName() throws Exception {
         GrandsonUser grandsonUser = new GrandsonUser();
         grandsonUser.setUserId(1);
@@ -117,17 +76,6 @@ public class HessianJavaSerializeTest extends SerializeTestBase {
 
         GrandsonUser serializedUser = baseHessian2Serialize(grandsonUser);
         Assertions.assertEquals("tom", serializedUser.getUserName());
-    }
-
-    @Test
-    public void testGetGrandsonUserNameCompact() throws Exception {
-        GrandsonUser grandsonUser = new GrandsonUser();
-        grandsonUser.setUserId(1);
-        grandsonUser.setUserName("tom");
-
-        // TODO
-        // GrandsonUser serializedUser = baseHessian2Serialize(grandsonUser);
-        // Assertions.assertEquals("tom", serializedUser.getUserName());
     }
 
     @Test

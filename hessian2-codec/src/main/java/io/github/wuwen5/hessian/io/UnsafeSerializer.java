@@ -54,6 +54,7 @@ import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.WeakHashMap;
 import lombok.extern.slf4j.Slf4j;
 import sun.misc.Unsafe;
@@ -125,6 +126,7 @@ public class UnsafeSerializer extends AbstractSerializer {
         ArrayList<Field> fieldArrayList = new ArrayList<>();
         fieldArrayList.addAll(primitiveFields);
         fieldArrayList.addAll(compoundFields);
+        Collections.reverse(fieldArrayList);
 
         this.fields = new Field[fieldArrayList.size()];
         fieldArrayList.toArray(this.fields);
