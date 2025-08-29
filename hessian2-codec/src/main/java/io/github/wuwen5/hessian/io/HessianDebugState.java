@@ -1083,7 +1083,7 @@ public class HessianDebugState implements Hessian2Constants {
                 length = 256 * length + (ch & 0xff);
 
                 if (++lengthIndex == 2 && length == 0 && isLastChunk) {
-                    String value = "binary(" + totalLength + ")";
+                    String value = getBinaryValue();
 
                     if (next.isShift(value)) {
                         return next.shift(value);
@@ -1104,7 +1104,7 @@ public class HessianDebugState implements Hessian2Constants {
                     lengthIndex = 0;
                     return this;
                 } else if (ch == 0x20) {
-                    String value = "binary(" + totalLength + ")";
+                    String value = getBinaryValue();
 
                     if (next.isShift(value)) {
                         return next.shift(value);
@@ -1127,7 +1127,7 @@ public class HessianDebugState implements Hessian2Constants {
             totalLength++;
 
             if (length == 0 && isLastChunk) {
-                String value = "binary(" + totalLength + ")";
+                String value = getBinaryValue();
 
                 if (next.isShift(value)) {
                     return next.shift(value);
@@ -1139,6 +1139,10 @@ public class HessianDebugState implements Hessian2Constants {
             } else {
                 return this;
             }
+        }
+
+        private String getBinaryValue() {
+            return "binary(" + totalLength + ")";
         }
     }
 
@@ -1251,21 +1255,19 @@ public class HessianDebugState implements Hessian2Constants {
     }
 
     class ObjectDefState extends State {
-        private static final int TYPE = 1;
-        private static final int COUNT = 2;
-        private static final int FIELD = 3;
-        private static final int COMPLETE = 4;
+        private static final int STATE_TYPE = 1;
+        private static final int STATE_COUNT = 2;
+        private static final int STATE_FIELD = 3;
 
         private int state;
         private int count;
 
-        private String type;
         private final List<String> fields = new ArrayList<>();
 
         ObjectDefState(State next) {
             super(next);
 
-            state = TYPE;
+            state = STATE_TYPE;
         }
 
         @Override
@@ -1275,19 +1277,19 @@ public class HessianDebugState implements Hessian2Constants {
 
         @Override
         State shift(Object object) {
-            if (state == TYPE) {
-                type = (String) object;
+            if (state == STATE_TYPE) {
+                String type = (String) object;
 
                 print("/* defun " + type + " [");
 
                 objectDefList.add(new ObjectDef(type, fields));
 
-                state = COUNT;
-            } else if (state == COUNT) {
+                state = STATE_COUNT;
+            } else if (state == STATE_COUNT) {
                 count = (Integer) object;
 
-                state = FIELD;
-            } else if (state == FIELD) {
+                state = STATE_FIELD;
+            } else if (state == STATE_FIELD) {
                 String field = (String) object;
 
                 count--;
@@ -1308,7 +1310,7 @@ public class HessianDebugState implements Hessian2Constants {
 
         @Override
         int depth() {
-            if (state <= TYPE) {
+            if (state <= STATE_TYPE) {
                 return next.depth();
             } else {
                 return next.depth() + 2;
@@ -1318,12 +1320,12 @@ public class HessianDebugState implements Hessian2Constants {
         @Override
         State next(int ch) {
             switch (state) {
-                case TYPE:
+                case STATE_TYPE:
 
-                case COUNT:
+                case STATE_COUNT:
                     return nextObject(ch);
 
-                case FIELD:
+                case STATE_FIELD:
                     if (count == 0) {
                         println("] */");
                         next.printIndent(0);
@@ -1453,8 +1455,9 @@ public class HessianDebugState implements Hessian2Constants {
 
             this.refId = refId;
 
-            if (isType) state = TYPE;
-            else {
+            if (isType) {
+                state = TYPE;
+            } else {
                 printObject("list (#" + this.refId + ")");
                 state = VALUE;
             }
@@ -1537,9 +1540,9 @@ public class HessianDebugState implements Hessian2Constants {
     }
 
     class CompactListState extends State {
-        private static final int TYPE = 0;
-        private static final int LENGTH = 1;
-        private static final int VALUE = 2;
+        private static final int STATE_TYPE = 0;
+        private static final int STATE_LENGTH = 1;
+        private static final int STATE_VALUE = 2;
 
         private final int refId;
 
@@ -1558,9 +1561,9 @@ public class HessianDebugState implements Hessian2Constants {
             this.refId = refId;
 
             if (isTyped) {
-                state = TYPE;
+                state = STATE_TYPE;
             } else {
-                state = LENGTH;
+                state = STATE_LENGTH;
             }
         }
 
@@ -1574,22 +1577,22 @@ public class HessianDebugState implements Hessian2Constants {
             isLength = true;
 
             if (isTyped) {
-                state = TYPE;
+                state = STATE_TYPE;
             } else {
                 printObject("list (#" + this.refId + ")");
 
-                state = VALUE;
+                state = STATE_VALUE;
             }
         }
 
         @Override
         boolean isShift(Object value) {
-            return state == TYPE || state == LENGTH;
+            return state == STATE_TYPE || state == STATE_LENGTH;
         }
 
         @Override
         State shift(Object object) {
-            if (state == TYPE) {
+            if (state == STATE_TYPE) {
                 Object type = object;
 
                 if (object instanceof Integer) {
@@ -1607,24 +1610,24 @@ public class HessianDebugState implements Hessian2Constants {
                 printObject("list " + type + " (#" + refId + ")");
 
                 if (isLength) {
-                    state = VALUE;
+                    state = STATE_VALUE;
 
                     if (length == 0) {
                         return next;
                     }
                 } else {
-                    state = LENGTH;
+                    state = STATE_LENGTH;
                 }
 
                 return this;
-            } else if (state == LENGTH) {
+            } else if (state == STATE_LENGTH) {
                 length = (Integer) object;
 
                 if (!isTyped) {
                     printObject("list (#" + refId + ")");
                 }
 
-                state = VALUE;
+                state = STATE_VALUE;
 
                 if (length == 0) {
                     return next;
@@ -1638,9 +1641,9 @@ public class HessianDebugState implements Hessian2Constants {
 
         @Override
         int depth() {
-            if (state <= LENGTH) {
+            if (state <= STATE_LENGTH) {
                 return next.depth();
-            } else if (state == VALUE) {
+            } else if (state == STATE_VALUE) {
                 return valueDepth;
             } else {
                 return next.depth() + 2;
@@ -1650,12 +1653,12 @@ public class HessianDebugState implements Hessian2Constants {
         @Override
         State next(int ch) {
             switch (state) {
-                case TYPE:
+                case STATE_TYPE:
 
-                case LENGTH:
+                case STATE_LENGTH:
                     return nextObject(ch);
 
-                case VALUE:
+                case STATE_VALUE:
                     if (length <= count) {
                         return next.next(ch);
                     } else {
@@ -1675,8 +1678,8 @@ public class HessianDebugState implements Hessian2Constants {
     }
 
     class Hessian2State extends State {
-        private static final int MAJOR = 0;
-        private static final int MINOR = 1;
+        private static final int STATE_MAJOR = 0;
+        private static final int STATE_MINOR = 1;
 
         private int state;
         private int major;
@@ -1694,12 +1697,12 @@ public class HessianDebugState implements Hessian2Constants {
         @Override
         State next(int ch) {
             switch (state) {
-                case MAJOR:
+                case STATE_MAJOR:
                     major = ch;
-                    state = MINOR;
+                    state = STATE_MINOR;
                     return this;
 
-                case MINOR:
+                case STATE_MINOR:
                     minor = ch;
                     println(-2, "Hessian " + major + "." + minor);
                     return next;
@@ -1711,11 +1714,11 @@ public class HessianDebugState implements Hessian2Constants {
     }
 
     class Call2State extends State {
-        private static final int METHOD = 0;
-        private static final int COUNT = 1;
-        private static final int ARG = 2;
+        private static final int STATE_METHOD = 0;
+        private static final int STATE_COUNT = 1;
+        private static final int STATE_ARG = 2;
 
-        private int state = METHOD;
+        private int state = STATE_METHOD;
         private int i;
         private int count;
 
@@ -1730,21 +1733,21 @@ public class HessianDebugState implements Hessian2Constants {
 
         @Override
         boolean isShift(Object value) {
-            return state != ARG;
+            return state != STATE_ARG;
         }
 
         @Override
         State shift(Object object) {
-            if (state == METHOD) {
+            if (state == STATE_METHOD) {
                 println(-5, "Call " + object);
 
-                state = COUNT;
+                state = STATE_COUNT;
                 return this;
-            } else if (state == COUNT) {
+            } else if (state == STATE_COUNT) {
 
                 this.count = (Integer) object;
 
-                state = ARG;
+                state = STATE_ARG;
 
                 if (this.count == 0) {
                     return next;
@@ -1759,12 +1762,12 @@ public class HessianDebugState implements Hessian2Constants {
         @Override
         State next(int ch) {
             switch (state) {
-                case COUNT:
+                case STATE_COUNT:
 
-                case METHOD:
+                case STATE_METHOD:
                     return nextObject(ch);
 
-                case ARG:
+                case STATE_ARG:
                     if (count <= i) {
                         println();
                         return next.next(ch);
