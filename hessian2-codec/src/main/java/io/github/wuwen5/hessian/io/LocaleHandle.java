@@ -79,6 +79,7 @@ public class LocaleHandle implements java.io.Serializable, HessianHandle {
         String language = s.substring(0, i);
         String country = null;
         String var = null;
+        String script = null;
 
         if (ch == '-' || ch == '_') {
             int head = ++i;
@@ -104,7 +105,58 @@ public class LocaleHandle implements java.io.Serializable, HessianHandle {
                     i++) {}
 
             var = s.substring(head, i);
+
+            // Update ch to the character after variant (if we haven't reached end)
+            if (i < len) {
+                ch = s.charAt(i);
+            }
         }
+
+        // Handle script (could be after underscore: _#script)
+        if (ch == '_' && i + 1 < len && s.charAt(i + 1) == '#') {
+            // Skip the underscore and '#'
+            i += 2;
+            int head = i;
+
+            for (;
+                    i < len
+                            && ('a' <= (ch = s.charAt(i)) && ch <= 'z'
+                                    || 'A' <= ch && ch <= 'Z'
+                                    || '0' <= ch && ch <= '9');
+                    i++) {}
+
+            script = s.substring(head, i);
+        } else if (ch == '#') {
+            // Direct '#script' (no underscore)
+            int head = ++i;
+
+            for (;
+                    i < len
+                            && ('a' <= (ch = s.charAt(i)) && ch <= 'z'
+                                    || 'A' <= ch && ch <= 'Z'
+                                    || '0' <= ch && ch <= '9');
+                    i++) {}
+
+            script = s.substring(head, i);
+        }
+
+        // If we have script, use Locale.Builder to properly construct the locale
+        if (script != null && !script.isEmpty()) {
+            Locale.Builder builder = new Locale.Builder();
+            if (language != null && !language.isEmpty()) {
+                builder.setLanguage(language);
+            }
+            if (country != null && !country.isEmpty()) {
+                builder.setRegion(country);
+            }
+            if (var != null && !var.isEmpty()) {
+                builder.setVariant(var);
+            }
+            builder.setScript(script);
+            return builder.build();
+        }
+
+        // Fallback to traditional constructors when no script
         if (var != null) {
             return new Locale(language, country, var);
         } else if (country != null) {
