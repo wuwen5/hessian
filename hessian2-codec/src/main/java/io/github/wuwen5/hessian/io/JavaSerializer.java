@@ -56,6 +56,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -135,6 +136,7 @@ public class JavaSerializer extends AbstractSerializer {
         ArrayList<Field> fieldArrayList = new ArrayList<>();
         fieldArrayList.addAll(primitiveFields);
         fieldArrayList.addAll(compoundFields);
+        Collections.reverse(fieldArrayList);
 
         this.fields = new Field[fieldArrayList.size()];
         fieldArrayList.toArray(this.fields);
