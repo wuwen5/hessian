@@ -36,10 +36,4 @@ public class CurrencyTest extends SerializeTestBase {
         currency = Currency.getInstance("EUR");
         Assertions.assertEquals(currency, baseHessian2Serialize(currency));
     }
-
-    @Test
-    void testCompact() throws IOException {
-        Currency currency = Currency.getInstance("USD");
-        Assertions.assertEquals(currency, baseHessian2Serialize(currency));
-    }
 }

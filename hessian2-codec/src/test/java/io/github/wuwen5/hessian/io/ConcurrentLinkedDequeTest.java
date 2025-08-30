@@ -40,14 +40,4 @@ public class ConcurrentLinkedDequeTest extends SerializeTestBase {
         Assertions.assertEquals(new ArrayList<>(originalDeque), new ArrayList<>(result));
         originalDeque.iterator().forEachRemaining(e -> Assertions.assertEquals(e, result.poll()));
     }
-
-    @Test
-    void testCompact() throws IOException {
-        ConcurrentLinkedDeque<String> originalDeque = new ConcurrentLinkedDeque<>();
-        originalDeque.add("one");
-        originalDeque.add("two");
-        originalDeque.add("three");
-
-        Assertions.assertEquals(new ArrayList<>(originalDeque), new ArrayList<>(baseHessian2Serialize(originalDeque)));
-    }
 }

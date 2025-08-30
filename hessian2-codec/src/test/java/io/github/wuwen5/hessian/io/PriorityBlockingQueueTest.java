@@ -40,18 +40,4 @@ public class PriorityBlockingQueueTest extends SerializeTestBase {
         result.add(3);
         Assertions.assertEquals(new ArrayList<>(originalPriorityBlockingQueue), new ArrayList<>(result));
     }
-
-    @Test
-    void testCompact() throws IOException {
-        PriorityBlockingQueue<Integer> originalPriorityBlockingQueue =
-                new PriorityBlockingQueue<>(16, Integer::compareTo);
-        originalPriorityBlockingQueue.add(1);
-        originalPriorityBlockingQueue.add(2);
-        originalPriorityBlockingQueue.add(4);
-        originalPriorityBlockingQueue.add(-1);
-
-        Assertions.assertEquals(
-                new ArrayList<>(originalPriorityBlockingQueue),
-                new ArrayList<>(baseHessian2Serialize(originalPriorityBlockingQueue)));
-    }
 }

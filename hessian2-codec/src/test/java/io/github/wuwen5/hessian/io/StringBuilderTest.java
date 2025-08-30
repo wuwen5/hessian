@@ -29,10 +29,4 @@ public class StringBuilderTest extends SerializeTestBase {
 
         Assertions.assertEquals(originalStringBuilder.toString(), result.toString());
     }
-
-    @Test
-    void testCompact() throws IOException {
-        StringBuilder obj = new StringBuilder("test");
-        Assertions.assertEquals(obj.toString(), baseHessian2Serialize(obj).toString());
-    }
 }

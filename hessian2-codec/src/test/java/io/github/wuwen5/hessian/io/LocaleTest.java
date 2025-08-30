@@ -30,10 +30,4 @@ public class LocaleTest extends SerializeTestBase {
 
         Assertions.assertEquals(originalLocale, result);
     }
-
-    @Test
-    void testCompact() throws IOException {
-        Locale obj = Locale.US;
-        Assertions.assertEquals(obj, baseHessian2Serialize(obj));
-    }
 }

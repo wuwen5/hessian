@@ -38,15 +38,4 @@ public class VectorTest extends SerializeTestBase {
 
         Assertions.assertEquals(treeSet, result);
     }
-
-    @Test
-    void testCompact() throws IOException {
-        Vector<Integer> treeSet = new Vector<>();
-        treeSet.add(1);
-        treeSet.add(2);
-        treeSet.add(4);
-        treeSet.add(-1);
-
-        Assertions.assertEquals(treeSet, baseHessian2Serialize(treeSet));
-    }
 }

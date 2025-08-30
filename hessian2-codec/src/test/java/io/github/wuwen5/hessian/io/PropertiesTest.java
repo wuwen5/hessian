@@ -32,12 +32,4 @@ public class PropertiesTest extends SerializeTestBase {
 
         Assertions.assertEquals(originalProperties, result);
     }
-
-    @Test
-    void testCompact() throws IOException {
-        Properties obj = new Properties();
-        obj.setProperty("key1", "value1");
-        obj.setProperty("key2", "value2");
-        Assertions.assertEquals(obj, baseHessian2Serialize(obj));
-    }
 }

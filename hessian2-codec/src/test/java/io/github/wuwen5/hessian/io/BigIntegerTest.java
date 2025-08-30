@@ -30,10 +30,4 @@ public class BigIntegerTest extends SerializeTestBase {
 
         Assertions.assertEquals(originalBigInteger, result);
     }
-
-    @Test
-    void testCompact() throws IOException {
-        BigInteger obj = new BigInteger("1234567890");
-        Assertions.assertEquals(obj, baseHessian2Serialize(obj));
-    }
 }

@@ -33,32 +33,12 @@ public class CollectionsTest extends SerializeTestBase {
         list.add(3);
         List<Integer> unmodifiableList = Collections.unmodifiableList(list);
         Assertions.assertEquals(unmodifiableList, baseHessian2Serialize(unmodifiableList));
-
+        Assertions.assertEquals(2, unmodifiableList.get(1));
         Assertions.assertEquals(unmodifiableList, baseHessian2Serialize(unmodifiableList, List.class));
     }
 
     @Test
-    void testRandomAccessToUnmodifiableListCompact() throws IOException {
-        List<Integer> list = new ArrayList<>();
-        list.add(1);
-        list.add(2);
-        list.add(3);
-        List<Integer> unmodifiableList = Collections.unmodifiableList(list);
-        Assertions.assertEquals(unmodifiableList, baseHessian2Serialize(unmodifiableList));
-    }
-
-    @Test
     void testLinkedToUnmodifiableList() throws IOException {
-        List<Integer> list = new LinkedList<>();
-        list.add(1);
-        list.add(2);
-        list.add(3);
-        List<Integer> unmodifiableList = Collections.unmodifiableList(list);
-        Assertions.assertEquals(unmodifiableList, baseHessian2Serialize(unmodifiableList));
-    }
-
-    @Test
-    void testLinkedToUnmodifiableListCompact() throws IOException {
         List<Integer> list = new LinkedList<>();
         list.add(1);
         list.add(2);
@@ -78,27 +58,7 @@ public class CollectionsTest extends SerializeTestBase {
     }
 
     @Test
-    void testRandomAccessToSynchronizedListCompact() throws IOException {
-        List<Integer> list = new ArrayList<>();
-        list.add(1);
-        list.add(2);
-        list.add(3);
-        List<Integer> unmodifiableList = Collections.synchronizedList(list);
-        Assertions.assertEquals(unmodifiableList, baseHessian2Serialize(unmodifiableList));
-    }
-
-    @Test
     void testLinkedToSynchronizedList() throws IOException {
-        List<Integer> list = new LinkedList<>();
-        list.add(1);
-        list.add(2);
-        list.add(3);
-        List<Integer> unmodifiableList = Collections.synchronizedList(list);
-        Assertions.assertEquals(unmodifiableList, baseHessian2Serialize(unmodifiableList));
-    }
-
-    @Test
-    void testLinkedToSynchronizedListCompact() throws IOException {
         List<Integer> list = new LinkedList<>();
         list.add(1);
         list.add(2);
@@ -111,14 +71,6 @@ public class CollectionsTest extends SerializeTestBase {
     void testCopiesList() throws IOException {
         List<Integer> copiesList = Collections.nCopies(3, 1);
         Assertions.assertEquals(copiesList, baseHessian2Serialize(copiesList));
-        Assertions.assertEquals(copiesList.subList(1, 2), baseHessian2Serialize(copiesList.subList(1, 2)));
-    }
-
-    @Test
-    void testCopiesListCompact() throws IOException {
-        List<Integer> copiesList = Collections.nCopies(3, 1);
-        Assertions.assertEquals(copiesList, baseHessian2Serialize(copiesList));
-
         Assertions.assertEquals(copiesList.subList(1, 2), baseHessian2Serialize(copiesList.subList(1, 2)));
     }
 }

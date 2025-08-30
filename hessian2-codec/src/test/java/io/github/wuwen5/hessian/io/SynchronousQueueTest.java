@@ -38,13 +38,4 @@ public class SynchronousQueueTest extends SerializeTestBase {
         result.offer(4);
         Assertions.assertEquals(new ArrayList<>(originalSynchronousQueue), new ArrayList<>(result));
     }
-
-    @Test
-    void testCompact() throws IOException {
-        SynchronousQueue<Integer> obj = new SynchronousQueue<>();
-        obj.offer(1);
-        obj.offer(2);
-        obj.offer(3);
-        Assertions.assertEquals(new ArrayList<>(obj), new ArrayList<>(baseHessian2Serialize(obj)));
-    }
 }

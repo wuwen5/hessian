@@ -40,15 +40,6 @@ public class TreeMapTest extends SerializeTestBase {
     }
 
     @Test
-    void testCompact() throws IOException {
-        TreeMap<String, Integer> obj = new TreeMap<>();
-        obj.put("one", 1);
-        obj.put("two", 2);
-        obj.put("three", 3);
-        Assertions.assertEquals(obj, baseHessian2Serialize(obj));
-    }
-
-    @Test
     void testWithComparator() throws IOException {
         TreeMap<Integer, Integer> originalMap = new TreeMap<>(Integer::compareTo);
         originalMap.put(1, 1);

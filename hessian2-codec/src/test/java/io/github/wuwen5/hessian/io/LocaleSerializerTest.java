@@ -33,19 +33,7 @@ public class LocaleSerializerTest extends SerializeTestBase {
         assertLocale(new Locale("zh", "CN", "hant"));
     }
 
-    @Test
-    public void localeCompact() throws IOException {
-        assertLocaleCompact(null);
-        assertLocaleCompact(new Locale(""));
-        assertLocaleCompact(new Locale("zh"));
-        assertLocaleCompact(new Locale("zh", "CN"));
-    }
-
     private void assertLocale(Locale locale) throws IOException {
-        Assertions.assertEquals(locale, baseHessian2Serialize(locale));
-    }
-
-    private void assertLocaleCompact(Locale locale) throws IOException {
         Assertions.assertEquals(locale, baseHessian2Serialize(locale));
     }
 }

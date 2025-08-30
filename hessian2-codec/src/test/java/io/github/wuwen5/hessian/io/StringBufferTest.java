@@ -29,10 +29,4 @@ public class StringBufferTest extends SerializeTestBase {
 
         Assertions.assertEquals(originalStringBuffer.toString(), result.toString());
     }
-
-    @Test
-    void testCompact() throws IOException {
-        StringBuffer obj = new StringBuffer("Hello, World!");
-        Assertions.assertEquals(obj.toString(), baseHessian2Serialize(obj).toString());
-    }
 }

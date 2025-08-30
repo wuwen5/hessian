@@ -36,16 +36,6 @@ public class ConcurrentSkipListMapTest extends SerializeTestBase {
     }
 
     @Test
-    void testWithCompact() throws IOException {
-        ConcurrentSkipListMap<String, Integer> originalMap = new ConcurrentSkipListMap<>();
-        originalMap.put("one", 1);
-        originalMap.put("two", 2);
-        originalMap.put("three", 3);
-
-        Assertions.assertEquals(originalMap, baseHessian2Serialize(originalMap));
-    }
-
-    @Test
     void testWithComparator() throws IOException {
         ConcurrentSkipListMap<Integer, Integer> originalMap = new ConcurrentSkipListMap<>(Integer::compareTo);
         originalMap.put(1, 1);

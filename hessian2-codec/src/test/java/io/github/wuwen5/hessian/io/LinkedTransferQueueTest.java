@@ -38,13 +38,4 @@ public class LinkedTransferQueueTest extends SerializeTestBase {
         result.offer(4);
         Assertions.assertEquals(new ArrayList<>(originalLinkedTransferQueue), new ArrayList<>(result));
     }
-
-    @Test
-    void testCompact() throws IOException {
-        LinkedTransferQueue<Integer> obj = new LinkedTransferQueue<>();
-        obj.offer(1);
-        obj.offer(2);
-        obj.offer(3);
-        Assertions.assertEquals(new ArrayList<>(obj), new ArrayList<>(baseHessian2Serialize(obj)));
-    }
 }

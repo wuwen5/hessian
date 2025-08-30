@@ -30,10 +30,4 @@ public class BigDecimalTest extends SerializeTestBase {
 
         Assertions.assertEquals(originalBigDecimal, result);
     }
-
-    @Test
-    void testCompact() throws IOException {
-        BigDecimal obj = new BigDecimal("123.456");
-        Assertions.assertEquals(obj, baseHessian2Serialize(obj));
-    }
 }

@@ -34,14 +34,6 @@ public class URITest extends SerializeTestBase {
     }
 
     @Test
-    void testCompact() throws IOException, URISyntaxException {
-        URI originalURI = new URI(
-                "http://username:password@www.example.com:8080/path/to/resource?param1=value1&param2=value2#fragment");
-        URI result = baseHessian2Serialize(originalURI);
-        Assertions.assertEquals(originalURI.toString(), result.toString());
-    }
-
-    @Test
     void testEmp() throws IOException, URISyntaxException {
         URI originalURI = new URI(
                 "http",

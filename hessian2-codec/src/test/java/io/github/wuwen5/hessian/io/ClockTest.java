@@ -34,10 +34,4 @@ public class ClockTest extends SerializeTestBase {
 
         Assertions.assertEquals(originalClock.getZone(), result.getZone());
     }
-
-    @Test
-    void testCompact() throws IOException {
-        Clock obj = Clock.system(ZoneId.of("Asia/Shanghai"));
-        Assertions.assertEquals(obj.getZone(), baseHessian2Serialize(obj).getZone());
-    }
 }

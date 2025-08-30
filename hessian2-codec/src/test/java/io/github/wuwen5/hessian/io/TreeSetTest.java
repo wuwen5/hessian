@@ -39,15 +39,4 @@ public class TreeSetTest extends SerializeTestBase {
         Assertions.assertEquals(treeSet, result);
         treeSet.iterator().forEachRemaining(e -> Assertions.assertEquals(e, result.pollFirst()));
     }
-
-    @Test
-    void testCompact() throws IOException {
-        TreeSet<Integer> treeSet = new TreeSet<>(Integer::compareTo);
-        treeSet.add(1);
-        treeSet.add(2);
-        treeSet.add(4);
-        treeSet.add(-1);
-
-        Assertions.assertEquals(treeSet, baseHessian2Serialize(treeSet));
-    }
 }

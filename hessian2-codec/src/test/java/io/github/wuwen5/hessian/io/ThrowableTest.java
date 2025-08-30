@@ -29,17 +29,4 @@ public class ThrowableTest extends SerializeTestBase {
         Assertions.assertEquals(throwable.getMessage(), result.getMessage());
         Assertions.assertEquals(throwable.getLocalizedMessage(), result.getLocalizedMessage());
     }
-
-    @Test
-    void testCompact() throws IOException {
-        Throwable throwable = new Throwable("test");
-
-        Assertions.assertArrayEquals(
-                throwable.getStackTrace(), baseHessian2Serialize(throwable).getStackTrace());
-        Assertions.assertEquals(
-                throwable.getMessage(), baseHessian2Serialize(throwable).getMessage());
-        Assertions.assertEquals(
-                throwable.getLocalizedMessage(),
-                baseHessian2Serialize(throwable).getLocalizedMessage());
-    }
 }

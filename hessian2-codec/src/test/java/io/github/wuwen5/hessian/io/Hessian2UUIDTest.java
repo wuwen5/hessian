@@ -40,13 +40,6 @@ public class Hessian2UUIDTest extends SerializeTestBase {
     }
 
     @Test
-    public void testUUIDObjectCompact() throws IOException {
-        UUID actual = UUID.randomUUID();
-        UUID deserialize = baseHessian2Serialize(actual);
-        assertEquals(actual, deserialize);
-    }
-
-    @Test
     public void testUUIDList() throws IOException {
         List<UUID> actual = new ArrayList<>(2);
         actual.add(UUID.randomUUID());
@@ -56,24 +49,7 @@ public class Hessian2UUIDTest extends SerializeTestBase {
     }
 
     @Test
-    public void testUUIDListCompact() throws IOException {
-        List<UUID> actual = new ArrayList<>(2);
-        actual.add(UUID.randomUUID());
-        actual.add(UUID.randomUUID());
-
-        assertEquals(actual, baseHessian2Serialize(actual));
-    }
-
-    @Test
     public void testUUIDMap() throws IOException {
-        Map<UUID, Object> actual = new HashMap<>(8);
-        actual.put(UUID.randomUUID(), UUID.randomUUID());
-        actual.put(UUID.randomUUID(), null);
-        assertEquals(actual, baseHessian2Serialize(actual));
-    }
-
-    @Test
-    public void testUUIDMapCompact() throws IOException {
         Map<UUID, Object> actual = new HashMap<>(8);
         actual.put(UUID.randomUUID(), UUID.randomUUID());
         actual.put(UUID.randomUUID(), null);
