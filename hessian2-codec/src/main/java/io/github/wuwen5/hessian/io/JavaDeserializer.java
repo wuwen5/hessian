@@ -139,7 +139,7 @@ public class JavaDeserializer extends AbstractMapDeserializer {
             Class<?>[] params = constructor.getParameterTypes();
             objects = new Object[params.length];
             for (int i = 0; i < params.length; i++) {
-                objects[i] = getParamArg(params[i]);
+                objects[i] = FieldDeserializer2Factory.getParamArg(params[i]);
             }
         }
 
@@ -359,32 +359,5 @@ public class JavaDeserializer extends AbstractMapDeserializer {
         }
 
         return fieldMap;
-    }
-
-    /**
-     * Creates a map of the classes fields.
-     */
-    protected static Object getParamArg(Class<?> cl) {
-        if (!cl.isPrimitive()) {
-            return null;
-        } else if (boolean.class.equals(cl)) {
-            return Boolean.FALSE;
-        } else if (byte.class.equals(cl)) {
-            return (byte) 0;
-        } else if (short.class.equals(cl)) {
-            return (short) 0;
-        } else if (char.class.equals(cl)) {
-            return (char) 0;
-        } else if (int.class.equals(cl)) {
-            return 0;
-        } else if (long.class.equals(cl)) {
-            return 0L;
-        } else if (float.class.equals(cl)) {
-            return (float) 0;
-        } else if (double.class.equals(cl)) {
-            return (double) 0;
-        } else {
-            throw new UnsupportedOperationException();
-        }
     }
 }
