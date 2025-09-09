@@ -72,8 +72,11 @@ Hessian2 is an enhanced version of the original Hessian protocol, with the follo
 
 Community contributions are welcome. We are committed to keeping a clean, modular, and efficient implementation of the Hessian serialization protocol in Java.
 
-## Maven dependency
+## 📦 Maven dependency
 
+- Basic usage
+
+If you only need Hessian serialization/deserialization, simply include the `hessian2-codec` dependency:
 ```xml
 <dependency>
     <groupId>io.github.wuwen5.hessian</groupId>
@@ -81,3 +84,34 @@ Community contributions are welcome. We are committed to keeping a clean, modula
     <version>0.1.0-SNAPSHOT</version>
 </dependency>
 ```
+
+- Using with Dubbo
+
+When integrating with Dubbo, you need to add the `hessian-dubbo-adapter` module and exclude Dubbo’s built-in `hessian-lite` dependency:
+```xml
+<dependencies>
+  <dependency>
+    <groupId>io.github.wuwen5.hessian</groupId>
+    <artifactId>hessian2-codec</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+  </dependency>
+  <dependency>
+    <groupId>io.github.wuwen5.hessian</groupId>
+    <artifactId>hessian-dubbo-adapter</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+  </dependency>
+  <dependency>
+    <groupId>org.apache.dubbo</groupId>
+    <artifactId>dubbo</artifactId>
+    <version>${dubbo.version}</version>
+    <exclusions>
+      <exclusion>
+        <groupId>com.alibaba</groupId>
+        <artifactId>hessian-lite</artifactId>
+      </exclusion>
+    </exclusions>
+  </dependency>
+</dependencies>
+```
+
+

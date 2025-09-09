@@ -72,12 +72,45 @@ Hessian2 是 Hessian 协议的升级版本，主要特性包括：
 
 我们欢迎社区贡献，并持续维护 Hessian 序列化协议的 Java 实现。
 
-## Maven dependency
+## 📦 Maven 依赖
 
+- 基础功能依赖
+  
+如果只需要 Hessian 序列化/反序列化功能，可以仅引入 hessian2-codec：
 ```xml
 <dependency>
     <groupId>io.github.wuwen5.hessian</groupId>
     <artifactId>hessian2-codec</artifactId>
     <version>0.1.0-SNAPSHOT</version>
 </dependency>
+```
+
+- 在 Dubbo 中使用
+
+在 Dubbo 场景下，需要同时引入 hessian-dubbo-adapter 模块，并排除 Dubbo 自带的 hessian-lite：
+
+```xml
+<dependencies>
+  <dependency>
+    <groupId>io.github.wuwen5.hessian</groupId>
+    <artifactId>hessian2-codec</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+  </dependency>
+  <dependency>
+    <groupId>io.github.wuwen5.hessian</groupId>
+    <artifactId>hessian-dubbo-adapter</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+  </dependency>
+  <dependency>
+    <groupId>org.apache.dubbo</groupId>
+    <artifactId>dubbo</artifactId>
+    <version>${dubbo.version}</version>
+    <exclusions>
+      <exclusion>
+        <groupId>com.alibaba</groupId>
+        <artifactId>hessian-lite</artifactId>
+      </exclusion>
+    </exclusions>
+  </dependency>
+</dependencies>
 ```
