@@ -67,7 +67,7 @@ public class ClassFactory {
 
     private List<Allow> arrayList;
 
-    ClassFactory(ClassLoader loader) {
+    public ClassFactory(ClassLoader loader) {
         this.loader = loader;
     }
 

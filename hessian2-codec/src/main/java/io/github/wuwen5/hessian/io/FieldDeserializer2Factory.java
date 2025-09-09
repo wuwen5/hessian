@@ -118,25 +118,25 @@ public class FieldDeserializer2Factory {
     /**
      * Creates a map of the classes fields.
      */
-    protected static Object getParamArg(Class<?> cl) {
+    public static Object getParamArg(Class<?> cl) {
         if (!cl.isPrimitive()) {
             return null;
         } else if (boolean.class.equals(cl)) {
             return Boolean.FALSE;
         } else if (byte.class.equals(cl)) {
-            return new Byte((byte) 0);
+            return (byte) 0;
         } else if (short.class.equals(cl)) {
-            return new Short((short) 0);
+            return (short) 0;
         } else if (char.class.equals(cl)) {
-            return new Character((char) 0);
+            return (char) 0;
         } else if (int.class.equals(cl)) {
-            return Integer.valueOf(0);
+            return 0;
         } else if (long.class.equals(cl)) {
-            return Long.valueOf(0);
+            return 0L;
         } else if (float.class.equals(cl)) {
-            return Float.valueOf(0);
+            return (float) 0;
         } else if (double.class.equals(cl)) {
-            return Double.valueOf(0);
+            return (double) 0;
         } else {
             throw new UnsupportedOperationException();
         }
