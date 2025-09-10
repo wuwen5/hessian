@@ -37,8 +37,8 @@ In contrast:
 | Format       | Shared References | Cyclic References | Notes                                                                  |
 | ------------ | ----------------- | ----------------- | ---------------------------------------------------------------------- |
 | **Hessian2** | ✅ Yes             | ✅ Yes             | Native support, no special handling                                    |
-| **JSON**     | ❌ No              | ❌ No              | Value copy only; circular references cause errors                      |
-| **Protobuf** | ❌ No              | ❌ No              | Tree-based, cannot represent object graphs with cycles or shared state |
+| **JSON (standard)**     | ❌ No              | ❌ No              | By default, only supports value copies; circular references will cause an error. Some JSON libraries provide annotations or custom strategies to support references.                      |
+| **Protobuf** | ❌ No              | ❌ No              | Tree-structured; cannot express shared or circular references. Shared objects must be handled at the application level using IDs or mappings. |
 
 ### 🌍 When Hessian2 Still Shines
 

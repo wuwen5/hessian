@@ -8,5 +8,7 @@ coverage:
         threshold: 10%
 ignore:
   - ./burlap-rpc/**/*
+  - ./hessian-adapters/**/*
   - ./hessian-rpc/**/*
   - ./hessian-services/**/*
+  - ./test/**/*

@@ -72,7 +72,7 @@
     <spotless-maven-plugin.version>2.46.1</spotless-maven-plugin.version>
     <spotless.action>check</spotless.action>
     <palantirJavaFormat.version>2.38.0</palantirJavaFormat.version>
-    <sonar.exclusions>burlap-rpc/**,hessian-services/**,hessian-rpc/**,hessian2-codec/src/test/**</sonar.exclusions>
+    <sonar.inclusions>hessian2-codec/src/main/java/**</sonar.inclusions>
     <sonar.plugin>5.2.0.4988</sonar.plugin>
     <sonar.organization>wuwen5</sonar.organization>
 
