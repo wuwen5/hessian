@@ -44,8 +44,11 @@ public abstract class SerializeTestBase {
     }
 
     protected <T> T baseHessian2Serialize(T data) throws IOException {
-        return hessianIO(out -> Try.run(() -> out.writeObject(data)), in -> Try.of(() -> (T) in.readObject())
-                .get());
+        return hessianIO(
+                out -> Try.run(() -> out.writeObject(data)).onFailure(e -> {
+                    throw new RuntimeException(e);
+                }),
+                in -> Try.of(() -> (T) in.readObject()).get());
     }
 
     protected <T> T baseHessian2Serialize(T data, Class<T> cls) throws IOException {

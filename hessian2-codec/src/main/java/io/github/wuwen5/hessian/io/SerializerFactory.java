@@ -429,6 +429,8 @@ public class SerializerFactory extends AbstractSerializerFactory {
             deserializer = new ClassDeserializer(getClassLoader());
         } else if (java.util.BitSet.class.equals(cl)) {
             deserializer = new BitSetDeserializer(fieldDeserializer2Factory);
+        } else if (Calendar.class.isAssignableFrom(cl)) {
+            deserializer = new CalendarDeserializer(cl);
         } else {
             deserializer = getDefaultDeserializer(cl);
         }

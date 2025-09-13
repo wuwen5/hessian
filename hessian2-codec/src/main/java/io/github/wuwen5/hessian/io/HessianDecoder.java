@@ -76,7 +76,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
 
     private static final int END_OF_DATA = -2;
 
-    private static final int SIZE = 1024;
+    private static final int SIZE = 8 * 1024;
 
     /**
      * standard, unmodified factory for deserializing objects
@@ -139,7 +139,12 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
     public HessianDecoder(InputStream is) {
         this();
 
-        init(is);
+        if (dIs != null) {
+            dIs.initPacket(is);
+            is = dIs;
+        }
+
+        this.is = is;
     }
 
     /**
