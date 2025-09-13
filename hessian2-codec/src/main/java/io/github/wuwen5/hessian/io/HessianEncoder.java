@@ -88,7 +88,7 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
     /**
      * map of references
      */
-    private final IdentityIntMap refs = new IdentityIntMap(256);
+    private final IdentityIntMap refs = new IdentityIntMap();
 
     private int refCount = 0;
 
@@ -97,7 +97,7 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
     /**
      * map of classes
      */
-    private final IdentityIntMap classRefs = new IdentityIntMap(256);
+    private final IdentityIntMap classRefs = new IdentityIntMap();
 
     /**
      * map of types
@@ -124,7 +124,7 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
      * @param os the underlying output stream.
      */
     public HessianEncoder(OutputStream os) {
-        init(os);
+        this.os = os;
     }
 
     @Override
@@ -350,7 +350,7 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
         }
 
         if (typeRefs == null) {
-            typeRefs = new HashMap<>();
+            typeRefs = new HashMap<>(32);
         }
 
         Integer typeRefV = typeRefs.get(type);
@@ -360,7 +360,7 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
 
             writeInt(typeRef);
         } else {
-            typeRefs.put(type, Integer.valueOf(typeRefs.size()));
+            typeRefs.put(type, typeRefs.size());
 
             writeString(type);
         }
