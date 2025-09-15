@@ -19,3 +19,4 @@
 
 org.apache.dubbo.common.serialize.hessian2
 io.github.wuwen5.hessian
+java.util.GregorianCalendar
