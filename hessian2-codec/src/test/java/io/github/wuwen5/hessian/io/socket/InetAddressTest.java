@@ -65,8 +65,8 @@ public class InetAddressTest extends SerializeTestBase {
     void testGetByAddressWithNetworkInterface() throws Exception {
         Optional<NetworkInterface> optNif = Collections.list(NetworkInterface.getNetworkInterfaces()).stream()
                 .filter(t -> Try.of(t::isUp).get())
-                .filter(nif -> Collections.list(nif.getInetAddresses()).stream()
-                        .anyMatch(address -> address instanceof Inet6Address))
+                .filter(nif ->
+                        Collections.list(nif.getInetAddresses()).stream().anyMatch(Inet6Address.class::isInstance))
                 .findFirst();
 
         if (optNif.isPresent()) {

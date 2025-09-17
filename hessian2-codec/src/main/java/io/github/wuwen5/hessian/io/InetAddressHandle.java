@@ -18,10 +18,10 @@
 package io.github.wuwen5.hessian.io;
 
 import com.caucho.hessian.io.HessianHandle;
+import java.io.IOException;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.net.SocketException;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -47,24 +47,25 @@ public class InetAddressHandle implements java.io.Serializable, HessianHandle {
     }
 
     private Object readResolve() {
-        try {
-            if (ifname != null) {
-                try {
-                    NetworkInterface scopeIfname = NetworkInterface.getByName(ifname);
-                    if (scopeIfname != null) {
-                        return Inet6Address.getByAddress(this.hostName, this.address, scopeIfname);
-                    }
-                } catch (SocketException e) {
-                    log.debug("Failed to get network interface by name: {}", ifname, e);
+        if (ifname != null) {
+            try {
+                NetworkInterface scopeIfname = NetworkInterface.getByName(ifname);
+                if (scopeIfname != null) {
+                    return Inet6Address.getByAddress(this.hostName, this.address, scopeIfname);
                 }
+            } catch (IOException e) {
+                log.debug("Failed to get network interface by name: {}", ifname, e);
             }
+        }
+
+        try {
+
             if (scopeId >= 0) {
                 return Inet6Address.getByAddress(this.hostName, this.address, this.scopeId);
             }
             return InetAddress.getByAddress(this.hostName, this.address);
-        } catch (Exception e) {
+        } catch (IOException e) {
             log.debug(e.toString(), e);
-
             return null;
         }
     }
