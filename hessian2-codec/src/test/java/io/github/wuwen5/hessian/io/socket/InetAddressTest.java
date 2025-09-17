@@ -64,7 +64,7 @@ public class InetAddressTest extends SerializeTestBase {
         NetworkInterface networkInterface =
                 NetworkInterface.getNetworkInterfaces().nextElement();
         inet6Address = Inet6Address.getByAddress(
-                "baidu.com", new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}, networkInterface);
+                "baidu.com", InetAddress.getByName("::1").getAddress(), networkInterface);
         Inet6Address result = baseHessian2Serialize(inet6Address);
         Assertions.assertEquals(inet6Address, result);
         Assertions.assertEquals(inet6Address.getHostAddress(), result.getHostAddress());

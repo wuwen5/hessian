@@ -54,7 +54,8 @@ public class InetAddressHandle implements java.io.Serializable, HessianHandle {
                     if (scopeIfname != null) {
                         return Inet6Address.getByAddress(this.hostName, this.address, scopeIfname);
                     }
-                } catch (SocketException ignored) {
+                } catch (SocketException e) {
+                    log.debug("Failed to get network interface by name: {}", ifname, e);
                 }
             }
             if (scopeId >= 0) {
