@@ -18,12 +18,16 @@ package io.github.wuwen5.hessian.io.socket;
 
 import io.github.wuwen5.hessian.io.SerializeTestBase;
 import io.vavr.control.Try;
+import java.io.IOException;
+import java.io.Serializable;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Collections;
 import java.util.Optional;
+import lombok.Getter;
+import lombok.Setter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -75,5 +79,31 @@ public class InetAddressTest extends SerializeTestBase {
             Assertions.assertEquals(inet6Address.getHostName(), result.getHostName());
             Assertions.assertArrayEquals(inet6Address.getAddress(), result.getAddress());
         }
+    }
+
+    @Test
+    void testInetAddressRef() throws IOException {
+        Bean bean = new Bean();
+        Inet4Address inet4Address = (Inet4Address) Inet4Address.getByAddress("baidu.com", new byte[] {1, 2, 3, 4});
+
+        bean.setAddr1(null);
+        bean.setAddr2(inet4Address);
+        bean.setAddr3(inet4Address);
+
+        Bean ret = baseHessian2Serialize(bean);
+
+        Assertions.assertNull(ret.getAddr1());
+        Assertions.assertEquals(bean.getAddr2(), ret.getAddr2());
+        Assertions.assertEquals(bean.getAddr3(), ret.getAddr3());
+        Assertions.assertEquals(ret.getAddr2(), ret.getAddr3());
+        Assertions.assertEquals(System.identityHashCode(ret.getAddr2()), System.identityHashCode(ret.getAddr3()));
+    }
+
+    @Getter
+    @Setter
+    static class Bean implements Serializable {
+        InetAddress addr1;
+        InetAddress addr2;
+        InetAddress addr3;
     }
 }

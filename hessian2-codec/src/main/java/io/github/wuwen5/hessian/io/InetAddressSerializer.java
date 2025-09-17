@@ -33,10 +33,7 @@ public class InetAddressSerializer extends AbstractSerializer {
 
     @Override
     public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
-        if (obj == null) {
-            out.writeNull();
-            return;
-        }
+
         if (out.addRef(obj)) {
             return;
         }
