@@ -26,23 +26,23 @@ public class SerializerFactoryTest {
 
     @Test
     public void getSerializer() throws Exception {
-        final SerializerFactory serializerFactory = new SerializerFactory();
+        final Hessian2SerializerFactory serializerFactory = new Hessian2SerializerFactory();
         final Class<TestClass> klass = TestClass.class;
 
-        Serializer s1 = serializerFactory.getSerializer(klass);
-        Serializer s2 = serializerFactory.getSerializer(klass);
+        HessianSerializer s1 = serializerFactory.getSerializer(klass);
+        HessianSerializer s2 = serializerFactory.getSerializer(klass);
 
         Assertions.assertSame(s1, s2, "serveral Serializer!");
     }
 
     @Test
     public void getSerializerDuplicateThread() throws Exception {
-        final SerializerFactory serializerFactory = new SerializerFactory();
+        final Hessian2SerializerFactory serializerFactory = new Hessian2SerializerFactory();
         final Class<TestClass> klass = TestClass.class;
         final CountDownLatch countDownLatch = new CountDownLatch(THREADS);
 
         // init into cached map
-        final Serializer s = serializerFactory.getSerializer(klass);
+        final HessianSerializer s = serializerFactory.getSerializer(klass);
 
         // get from duplicate thread
         for (int i = 0; i < THREADS; i++) {
@@ -65,18 +65,18 @@ public class SerializerFactoryTest {
 
     @Test
     public void getDeserializer() throws Exception {
-        final SerializerFactory serializerFactory = new SerializerFactory();
+        final Hessian2SerializerFactory serializerFactory = new Hessian2SerializerFactory();
         final Class<TestClass> klass = TestClass.class;
 
-        Deserializer d1 = serializerFactory.getDeserializer(klass);
-        Deserializer d2 = serializerFactory.getDeserializer(klass);
+        HessianDeserializer d1 = serializerFactory.getDeserializer(klass);
+        HessianDeserializer d2 = serializerFactory.getDeserializer(klass);
 
         Assertions.assertSame(d1, d2, "several Deserializer!");
     }
 
     @Test
     public void testCheckSerializable() throws HessianProtocolException {
-        final SerializerFactory serializerFactory = new SerializerFactory();
+        final Hessian2SerializerFactory serializerFactory = new Hessian2SerializerFactory();
         try {
             serializerFactory.getSerializer(TestImpl.class);
             Assertions.fail();
@@ -105,12 +105,12 @@ public class SerializerFactoryTest {
 
     @Test
     public void getDeserializerDuplicateThread() throws Exception {
-        final SerializerFactory serializerFactory = new SerializerFactory();
+        final Hessian2SerializerFactory serializerFactory = new Hessian2SerializerFactory();
         final Class<TestClass> klass = TestClass.class;
         final CountDownLatch countDownLatch = new CountDownLatch(THREADS);
 
         // init into cached map
-        final Deserializer s = serializerFactory.getDeserializer(klass);
+        final HessianDeserializer s = serializerFactory.getDeserializer(klass);
 
         // get from duplicate thread
         for (int i = 0; i < THREADS; i++) {
@@ -133,16 +133,16 @@ public class SerializerFactoryTest {
 
     @Test
     public void getDeserializerByType() throws Exception {
-        final SerializerFactory serializerFactory = new SerializerFactory();
+        final Hessian2SerializerFactory serializerFactory = new Hessian2SerializerFactory();
 
         final String testClassName = TestClass.class.getName();
-        Deserializer d1 = serializerFactory.getDeserializer(testClassName);
+        HessianDeserializer d1 = serializerFactory.getDeserializer(testClassName);
         Assertions.assertNotNull(d1, "TestClass Deserializer!");
 
-        Deserializer d2 = serializerFactory.getDeserializer("com.test.NotExistClass");
+        HessianDeserializer d2 = serializerFactory.getDeserializer("com.test.NotExistClass");
         Assertions.assertNull(d2, "NotExistClass Deserializer!");
         // again check NotExistClass, there should be no warning like Hessian/Burlap:.....
-        Deserializer d3 = serializerFactory.getDeserializer("com.test.NotExistClass");
+        HessianDeserializer d3 = serializerFactory.getDeserializer("com.test.NotExistClass");
         Assertions.assertNull(d3, "NotExistClass Deserializer!");
     }
 }

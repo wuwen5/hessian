@@ -15,11 +15,21 @@
  * limitations under the License.
  */
 
-package com.caucho.hessian.io;
+package io.github.wuwen5.hessian.io;
 
-import io.github.wuwen5.hessian.io.Hessian2Handle;
+import java.io.IOException;
 
 /**
- * Marks a type as a handle
+ * Looks up remote objects.  The default just returns a HessianRemote object.
  */
-public interface HessianHandle extends Hessian2Handle {}
+public interface Hessian2RemoteResolver {
+
+    /**
+     * Looks up a proxy object.
+     * @param type object type
+     * @param url remote    url
+     * @return a HessianRemote object
+     * @throws IOException if an I/O error occurs
+     */
+    Object lookup(String type, String url) throws IOException;
+}

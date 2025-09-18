@@ -1,49 +1,18 @@
 /*
- * Copyright (c) 2001-2008 Caucho Technology, Inc.  All rights reserved.
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- * The Apache Software License, Version 1.1
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:
- *       "This product includes software developed by the
- *        Caucho Technology (http://www.caucho.com/)."
- *    Alternately, this acknowlegement may appear in the software itself,
- *    if and wherever such third-party acknowlegements normally appear.
- *
- * 4. The names "Hessian", "Resin", and "Caucho" must not be used to
- *    endorse or promote products derived from this software without prior
- *    written permission. For written permission, please contact
- *    info@caucho.com.
- *
- * 5. Products derived from this software may not be called "Resin"
- *    nor may "Resin" appear in their names without prior written
- *    permission of Caucho Technology.
- *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED.  IN NO EVENT SHALL CAUCHO TECHNOLOGY OR ITS CONTRIBUTORS
- * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
- * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
- * BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
- * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
- * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * @author Scott Ferguson
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.github.wuwen5.hessian.io;
@@ -81,14 +50,14 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
     /**
      * standard, unmodified factory for deserializing objects
      */
-    protected SerializerFactory defaultSerializerFactory;
+    protected Hessian2SerializerFactory defaultSerializerFactory;
     /**
      * factory for deserializing objects in the input stream
      * -- SETTER --
      * Sets the serializer factory.
      */
     @Setter
-    protected SerializerFactory serializerFactory;
+    protected Hessian2SerializerFactory serializerFactory;
 
     private static boolean isCloseStreamOnClose;
 
@@ -150,11 +119,11 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
     /**
      * Gets the serializer factory.
      */
-    public SerializerFactory getSerializerFactory() {
+    public Hessian2SerializerFactory getSerializerFactory() {
         // the default serializer factory cannot be modified by external
         // callers
         if (serializerFactory == defaultSerializerFactory) {
-            serializerFactory = new SerializerFactory();
+            serializerFactory = new Hessian2SerializerFactory();
         }
 
         return serializerFactory;
@@ -163,11 +132,11 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
     /**
      * Gets the serializer factory.
      */
-    protected final SerializerFactory findSerializerFactory() {
-        SerializerFactory factory = serializerFactory;
+    protected final Hessian2SerializerFactory findSerializerFactory() {
+        Hessian2SerializerFactory factory = serializerFactory;
 
         if (factory == null) {
-            factory = SerializerFactory.createDefault();
+            factory = Hessian2SerializerFactory.createDefault();
             defaultSerializerFactory = factory;
             serializerFactory = factory;
         }
@@ -1914,7 +1883,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
                 return null;
 
             case BC_MAP_UNTYPED: {
-                Deserializer reader = findSerializerFactory().getDeserializer(cl);
+                HessianDeserializer reader = findSerializerFactory().getDeserializer(cl);
 
                 return reader.readMap(this);
             }
@@ -1924,12 +1893,12 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
 
                 // hessian/3bb3
                 if ("".equals(type)) {
-                    Deserializer reader;
+                    HessianDeserializer reader;
                     reader = findSerializerFactory().getDeserializer(cl);
 
                     return reader.readMap(this);
                 } else {
-                    Deserializer reader;
+                    HessianDeserializer reader;
                     reader = findSerializerFactory().getObjectDeserializer(type, cl);
 
                     return reader.readMap(this);
@@ -1984,7 +1953,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case BC_LIST_VARIABLE: {
                 String type = readType();
 
-                Deserializer reader;
+                HessianDeserializer reader;
                 reader = findSerializerFactory().getListDeserializer(type, cl);
 
                 return reader.readList(this, -1);
@@ -1994,7 +1963,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
                 String type = readType();
                 int len = readInt();
 
-                Deserializer reader;
+                HessianDeserializer reader;
                 reader = findSerializerFactory().getListDeserializer(type, cl);
 
                 return reader.readLengthList(this, len);
@@ -2012,14 +1981,14 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
 
                 String type = readType();
 
-                Deserializer reader;
+                HessianDeserializer reader;
                 reader = findSerializerFactory().getListDeserializer(type, cl);
 
                 return reader.readLengthList(this, i);
             }
 
             case BC_LIST_VARIABLE_UNTYPED: {
-                Deserializer reader;
+                HessianDeserializer reader;
                 reader = findSerializerFactory().getListDeserializer(null, cl);
 
                 return reader.readList(this, -1);
@@ -2028,7 +1997,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case BC_LIST_FIXED_UNTYPED: {
                 int len = readInt();
 
-                Deserializer reader;
+                HessianDeserializer reader;
                 reader = findSerializerFactory().getListDeserializer(null, cl);
 
                 return reader.readLengthList(this, len);
@@ -2044,7 +2013,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case 0x7f: {
                 int i = tag - 0x78;
 
-                Deserializer reader;
+                HessianDeserializer reader;
                 reader = findSerializerFactory().getListDeserializer(null, cl);
 
                 return reader.readLengthList(this, i);
@@ -2422,7 +2391,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
                 String type = readType();
                 int len = readInt();
 
-                Deserializer reader;
+                HessianDeserializer reader;
                 reader = findSerializerFactory().getListDeserializer(type, null);
 
                 return reader.readLengthList(this, len);
@@ -2432,7 +2401,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
                 // fixed length lists
                 int len = readInt();
 
-                Deserializer reader;
+                HessianDeserializer reader;
                 reader = findSerializerFactory().getListDeserializer(null, null);
 
                 return reader.readLengthList(this, len);
@@ -2451,7 +2420,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
                 String type = readType();
                 int len = tag - 0x70;
 
-                Deserializer reader;
+                HessianDeserializer reader;
                 reader = findSerializerFactory().getListDeserializer(type, null);
 
                 return reader.readLengthList(this, len);
@@ -2469,7 +2438,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
                 // fixed length lists
                 int len = tag - 0x78;
 
-                Deserializer reader;
+                HessianDeserializer reader;
                 reader = findSerializerFactory().getListDeserializer(null, null);
 
                 return reader.readLengthList(this, len);
@@ -2556,9 +2525,9 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
         String type = readString();
         int len = readInt();
 
-        SerializerFactory factory = findSerializerFactory();
+        Hessian2SerializerFactory factory = findSerializerFactory();
 
-        Deserializer reader = factory.getObjectDeserializer(type, null);
+        HessianDeserializer reader = factory.getObjectDeserializer(type, null);
 
         Object[] fields = reader.createFields(len);
         String[] fieldNames = new String[len];
@@ -2577,10 +2546,10 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
 
     private Object readObjectInstance(Class<?> cl, ObjectDefinition def) throws IOException {
         String type = def.getType();
-        Deserializer reader = def.getReader();
+        HessianDeserializer reader = def.getReader();
         Object[] fields = def.getFields();
 
-        SerializerFactory factory = findSerializerFactory();
+        Hessian2SerializerFactory factory = findSerializerFactory();
 
         if (cl != reader.getType() && cl != null) {
             reader = factory.getObjectDeserializer(type, cl);
@@ -2749,7 +2718,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
      * Resolves a remote object.
      */
     public Object resolveRemote(String type, String url) throws IOException {
-        HessianRemoteResolver resolver = getRemoteResolver();
+        Hessian2RemoteResolver resolver = getRemoteResolver();
 
         if (resolver != null) {
             return resolver.lookup(type, url);
@@ -3410,11 +3379,11 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
 
     static final class ObjectDefinition {
         private final String type;
-        private final Deserializer reader;
+        private final HessianDeserializer reader;
         private final Object[] fields;
         private final String[] fieldNames;
 
-        ObjectDefinition(String type, Deserializer reader, Object[] fields, String[] fieldNames) {
+        ObjectDefinition(String type, HessianDeserializer reader, Object[] fields, String[] fieldNames) {
             this.type = type;
             this.reader = reader;
             this.fields = fields;
@@ -3425,7 +3394,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             return type;
         }
 
-        Deserializer getReader() {
+        HessianDeserializer getReader() {
             return reader;
         }
 

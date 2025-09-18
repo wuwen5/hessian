@@ -15,11 +15,20 @@
  * limitations under the License.
  */
 
-package com.caucho.hessian.io;
+package io.github.wuwen5.hessian.io;
 
-import io.github.wuwen5.hessian.io.Hessian2Handle;
+import java.io.IOException;
 
 /**
- * Marks a type as a handle
+ * Serializing an object for known object types.
  */
-public interface HessianHandle extends Hessian2Handle {}
+public interface FieldDeserializer {
+
+    /**
+     * Deserialize the object from the input stream.
+     * @param in the stream from which to read the object
+     * @param obj the object to deserialize into
+     * @throws IOException if an I/O error occurs
+     */
+    void deserialize(AbstractHessianDecoder in, Object obj) throws IOException;
+}

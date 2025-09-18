@@ -24,7 +24,7 @@ import java.util.GregorianCalendar;
 /**
  * Handle for a calendar object.
  */
-public class CalendarHandle implements java.io.Serializable, HessianHandle {
+public class CalendarHandle implements java.io.Serializable, Hessian2Handle {
     private Class<?> type;
     private final Date date;
 

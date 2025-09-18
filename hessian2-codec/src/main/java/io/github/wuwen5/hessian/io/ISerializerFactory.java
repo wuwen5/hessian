@@ -17,29 +17,28 @@
 
 package io.github.wuwen5.hessian.io;
 
-import java.io.IOException;
-
 /**
- * Serializing an object for known object types.
+ * Factory for returning serialization methods.
  */
-public class ThrowableSerializer extends AbstractSerializerWrapper {
-    private final HessianSerializer ser;
+public interface ISerializerFactory {
 
-    public ThrowableSerializer(HessianSerializer ser) {
-        this.ser = ser;
-    }
+    /**
+     * Returns the serializer for a class.
+     *
+     * @param cl the class of the object that needs to be serialized.
+     *
+     * @return a serializer object for the serialization.
+     * @throws HessianProtocolException when a serializer cannot be found.
+     */
+    HessianSerializer getSerializer(Class<?> cl) throws HessianProtocolException;
 
-    @Override
-    protected HessianSerializer getDelegate() {
-        return ser;
-    }
-
-    @Override
-    public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
-        Throwable e = (Throwable) obj;
-
-        e.getStackTrace();
-
-        ser.writeObject(obj, out);
-    }
+    /**
+     * Returns the deserializer for a class.
+     *
+     * @param cl the class of the object that needs to be deserialized.
+     *
+     * @return a deserializer object for the serialization.
+     * @throws HessianProtocolException when a deserializer cannot be found.
+     */
+    HessianDeserializer getDeserializer(Class<?> cl) throws HessianProtocolException;
 }

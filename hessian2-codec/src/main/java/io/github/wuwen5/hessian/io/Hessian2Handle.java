@@ -15,11 +15,9 @@
  * limitations under the License.
  */
 
-package com.caucho.hessian.io;
-
-import io.github.wuwen5.hessian.io.Hessian2Handle;
+package io.github.wuwen5.hessian.io;
 
 /**
  * Marks a type as a handle
  */
-public interface HessianHandle extends Hessian2Handle {}
+public interface Hessian2Handle {}

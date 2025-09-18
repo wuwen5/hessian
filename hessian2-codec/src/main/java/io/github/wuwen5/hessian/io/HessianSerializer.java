@@ -15,11 +15,20 @@
  * limitations under the License.
  */
 
-package com.caucho.hessian.io;
+package io.github.wuwen5.hessian.io;
 
-import io.github.wuwen5.hessian.io.Hessian2Handle;
+import java.io.IOException;
 
 /**
- * Marks a type as a handle
+ * Serializing an object.
  */
-public interface HessianHandle extends Hessian2Handle {}
+public interface HessianSerializer {
+
+    /**
+     * Serializes an object.
+     * @param obj the object to serialize
+     * @param out the stream to serialize to
+     * @throws IOException if an I/O error occurs
+     */
+    void writeObject(Object obj, AbstractHessianEncoder out) throws IOException;
+}

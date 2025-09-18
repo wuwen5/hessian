@@ -1,49 +1,18 @@
 /*
- * Copyright (c) 2001-2008 Caucho Technology, Inc.  All rights reserved.
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- * The Apache Software License, Version 1.1
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:
- *       "This product includes software developed by the
- *        Caucho Technology (http://www.caucho.com/)."
- *    Alternately, this acknowlegement may appear in the software itself,
- *    if and wherever such third-party acknowlegements normally appear.
- *
- * 4. The names "Burlap", "Resin", and "Caucho" must not be used to
- *    endorse or promote products derived from this software without prior
- *    written permission. For written permission, please contact
- *    info@caucho.com.
- *
- * 5. Products derived from this software may not be called "Resin"
- *    nor may "Resin" appear in their names without prior written
- *    permission of Caucho Technology.
- *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED.  IN NO EVENT SHALL CAUCHO TECHNOLOGY OR ITS CONTRIBUTORS
- * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
- * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
- * BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
- * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
- * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * @author Scott Ferguson
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.github.wuwen5.hessian.io;
@@ -70,7 +39,7 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
     private static Unsafe unsafe;
 
     private final Class<?> type;
-    private final Map<String, FieldDeserializer2> fieldMap;
+    private final Map<String, FieldDeserializer> fieldMap;
     private final Method readResolve;
 
     public UnsafeDeserializer(Class<?> cl, FieldDeserializer2Factory fieldFactory) {
@@ -113,7 +82,7 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
 
     @Override
     public Object[] createFields(int len) {
-        return new FieldDeserializer2[len];
+        return new FieldDeserializer[len];
     }
 
     @Override
@@ -132,7 +101,7 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
         try {
             Object obj = instantiate();
 
-            return readObject(in, obj, (FieldDeserializer2[]) fields);
+            return readObject(in, obj, (FieldDeserializer[]) fields);
         } catch (IOException | RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -177,7 +146,7 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
             while (!in.isEnd()) {
                 Object key = in.readObject();
 
-                FieldDeserializer2 deser = fieldMap.get(key);
+                FieldDeserializer deser = fieldMap.get(key);
 
                 if (deser != null) {
                     deser.deserialize(in, obj);
@@ -200,11 +169,11 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
         }
     }
 
-    public Object readObject(AbstractHessianDecoder in, Object obj, FieldDeserializer2[] fields) throws IOException {
+    public Object readObject(AbstractHessianDecoder in, Object obj, FieldDeserializer[] fields) throws IOException {
         try {
             int ref = in.addRef(obj);
 
-            for (FieldDeserializer2 reader : fields) {
+            for (FieldDeserializer reader : fields) {
                 reader.deserialize(in, obj);
             }
 
@@ -227,7 +196,7 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
             int ref = in.addRef(obj);
 
             for (String fieldName : fieldNames) {
-                FieldDeserializer2 reader = fieldMap.get(fieldName);
+                FieldDeserializer reader = fieldMap.get(fieldName);
 
                 if (reader != null) {
                     reader.deserialize(in, obj);
@@ -275,8 +244,8 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
     /**
      * Creates a map of the classes fields.
      */
-    protected Map<String, FieldDeserializer2> getFieldMap(Class<?> cl, FieldDeserializer2Factory fieldFactory) {
-        Map<String, FieldDeserializer2> map = new HashMap<>();
+    protected Map<String, FieldDeserializer> getFieldMap(Class<?> cl, FieldDeserializer2Factory fieldFactory) {
+        Map<String, FieldDeserializer> map = new HashMap<>();
 
         for (; cl != null; cl = cl.getSuperclass()) {
             Field[] fields = cl.getDeclaredFields();
@@ -284,7 +253,7 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
                 if (!Modifier.isTransient(field.getModifiers())
                         && !Modifier.isStatic(field.getModifiers())
                         && map.get(field.getName()) == null) {
-                    FieldDeserializer2 deser = fieldFactory.create(field);
+                    FieldDeserializer deser = fieldFactory.create(field);
 
                     map.put(field.getName(), deser);
                 }
