@@ -1,0 +1,15 @@
+This project is a fork and major refactoring of the original Hessian library,
+which was created by Caucho Technology, Inc. and distributed under the
+Apache Software License, Version 1.1.
+
+Original Copyright:
+Copyright (c) 2001-2004 Caucho Technology, Inc.  All rights reserved.
+
+You may obtain a copy of the original license at:
+http://www.apache.org/licenses/LICENSE-1.1
+
+Portions of this project are licensed under the Apache Software License 1.1
+(as noted in source headers where applicable). All new contributions and
+modifications in this project are licensed under the Apache License 2.0.
+
+You may obtain a copy of the Apache License 2.0 at
