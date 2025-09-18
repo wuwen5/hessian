@@ -31,7 +31,6 @@
   </developers>
 
   <modules>
-    <module>burlap-rpc</module>
     <module>hessian-services</module>
     <module>hessian2-codec</module>
     <module>hessian-rpc</module>

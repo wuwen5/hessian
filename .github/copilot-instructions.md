@@ -49,7 +49,6 @@ This test validates:
 ### Key Modules
 - **`hessian2-codec/`** -- CORE MODULE: Contains the main Hessian2 serialization implementation
 - **`hessian-rpc/`** -- RPC client/server functionality (legacy support)
-- **`burlap-rpc/`** -- Burlap XML-RPC implementation (legacy support)  
 - **`hessian-services/`** -- Service interface definitions
 - **`docs/`** -- Protocol specification and documentation
 
@@ -138,7 +137,6 @@ This test validates:
 Root: pom.xml (multi-module setup)
 ├── hessian2-codec/ (182 classes, primary module)
 ├── hessian-rpc/ (63 classes, legacy RPC)
-├── burlap-rpc/ (25 classes, XML-RPC)
 ├── hessian-services/ (10 classes, interfaces)
 └── docs/ (protocol specification)
 
