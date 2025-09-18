@@ -70,7 +70,7 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
     private static Unsafe unsafe;
 
     private final Class<?> type;
-    private final Map<String, FieldDeserializer2> fieldMap;
+    private final Map<String, FieldDeserializer> fieldMap;
     private final Method readResolve;
 
     public UnsafeDeserializer(Class<?> cl, FieldDeserializer2Factory fieldFactory) {
@@ -113,7 +113,7 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
 
     @Override
     public Object[] createFields(int len) {
-        return new FieldDeserializer2[len];
+        return new FieldDeserializer[len];
     }
 
     @Override
@@ -132,7 +132,7 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
         try {
             Object obj = instantiate();
 
-            return readObject(in, obj, (FieldDeserializer2[]) fields);
+            return readObject(in, obj, (FieldDeserializer[]) fields);
         } catch (IOException | RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -177,7 +177,7 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
             while (!in.isEnd()) {
                 Object key = in.readObject();
 
-                FieldDeserializer2 deser = fieldMap.get(key);
+                FieldDeserializer deser = fieldMap.get(key);
 
                 if (deser != null) {
                     deser.deserialize(in, obj);
@@ -200,11 +200,11 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
         }
     }
 
-    public Object readObject(AbstractHessianDecoder in, Object obj, FieldDeserializer2[] fields) throws IOException {
+    public Object readObject(AbstractHessianDecoder in, Object obj, FieldDeserializer[] fields) throws IOException {
         try {
             int ref = in.addRef(obj);
 
-            for (FieldDeserializer2 reader : fields) {
+            for (FieldDeserializer reader : fields) {
                 reader.deserialize(in, obj);
             }
 
@@ -227,7 +227,7 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
             int ref = in.addRef(obj);
 
             for (String fieldName : fieldNames) {
-                FieldDeserializer2 reader = fieldMap.get(fieldName);
+                FieldDeserializer reader = fieldMap.get(fieldName);
 
                 if (reader != null) {
                     reader.deserialize(in, obj);
@@ -275,8 +275,8 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
     /**
      * Creates a map of the classes fields.
      */
-    protected Map<String, FieldDeserializer2> getFieldMap(Class<?> cl, FieldDeserializer2Factory fieldFactory) {
-        Map<String, FieldDeserializer2> map = new HashMap<>();
+    protected Map<String, FieldDeserializer> getFieldMap(Class<?> cl, FieldDeserializer2Factory fieldFactory) {
+        Map<String, FieldDeserializer> map = new HashMap<>();
 
         for (; cl != null; cl = cl.getSuperclass()) {
             Field[] fields = cl.getDeclaredFields();
@@ -284,7 +284,7 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
                 if (!Modifier.isTransient(field.getModifiers())
                         && !Modifier.isStatic(field.getModifiers())
                         && map.get(field.getName()) == null) {
-                    FieldDeserializer2 deser = fieldFactory.create(field);
+                    FieldDeserializer deser = fieldFactory.create(field);
 
                     map.put(field.getName(), deser);
                 }

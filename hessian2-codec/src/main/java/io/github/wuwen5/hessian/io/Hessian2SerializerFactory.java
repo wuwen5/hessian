@@ -74,34 +74,34 @@ import lombok.SneakyThrows;
 /**
  * Factory for returning serialization methods.
  */
-public class SerializerFactory extends AbstractSerializerFactory {
-    private static final Logger log = Logger.getLogger(SerializerFactory.class.getName());
+public class Hessian2SerializerFactory implements ISerializerFactory {
+    private static final Logger log = Logger.getLogger(Hessian2SerializerFactory.class.getName());
 
     private static final ClassLoader SYSTEM_CLASS_LOADER;
 
-    private static final Map<String, Deserializer> STATIC_TYPE_MAP;
+    private static final Map<String, HessianDeserializer> STATIC_TYPE_MAP;
 
-    private static final WeakHashMap<ClassLoader, SoftReference<SerializerFactory>> DEFAULT_FACTORY_REF_MAP =
+    private static final WeakHashMap<ClassLoader, SoftReference<Hessian2SerializerFactory>> DEFAULT_FACTORY_REF_MAP =
             new WeakHashMap<>();
 
     private final ContextSerializerFactory contextFactory;
     private final WeakReference<ClassLoader> loaderRef;
 
-    protected Serializer defaultSerializer;
+    protected HessianSerializer defaultSerializer;
 
     /**
      * Additional factories
      */
-    protected List<AbstractSerializerFactory> factories = new ArrayList<>();
+    protected List<ISerializerFactory> factories = new ArrayList<>();
 
     protected CollectionSerializer collectionSerializer;
     protected MapSerializer mapSerializer;
 
-    private Deserializer hashMapDeserializer;
-    private Deserializer arrayListDeserializer;
-    private final ConcurrentMap<Class<?>, Serializer> cachedSerializerMap = new ConcurrentHashMap<>(8);
-    private final ConcurrentMap<Class<?>, Deserializer> cachedDeserializerMap = new ConcurrentHashMap<>(8);
-    private final ConcurrentMap<String, Deserializer> cachedTypeDeserializerMap = new ConcurrentHashMap<>();
+    private HessianDeserializer hashMapDeserializer;
+    private HessianDeserializer arrayListDeserializer;
+    private final ConcurrentMap<Class<?>, HessianSerializer> cachedSerializerMap = new ConcurrentHashMap<>(8);
+    private final ConcurrentMap<Class<?>, HessianDeserializer> cachedDeserializerMap = new ConcurrentHashMap<>(8);
+    private final ConcurrentMap<String, HessianDeserializer> cachedTypeDeserializerMap = new ConcurrentHashMap<>();
 
     private boolean isAllowNonSerializable;
     private final boolean isEnableUnsafeSerializer = (UnsafeSerializer.isEnabled() && UnsafeDeserializer.isEnabled());
@@ -110,11 +110,11 @@ public class SerializerFactory extends AbstractSerializerFactory {
 
     private ClassFactory classFactory;
 
-    public SerializerFactory() {
+    public Hessian2SerializerFactory() {
         this(Thread.currentThread().getContextClassLoader());
     }
 
-    public SerializerFactory(ClassLoader loader) {
+    public Hessian2SerializerFactory(ClassLoader loader) {
         loaderRef = new WeakReference<>(loader);
 
         contextFactory = ContextSerializerFactory.create(loader);
@@ -126,20 +126,20 @@ public class SerializerFactory extends AbstractSerializerFactory {
         }
     }
 
-    public static SerializerFactory createDefault() {
+    public static Hessian2SerializerFactory createDefault() {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
         synchronized (DEFAULT_FACTORY_REF_MAP) {
-            SoftReference<SerializerFactory> factoryRef = DEFAULT_FACTORY_REF_MAP.get(loader);
+            SoftReference<Hessian2SerializerFactory> factoryRef = DEFAULT_FACTORY_REF_MAP.get(loader);
 
-            SerializerFactory factory = null;
+            Hessian2SerializerFactory factory = null;
 
             if (factoryRef != null) {
                 factory = factoryRef.get();
             }
 
             if (factory == null) {
-                factory = new SerializerFactory();
+                factory = new Hessian2SerializerFactory();
 
                 factoryRef = new SoftReference<>(factory);
 
@@ -174,7 +174,7 @@ public class SerializerFactory extends AbstractSerializerFactory {
     /**
      * Adds a factory.
      */
-    public void addFactory(AbstractSerializerFactory factory) {
+    public void addFactory(ISerializerFactory factory) {
         factories.add(factory);
     }
 
@@ -199,8 +199,8 @@ public class SerializerFactory extends AbstractSerializerFactory {
      *
      * @return a serializer object for the serialization.
      */
-    public Serializer getObjectSerializer(Class<?> cl) throws HessianProtocolException {
-        Serializer serializer = getSerializer(cl);
+    public HessianSerializer getObjectSerializer(Class<?> cl) throws HessianProtocolException {
+        HessianSerializer serializer = getSerializer(cl);
 
         if (serializer instanceof ObjectSerializer) {
             return ((ObjectSerializer) serializer).getObjectSerializer();
@@ -235,8 +235,8 @@ public class SerializerFactory extends AbstractSerializerFactory {
      * @return a serializer object for the serialization.
      */
     @Override
-    public Serializer getSerializer(Class<?> cl) throws HessianProtocolException {
-        Serializer serializer = cachedSerializerMap.get(cl);
+    public HessianSerializer getSerializer(Class<?> cl) throws HessianProtocolException {
+        HessianSerializer serializer = cachedSerializerMap.get(cl);
 
         if (serializer != null) {
             return serializer;
@@ -246,11 +246,11 @@ public class SerializerFactory extends AbstractSerializerFactory {
     }
 
     @SneakyThrows
-    protected Serializer loadSerializer(Class<?> cl) {
-        Serializer serializer;
+    protected HessianSerializer loadSerializer(Class<?> cl) {
+        HessianSerializer serializer;
 
         for (int i = 0; factories != null && i < factories.size(); i++) {
-            AbstractSerializerFactory factory = factories.get(i);
+            ISerializerFactory factory = factories.get(i);
 
             serializer = factory.getSerializer(cl);
 
@@ -288,7 +288,7 @@ public class SerializerFactory extends AbstractSerializerFactory {
         else if (InetAddress.class.isAssignableFrom(cl)) {
             return InetAddressSerializer.create();
         } else if (JavaSerializer.getWriteReplace(cl) != null) {
-            Serializer baseSerializer = getDefaultSerializer(cl);
+            HessianSerializer baseSerializer = getDefaultSerializer(cl);
 
             return new WriteReplaceSerializer(cl, getClassLoader(), baseSerializer);
         } else if (Map.class.isAssignableFrom(cl)) {
@@ -333,7 +333,7 @@ public class SerializerFactory extends AbstractSerializerFactory {
      *
      * @return a serializer object for the serialization.
      */
-    protected Serializer getDefaultSerializer(Class<?> cl) {
+    protected HessianSerializer getDefaultSerializer(Class<?> cl) {
         if (defaultSerializer != null) {
             return defaultSerializer;
         }
@@ -358,8 +358,8 @@ public class SerializerFactory extends AbstractSerializerFactory {
      * @return a deserializer object for the serialization.
      */
     @Override
-    public Deserializer getDeserializer(Class<?> cl) throws HessianProtocolException {
-        Deserializer deserializer = cachedDeserializerMap.get(cl);
+    public HessianDeserializer getDeserializer(Class<?> cl) throws HessianProtocolException {
+        HessianDeserializer deserializer = cachedDeserializerMap.get(cl);
 
         if (deserializer != null) {
             return deserializer;
@@ -369,11 +369,11 @@ public class SerializerFactory extends AbstractSerializerFactory {
     }
 
     @SneakyThrows
-    protected Deserializer loadDeserializer(Class<?> cl) {
-        Deserializer deserializer = null;
+    protected HessianDeserializer loadDeserializer(Class<?> cl) {
+        HessianDeserializer deserializer = null;
 
         for (int i = 0; deserializer == null && factories != null && i < factories.size(); i++) {
-            AbstractSerializerFactory factory = factories.get(i);
+            ISerializerFactory factory = factories.get(i);
 
             deserializer = factory.getDeserializer(cl);
         }
@@ -445,11 +445,11 @@ public class SerializerFactory extends AbstractSerializerFactory {
      *
      * @return a serializer object for the serialization.
      */
-    protected Deserializer getCustomDeserializer(Class<?> cl) {
+    protected HessianDeserializer getCustomDeserializer(Class<?> cl) {
         try {
             Class<?> serClass = Class.forName(cl.getName() + "HessianDeserializer", false, cl.getClassLoader());
 
-            return (Deserializer) serClass.getDeclaredConstructor().newInstance();
+            return (HessianDeserializer) serClass.getDeclaredConstructor().newInstance();
         } catch (ClassNotFoundException e) {
             log.log(Level.FINEST, e.toString(), e);
 
@@ -470,7 +470,7 @@ public class SerializerFactory extends AbstractSerializerFactory {
      *
      * @return a serializer object for the serialization.
      */
-    protected Deserializer getDefaultDeserializer(Class<?> cl) {
+    protected HessianDeserializer getDefaultDeserializer(Class<?> cl) {
         if (InputStream.class.equals(cl)) {
             return InputStreamDeserializer.DESER;
         }
@@ -486,7 +486,7 @@ public class SerializerFactory extends AbstractSerializerFactory {
      * Reads the object as a list.
      */
     public Object readList(AbstractHessianDecoder in, int length, String type) throws IOException {
-        Deserializer deserializer = getDeserializer(type);
+        HessianDeserializer deserializer = getDeserializer(type);
 
         if (deserializer != null) {
             return deserializer.readList(in, length);
@@ -499,7 +499,7 @@ public class SerializerFactory extends AbstractSerializerFactory {
      * Reads the object as a map.
      */
     public Object readMap(AbstractHessianDecoder in, String type) throws IOException {
-        Deserializer deserializer = getDeserializer(type);
+        HessianDeserializer deserializer = getDeserializer(type);
 
         if (deserializer != null) {
             return deserializer.readMap(in);
@@ -516,7 +516,7 @@ public class SerializerFactory extends AbstractSerializerFactory {
      * Reads the object as a map.
      */
     public Object readObject(AbstractHessianDecoder in, String type, String[] fieldNames) throws IOException {
-        Deserializer deserializer = getDeserializer(type);
+        HessianDeserializer deserializer = getDeserializer(type);
 
         if (deserializer != null) {
             return deserializer.readObject(in, fieldNames);
@@ -532,14 +532,14 @@ public class SerializerFactory extends AbstractSerializerFactory {
     /**
      * Reads the object as a map.
      */
-    public Deserializer getObjectDeserializer(String type, Class<?> cl) throws HessianProtocolException {
-        Deserializer reader = getObjectDeserializer(type);
+    public HessianDeserializer getObjectDeserializer(String type, Class<?> cl) throws HessianProtocolException {
+        HessianDeserializer reader = getObjectDeserializer(type);
 
         if (cl == null
                 || cl.equals(reader.getType())
                 || cl.isAssignableFrom(reader.getType())
                 || reader.isReadResolve()
-                || HessianHandle.class.isAssignableFrom(reader.getType())) {
+                || Hessian2Handle.class.isAssignableFrom(reader.getType())) {
             return reader;
         }
 
@@ -554,8 +554,8 @@ public class SerializerFactory extends AbstractSerializerFactory {
     /**
      * Reads the object as a map.
      */
-    public Deserializer getObjectDeserializer(String type) throws HessianProtocolException {
-        Deserializer deserializer = getDeserializer(type);
+    public HessianDeserializer getObjectDeserializer(String type) throws HessianProtocolException {
+        HessianDeserializer deserializer = getDeserializer(type);
 
         if (deserializer != null) {
             return deserializer;
@@ -571,8 +571,8 @@ public class SerializerFactory extends AbstractSerializerFactory {
     /**
      * Reads the object as a map.
      */
-    public Deserializer getListDeserializer(String type, Class<?> cl) throws HessianProtocolException {
-        Deserializer reader = getListDeserializer(type);
+    public HessianDeserializer getListDeserializer(String type, Class<?> cl) throws HessianProtocolException {
+        HessianDeserializer reader = getListDeserializer(type);
 
         if (cl == null || cl.equals(reader.getType()) || cl.isAssignableFrom(reader.getType())) {
             return reader;
@@ -589,8 +589,8 @@ public class SerializerFactory extends AbstractSerializerFactory {
     /**
      * Reads the object as a map.
      */
-    public Deserializer getListDeserializer(String type) throws HessianProtocolException {
-        Deserializer deserializer = getDeserializer(type);
+    public HessianDeserializer getListDeserializer(String type) throws HessianProtocolException {
+        HessianDeserializer deserializer = getDeserializer(type);
 
         if (deserializer != null) {
             return deserializer;
@@ -606,12 +606,12 @@ public class SerializerFactory extends AbstractSerializerFactory {
     /**
      * Returns a deserializer based on a string type.
      */
-    public Deserializer getDeserializer(String type) throws HessianProtocolException {
+    public HessianDeserializer getDeserializer(String type) throws HessianProtocolException {
         if (type == null || type.isEmpty()) {
             return null;
         }
 
-        Deserializer deserializer = cachedTypeDeserializerMap.get(type);
+        HessianDeserializer deserializer = cachedTypeDeserializerMap.get(type);
 
         if (deserializer != null) {
             return deserializer;
@@ -623,7 +623,7 @@ public class SerializerFactory extends AbstractSerializerFactory {
         }
 
         if (type.startsWith("[")) {
-            Deserializer subDeserializer = getDeserializer(type.substring(1));
+            HessianDeserializer subDeserializer = getDeserializer(type.substring(1));
 
             if (subDeserializer != null) {
                 deserializer = new ArrayDeserializer(subDeserializer.getType());
@@ -636,7 +636,7 @@ public class SerializerFactory extends AbstractSerializerFactory {
 
                 deserializer = getDeserializer(cl);
             } catch (Exception e) {
-                log.warning("Hessian/Burlap: '" + type + "' is an unknown class in " + getClassLoader() + ":\n" + e);
+                log.warning("Hessian2: '" + type + "' is an unknown class in " + getClassLoader() + ":\n" + e);
 
                 log.log(Level.FINER, e.toString(), e);
             }
@@ -650,7 +650,7 @@ public class SerializerFactory extends AbstractSerializerFactory {
     }
 
     private static void addBasic(Class<?> cl, String typeName, int type) {
-        Deserializer deserializer = new BasicDeserializer(type);
+        HessianDeserializer deserializer = new BasicDeserializer(type);
 
         STATIC_TYPE_MAP.put(typeName, deserializer);
     }
@@ -693,7 +693,7 @@ public class SerializerFactory extends AbstractSerializerFactory {
         addBasic(String[].class, "[string", BasicSerializer.STRING_ARRAY);
         addBasic(Object[].class, "[object", BasicSerializer.OBJECT_ARRAY);
 
-        Deserializer objectDeserializer = new JavaDeserializer(Object.class, new FieldDeserializer2Factory());
+        HessianDeserializer objectDeserializer = new JavaDeserializer(Object.class, new FieldDeserializer2Factory());
         STATIC_TYPE_MAP.put("object", objectDeserializer);
         STATIC_TYPE_MAP.put(HessianRemote.class.getName(), RemoteDeserializer.DESER);
 

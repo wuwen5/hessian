@@ -80,7 +80,7 @@ public class Hessian2StreamingInput {
         in = new HessianDecoder(this.is);
     }
 
-    public void setSerializerFactory(SerializerFactory factory) {
+    public void setSerializerFactory(Hessian2SerializerFactory factory) {
         in.setSerializerFactory(factory);
     }
 

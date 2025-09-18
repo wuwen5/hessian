@@ -62,24 +62,24 @@ import lombok.extern.slf4j.Slf4j;
 public class HessianFactory {
 
     @Setter
-    private SerializerFactory serializerFactory;
+    private Hessian2SerializerFactory serializerFactory;
 
-    private final SerializerFactory defaultSerializerFactory;
+    private final Hessian2SerializerFactory defaultSerializerFactory;
 
     protected final HessianFreeList<HessianEncoder> freeHessian2Output = new HessianFreeList<>(32);
 
     protected final HessianFreeList<HessianDecoder> freeHessian2Input = new HessianFreeList<>(32);
 
     public HessianFactory() {
-        defaultSerializerFactory = SerializerFactory.createDefault();
+        defaultSerializerFactory = Hessian2SerializerFactory.createDefault();
         serializerFactory = defaultSerializerFactory;
     }
 
-    public SerializerFactory getSerializerFactory() {
+    public Hessian2SerializerFactory getSerializerFactory() {
         // the default serializer factory cannot be modified by external
         // callers
         if (serializerFactory == defaultSerializerFactory) {
-            serializerFactory = new SerializerFactory();
+            serializerFactory = new Hessian2SerializerFactory();
         }
 
         return serializerFactory;

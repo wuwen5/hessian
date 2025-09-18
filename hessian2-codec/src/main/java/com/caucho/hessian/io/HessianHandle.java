@@ -48,7 +48,9 @@
 
 package com.caucho.hessian.io;
 
+import io.github.wuwen5.hessian.io.Hessian2Handle;
+
 /**
  * Marks a type as a handle
  */
-public interface HessianHandle extends io.github.wuwen5.hessian.io.HessianHandle {}
+public interface HessianHandle extends Hessian2Handle {}

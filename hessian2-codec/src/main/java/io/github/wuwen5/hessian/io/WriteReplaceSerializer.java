@@ -60,9 +60,9 @@ import lombok.extern.slf4j.Slf4j;
 public class WriteReplaceSerializer extends AbstractSerializer {
     private Object writeReplaceFactory;
     private Method writeReplace;
-    private final Serializer baseSerializer;
+    private final HessianSerializer baseSerializer;
 
-    public WriteReplaceSerializer(Class<?> cl, ClassLoader loader, Serializer baseSerializer) {
+    public WriteReplaceSerializer(Class<?> cl, ClassLoader loader, HessianSerializer baseSerializer) {
         introspectWriteReplace(cl, loader);
 
         this.baseSerializer = baseSerializer;

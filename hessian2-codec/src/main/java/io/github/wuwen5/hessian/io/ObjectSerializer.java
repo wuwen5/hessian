@@ -52,5 +52,5 @@ package io.github.wuwen5.hessian.io;
  * Serializing an object.
  */
 public interface ObjectSerializer {
-    Serializer getObjectSerializer();
+    HessianSerializer getObjectSerializer();
 }

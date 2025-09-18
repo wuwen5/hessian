@@ -15,25 +15,9 @@
  * limitations under the License.
  */
 
-package com.alibaba.com.caucho.hessian.io;
-
-import io.github.wuwen5.hessian.io.AbstractHessianEncoder;
-import io.github.wuwen5.hessian.io.HessianSerializer;
-import java.io.IOException;
+package io.github.wuwen5.hessian.io;
 
 /**
- * @author wuwen
+ * Marks a type as a handle
  */
-public abstract class UnsafeSerializer implements HessianSerializer {
-
-    public static UnsafeSerializer create(Class<?> cl) {
-        io.github.wuwen5.hessian.io.UnsafeSerializer unsafeSerializer =
-                io.github.wuwen5.hessian.io.UnsafeSerializer.create(cl);
-        return new UnsafeSerializer() {
-            @Override
-            public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
-                unsafeSerializer.writeObject(obj, out);
-            }
-        };
-    }
-}
+public interface Hessian2Handle {}

@@ -67,7 +67,7 @@ public abstract class AbstractHessianEncoder implements Closeable {
     /**
      * serializer factory
      */
-    private SerializerFactory defaultSerializerFactory;
+    private Hessian2SerializerFactory defaultSerializerFactory;
 
     /**
      * serializer factory
@@ -76,18 +76,18 @@ public abstract class AbstractHessianEncoder implements Closeable {
      *
      */
     @Setter
-    protected SerializerFactory serializerFactory;
+    protected Hessian2SerializerFactory serializerFactory;
 
     private byte[] byteBuffer;
 
     /**
      * Gets the serializer factory.
      */
-    public SerializerFactory getSerializerFactory() {
+    public Hessian2SerializerFactory getSerializerFactory() {
         // the default serializer factory cannot be modified by external
         // callers
         if (serializerFactory == defaultSerializerFactory) {
-            serializerFactory = new SerializerFactory();
+            serializerFactory = new Hessian2SerializerFactory();
         }
 
         return serializerFactory;
@@ -96,11 +96,11 @@ public abstract class AbstractHessianEncoder implements Closeable {
     /**
      * Gets the serializer factory.
      */
-    protected final SerializerFactory findSerializerFactory() {
-        SerializerFactory factory = serializerFactory;
+    protected final Hessian2SerializerFactory findSerializerFactory() {
+        Hessian2SerializerFactory factory = serializerFactory;
 
         if (factory == null) {
-            factory = SerializerFactory.createDefault();
+            factory = Hessian2SerializerFactory.createDefault();
             defaultSerializerFactory = factory;
             serializerFactory = factory;
         }

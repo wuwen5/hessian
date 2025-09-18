@@ -54,10 +54,10 @@ import java.util.logging.Logger;
 /**
  * Serializing an object.
  */
-public abstract class AbstractSerializerWrapper implements Serializer {
+public abstract class AbstractSerializerWrapper implements HessianSerializer {
     protected static final Logger log = Logger.getLogger(AbstractSerializerWrapper.class.getName());
 
-    protected abstract Serializer getDelegate();
+    protected abstract HessianSerializer getDelegate();
 
     @Override
     public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {

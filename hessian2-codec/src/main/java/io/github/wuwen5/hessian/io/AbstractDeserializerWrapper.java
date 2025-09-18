@@ -53,8 +53,8 @@ import java.io.IOException;
 /**
  * Deserializing an object.
  */
-public abstract class AbstractDeserializerWrapper implements Deserializer {
-    protected abstract Deserializer getDelegate();
+public abstract class AbstractDeserializerWrapper implements HessianDeserializer {
+    protected abstract HessianDeserializer getDelegate();
 
     @Override
     public Class<?> getType() {

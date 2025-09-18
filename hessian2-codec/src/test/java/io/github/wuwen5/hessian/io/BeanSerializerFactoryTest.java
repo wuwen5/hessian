@@ -1,3 +1,20 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.wuwen5.hessian.io;
 
 import io.vavr.control.Try;
@@ -19,7 +36,7 @@ public class BeanSerializerFactoryTest extends SerializeTestBase {
 
     @Test
     void testBeanSerializerFactoryWithReplace() throws IOException {
-        SerializerFactory serializerFactory = new BeanSerializerFactory();
+        Hessian2SerializerFactory serializerFactory = new BeanSerializerFactory();
         JavaBeanWithReplace test123 = new JavaBeanWithReplace().setName("test123");
 
         Object ret = hessianIOBeanSerializeFactory(
@@ -31,7 +48,7 @@ public class BeanSerializerFactoryTest extends SerializeTestBase {
 
     @Test
     void testBeanSerializerFactory() throws IOException {
-        SerializerFactory serializerFactory = new BeanSerializerFactory();
+        Hessian2SerializerFactory serializerFactory = new BeanSerializerFactory();
         JavaBean test123 = new JavaBean().setName("test123");
 
         Object ret = hessianIOBeanSerializeFactory(
@@ -43,7 +60,7 @@ public class BeanSerializerFactoryTest extends SerializeTestBase {
 
     @Test
     void testBeanSerializerWithConstructor() throws IOException {
-        SerializerFactory serializerFactory = new BeanSerializerFactory();
+        Hessian2SerializerFactory serializerFactory = new BeanSerializerFactory();
         JavaBean2 test123 = new JavaBean2("test123", true, (byte) 1, (short) 2, 3, 4L, 5.0f, 6.0);
 
         Object ret = hessianIOBeanSerializeFactory(

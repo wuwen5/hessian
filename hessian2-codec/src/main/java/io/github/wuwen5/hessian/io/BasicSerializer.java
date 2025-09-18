@@ -99,7 +99,7 @@ public class BasicSerializer extends AbstractSerializer implements ObjectSeriali
     }
 
     @Override
-    public Serializer getObjectSerializer() {
+    public HessianSerializer getObjectSerializer() {
         switch (code) {
             case BYTE:
                 return BYTE_HANDLE_SERIALIZER;

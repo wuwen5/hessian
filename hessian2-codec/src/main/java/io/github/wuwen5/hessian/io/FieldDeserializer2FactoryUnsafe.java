@@ -69,13 +69,13 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
      * Creates a map of the classes fields.
      */
     @Override
-    public FieldDeserializer2 create(Field field) {
+    public FieldDeserializer create(Field field) {
         if (Modifier.isTransient(field.getModifiers()) || Modifier.isStatic(field.getModifiers())) {
             return NullFieldDeserializer.DESER;
         }
 
         Class<?> type = field.getType();
-        FieldDeserializer2 deser;
+        FieldDeserializer deser;
 
         if (String.class.equals(type)) {
             deser = new StringFieldDeserializer(field);
@@ -108,7 +108,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
         return deser;
     }
 
-    static class NullFieldDeserializer implements FieldDeserializer2 {
+    static class NullFieldDeserializer implements FieldDeserializer {
         static NullFieldDeserializer DESER = new NullFieldDeserializer();
 
         @Override
@@ -117,7 +117,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
         }
     }
 
-    static class ObjectFieldDeserializer implements FieldDeserializer2 {
+    static class ObjectFieldDeserializer implements FieldDeserializer {
         private final Field field;
         private final long offset;
 
@@ -142,7 +142,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
         }
     }
 
-    static class BooleanFieldDeserializer implements FieldDeserializer2 {
+    static class BooleanFieldDeserializer implements FieldDeserializer {
         private final Field field;
         private final long offset;
 
@@ -167,7 +167,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
         }
     }
 
-    static class ByteFieldDeserializer implements FieldDeserializer2 {
+    static class ByteFieldDeserializer implements FieldDeserializer {
         private final Field field;
         private final long offset;
 
@@ -192,7 +192,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
         }
     }
 
-    static class CharFieldDeserializer implements FieldDeserializer2 {
+    static class CharFieldDeserializer implements FieldDeserializer {
         private final Field field;
         private final long offset;
 
@@ -225,7 +225,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
         }
     }
 
-    static class ShortFieldDeserializer implements FieldDeserializer2 {
+    static class ShortFieldDeserializer implements FieldDeserializer {
         private final Field field;
         private final long offset;
 
@@ -250,7 +250,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
         }
     }
 
-    static class IntFieldDeserializer implements FieldDeserializer2 {
+    static class IntFieldDeserializer implements FieldDeserializer {
         private final Field field;
         private final long offset;
 
@@ -275,7 +275,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
         }
     }
 
-    static class LongFieldDeserializer implements FieldDeserializer2 {
+    static class LongFieldDeserializer implements FieldDeserializer {
         private final Field field;
         private final long offset;
 
@@ -300,7 +300,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
         }
     }
 
-    static class FloatFieldDeserializer implements FieldDeserializer2 {
+    static class FloatFieldDeserializer implements FieldDeserializer {
         private final Field field;
         private final long aLong;
 
@@ -324,7 +324,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
         }
     }
 
-    static class DoubleFieldDeserializer implements FieldDeserializer2 {
+    static class DoubleFieldDeserializer implements FieldDeserializer {
         private final Field field;
         private final long offset;
 
@@ -348,7 +348,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
         }
     }
 
-    static class StringFieldDeserializer implements FieldDeserializer2 {
+    static class StringFieldDeserializer implements FieldDeserializer {
         private final Field field;
         private final long offset;
 
@@ -372,7 +372,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
         }
     }
 
-    static class SqlDateFieldDeserializer implements FieldDeserializer2 {
+    static class SqlDateFieldDeserializer implements FieldDeserializer {
         private final Field field;
         private final long offset;
 
@@ -403,7 +403,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
         }
     }
 
-    static class SqlTimestampFieldDeserializer implements FieldDeserializer2 {
+    static class SqlTimestampFieldDeserializer implements FieldDeserializer {
         private final Field field;
         private final long offset;
 
@@ -434,7 +434,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
         }
     }
 
-    static class SqlTimeFieldDeserializer implements FieldDeserializer2 {
+    static class SqlTimeFieldDeserializer implements FieldDeserializer {
         private final Field field;
         private final long offset;
 

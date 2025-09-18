@@ -15,25 +15,21 @@
  * limitations under the License.
  */
 
-package com.alibaba.com.caucho.hessian.io;
+package io.github.wuwen5.hessian.io;
 
-import io.github.wuwen5.hessian.io.AbstractHessianEncoder;
-import io.github.wuwen5.hessian.io.HessianSerializer;
 import java.io.IOException;
 
 /**
- * @author wuwen
+ * Looks up remote objects.  The default just returns a HessianRemote object.
  */
-public abstract class UnsafeSerializer implements HessianSerializer {
+public interface Hessian2RemoteResolver {
 
-    public static UnsafeSerializer create(Class<?> cl) {
-        io.github.wuwen5.hessian.io.UnsafeSerializer unsafeSerializer =
-                io.github.wuwen5.hessian.io.UnsafeSerializer.create(cl);
-        return new UnsafeSerializer() {
-            @Override
-            public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
-                unsafeSerializer.writeObject(obj, out);
-            }
-        };
-    }
+    /**
+     * Looks up a proxy object.
+     * @param type object type
+     * @param url remote    url
+     * @return a HessianRemote object
+     * @throws IOException if an I/O error occurs
+     */
+    Object lookup(String type, String url) throws IOException;
 }

@@ -52,7 +52,7 @@ package io.github.wuwen5.hessian.io;
  * Serializing an object for known object types.
  */
 public class RemoteDeserializer extends JavaDeserializer {
-    public static final Deserializer DESER = new RemoteDeserializer();
+    public static final HessianDeserializer DESER = new RemoteDeserializer();
 
     public RemoteDeserializer() {
         super(HessianRemote.class, FieldDeserializer2Factory.create());
@@ -66,7 +66,7 @@ public class RemoteDeserializer extends JavaDeserializer {
     @Override
     protected Object resolve(AbstractHessianDecoder in, Object obj) throws Exception {
         HessianRemote remote = (HessianRemote) obj;
-        HessianRemoteResolver resolver = in.getRemoteResolver();
+        Hessian2RemoteResolver resolver = in.getRemoteResolver();
 
         if (resolver != null) {
 

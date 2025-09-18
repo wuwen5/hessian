@@ -49,8 +49,8 @@
 package com.caucho.hessian.io;
 
 import io.github.wuwen5.hessian.io.AbstractHessianDecoder;
+import io.github.wuwen5.hessian.io.Hessian2SerializerFactory;
 import io.github.wuwen5.hessian.io.HessianFactory;
-import io.github.wuwen5.hessian.io.SerializerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import lombok.extern.slf4j.Slf4j;
@@ -60,11 +60,11 @@ public class HessianInputFactory {
 
     private final HessianFactory factory = new HessianFactory();
 
-    public void setSerializerFactory(io.github.wuwen5.hessian.io.SerializerFactory factory) {
+    public void setSerializerFactory(Hessian2SerializerFactory factory) {
         this.factory.setSerializerFactory(factory);
     }
 
-    public SerializerFactory getSerializerFactory() {
+    public Hessian2SerializerFactory getSerializerFactory() {
         return factory.getSerializerFactory();
     }
 

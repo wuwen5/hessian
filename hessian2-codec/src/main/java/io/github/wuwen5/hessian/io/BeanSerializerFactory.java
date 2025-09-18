@@ -51,7 +51,7 @@ package io.github.wuwen5.hessian.io;
 /**
  * Factory for returning serialization methods.
  */
-public class BeanSerializerFactory extends SerializerFactory {
+public class BeanSerializerFactory extends Hessian2SerializerFactory {
     /**
      * Returns the default serializer for a class that isn't matched
      * directly.  Application can override this method to produce
@@ -62,7 +62,7 @@ public class BeanSerializerFactory extends SerializerFactory {
      * @return a serializer object for the serialization.
      */
     @Override
-    protected Serializer getDefaultSerializer(Class<?> cl) {
+    protected HessianSerializer getDefaultSerializer(Class<?> cl) {
         return new BeanSerializer(cl, getClassLoader());
     }
 
@@ -76,7 +76,7 @@ public class BeanSerializerFactory extends SerializerFactory {
      * @return a serializer object for the serialization.
      */
     @Override
-    protected Deserializer getDefaultDeserializer(Class<?> cl) {
+    protected HessianDeserializer getDefaultDeserializer(Class<?> cl) {
         return new BeanDeserializer(cl);
     }
 }

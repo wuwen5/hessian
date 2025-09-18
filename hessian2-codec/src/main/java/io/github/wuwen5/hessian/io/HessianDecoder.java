@@ -81,14 +81,14 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
     /**
      * standard, unmodified factory for deserializing objects
      */
-    protected SerializerFactory defaultSerializerFactory;
+    protected Hessian2SerializerFactory defaultSerializerFactory;
     /**
      * factory for deserializing objects in the input stream
      * -- SETTER --
      * Sets the serializer factory.
      */
     @Setter
-    protected SerializerFactory serializerFactory;
+    protected Hessian2SerializerFactory serializerFactory;
 
     private static boolean isCloseStreamOnClose;
 
@@ -150,11 +150,11 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
     /**
      * Gets the serializer factory.
      */
-    public SerializerFactory getSerializerFactory() {
+    public Hessian2SerializerFactory getSerializerFactory() {
         // the default serializer factory cannot be modified by external
         // callers
         if (serializerFactory == defaultSerializerFactory) {
-            serializerFactory = new SerializerFactory();
+            serializerFactory = new Hessian2SerializerFactory();
         }
 
         return serializerFactory;
@@ -163,11 +163,11 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
     /**
      * Gets the serializer factory.
      */
-    protected final SerializerFactory findSerializerFactory() {
-        SerializerFactory factory = serializerFactory;
+    protected final Hessian2SerializerFactory findSerializerFactory() {
+        Hessian2SerializerFactory factory = serializerFactory;
 
         if (factory == null) {
-            factory = SerializerFactory.createDefault();
+            factory = Hessian2SerializerFactory.createDefault();
             defaultSerializerFactory = factory;
             serializerFactory = factory;
         }
@@ -1914,7 +1914,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
                 return null;
 
             case BC_MAP_UNTYPED: {
-                Deserializer reader = findSerializerFactory().getDeserializer(cl);
+                HessianDeserializer reader = findSerializerFactory().getDeserializer(cl);
 
                 return reader.readMap(this);
             }
@@ -1924,12 +1924,12 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
 
                 // hessian/3bb3
                 if ("".equals(type)) {
-                    Deserializer reader;
+                    HessianDeserializer reader;
                     reader = findSerializerFactory().getDeserializer(cl);
 
                     return reader.readMap(this);
                 } else {
-                    Deserializer reader;
+                    HessianDeserializer reader;
                     reader = findSerializerFactory().getObjectDeserializer(type, cl);
 
                     return reader.readMap(this);
@@ -1984,7 +1984,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case BC_LIST_VARIABLE: {
                 String type = readType();
 
-                Deserializer reader;
+                HessianDeserializer reader;
                 reader = findSerializerFactory().getListDeserializer(type, cl);
 
                 return reader.readList(this, -1);
@@ -1994,7 +1994,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
                 String type = readType();
                 int len = readInt();
 
-                Deserializer reader;
+                HessianDeserializer reader;
                 reader = findSerializerFactory().getListDeserializer(type, cl);
 
                 return reader.readLengthList(this, len);
@@ -2012,14 +2012,14 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
 
                 String type = readType();
 
-                Deserializer reader;
+                HessianDeserializer reader;
                 reader = findSerializerFactory().getListDeserializer(type, cl);
 
                 return reader.readLengthList(this, i);
             }
 
             case BC_LIST_VARIABLE_UNTYPED: {
-                Deserializer reader;
+                HessianDeserializer reader;
                 reader = findSerializerFactory().getListDeserializer(null, cl);
 
                 return reader.readList(this, -1);
@@ -2028,7 +2028,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case BC_LIST_FIXED_UNTYPED: {
                 int len = readInt();
 
-                Deserializer reader;
+                HessianDeserializer reader;
                 reader = findSerializerFactory().getListDeserializer(null, cl);
 
                 return reader.readLengthList(this, len);
@@ -2044,7 +2044,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             case 0x7f: {
                 int i = tag - 0x78;
 
-                Deserializer reader;
+                HessianDeserializer reader;
                 reader = findSerializerFactory().getListDeserializer(null, cl);
 
                 return reader.readLengthList(this, i);
@@ -2422,7 +2422,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
                 String type = readType();
                 int len = readInt();
 
-                Deserializer reader;
+                HessianDeserializer reader;
                 reader = findSerializerFactory().getListDeserializer(type, null);
 
                 return reader.readLengthList(this, len);
@@ -2432,7 +2432,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
                 // fixed length lists
                 int len = readInt();
 
-                Deserializer reader;
+                HessianDeserializer reader;
                 reader = findSerializerFactory().getListDeserializer(null, null);
 
                 return reader.readLengthList(this, len);
@@ -2451,7 +2451,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
                 String type = readType();
                 int len = tag - 0x70;
 
-                Deserializer reader;
+                HessianDeserializer reader;
                 reader = findSerializerFactory().getListDeserializer(type, null);
 
                 return reader.readLengthList(this, len);
@@ -2469,7 +2469,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
                 // fixed length lists
                 int len = tag - 0x78;
 
-                Deserializer reader;
+                HessianDeserializer reader;
                 reader = findSerializerFactory().getListDeserializer(null, null);
 
                 return reader.readLengthList(this, len);
@@ -2556,9 +2556,9 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
         String type = readString();
         int len = readInt();
 
-        SerializerFactory factory = findSerializerFactory();
+        Hessian2SerializerFactory factory = findSerializerFactory();
 
-        Deserializer reader = factory.getObjectDeserializer(type, null);
+        HessianDeserializer reader = factory.getObjectDeserializer(type, null);
 
         Object[] fields = reader.createFields(len);
         String[] fieldNames = new String[len];
@@ -2577,10 +2577,10 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
 
     private Object readObjectInstance(Class<?> cl, ObjectDefinition def) throws IOException {
         String type = def.getType();
-        Deserializer reader = def.getReader();
+        HessianDeserializer reader = def.getReader();
         Object[] fields = def.getFields();
 
-        SerializerFactory factory = findSerializerFactory();
+        Hessian2SerializerFactory factory = findSerializerFactory();
 
         if (cl != reader.getType() && cl != null) {
             reader = factory.getObjectDeserializer(type, cl);
@@ -2749,7 +2749,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
      * Resolves a remote object.
      */
     public Object resolveRemote(String type, String url) throws IOException {
-        HessianRemoteResolver resolver = getRemoteResolver();
+        Hessian2RemoteResolver resolver = getRemoteResolver();
 
         if (resolver != null) {
             return resolver.lookup(type, url);
@@ -3410,11 +3410,11 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
 
     static final class ObjectDefinition {
         private final String type;
-        private final Deserializer reader;
+        private final HessianDeserializer reader;
         private final Object[] fields;
         private final String[] fieldNames;
 
-        ObjectDefinition(String type, Deserializer reader, Object[] fields, String[] fieldNames) {
+        ObjectDefinition(String type, HessianDeserializer reader, Object[] fields, String[] fieldNames) {
             this.type = type;
             this.reader = reader;
             this.fields = fields;
@@ -3425,7 +3425,7 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             return type;
         }
 
-        Deserializer getReader() {
+        HessianDeserializer getReader() {
             return reader;
         }
 

@@ -48,10 +48,12 @@
 
 package com.caucho.hessian.io;
 
+import io.github.wuwen5.hessian.io.Hessian2SerializerFactory;
+
 /**
  * Factory for returning serialization methods.
  */
-public class SerializerFactory extends io.github.wuwen5.hessian.io.SerializerFactory {
+public class SerializerFactory extends Hessian2SerializerFactory {
 
     public SerializerFactory() {
         super();

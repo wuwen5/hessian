@@ -85,7 +85,7 @@ public class JavaSerializer extends AbstractSerializer {
         }
     }
 
-    public static Serializer create(Class<?> cl) {
+    public static HessianSerializer create(Class<?> cl) {
         synchronized (SERIALIZER_MAP) {
             SoftReference<JavaSerializer> baseRef = SERIALIZER_MAP.get(cl);
 

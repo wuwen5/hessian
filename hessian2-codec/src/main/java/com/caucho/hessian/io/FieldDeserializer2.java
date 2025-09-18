@@ -48,7 +48,9 @@
 
 package com.caucho.hessian.io;
 
+import io.github.wuwen5.hessian.io.FieldDeserializer;
+
 /**
  * Serializing an object for known object types.
  */
-public interface FieldDeserializer2 extends io.github.wuwen5.hessian.io.FieldDeserializer2 {}
+public interface FieldDeserializer2 extends FieldDeserializer {}

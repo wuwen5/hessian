@@ -48,9 +48,11 @@
 
 package com.caucho.hessian.io;
 
+import io.github.wuwen5.hessian.io.HessianDeserializer;
+
 /**
  * Deserializing an object. Custom deserializers should extend
  * from AbstractDeserializer to avoid issues with signature
  * changes.
  */
-public interface Deserializer extends io.github.wuwen5.hessian.io.Deserializer {}
+public interface Deserializer extends HessianDeserializer {}

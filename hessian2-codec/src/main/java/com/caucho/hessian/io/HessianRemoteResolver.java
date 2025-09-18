@@ -48,7 +48,9 @@
 
 package com.caucho.hessian.io;
 
+import io.github.wuwen5.hessian.io.Hessian2RemoteResolver;
+
 /**
  * Looks up remote objects.  The default just returns a HessianRemote object.
  */
-public interface HessianRemoteResolver extends io.github.wuwen5.hessian.io.HessianRemoteResolver {}
+public interface HessianRemoteResolver extends Hessian2RemoteResolver {}

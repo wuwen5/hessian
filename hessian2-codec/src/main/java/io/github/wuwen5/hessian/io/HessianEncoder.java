@@ -179,7 +179,7 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
             return;
         }
 
-        Serializer serializer = findSerializerFactory().getObjectSerializer(object.getClass());
+        HessianSerializer serializer = findSerializerFactory().getObjectSerializer(object.getClass());
 
         serializer.writeObject(object, this);
     }

@@ -24,7 +24,7 @@ import java.util.Calendar;
  * Serializing a calendar.
  */
 public class CalendarSerializer extends AbstractSerializer {
-    public static final Serializer SER = new CalendarSerializer();
+    public static final HessianSerializer SER = new CalendarSerializer();
 
     /**
      * Write the object to the encoder.

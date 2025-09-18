@@ -49,9 +49,9 @@
 package com.caucho.hessian.jmx;
 
 import com.caucho.hessian.io.AbstractSerializerFactory;
-import io.github.wuwen5.hessian.io.Deserializer;
+import io.github.wuwen5.hessian.io.HessianDeserializer;
 import io.github.wuwen5.hessian.io.HessianProtocolException;
-import io.github.wuwen5.hessian.io.Serializer;
+import io.github.wuwen5.hessian.io.HessianSerializer;
 import io.github.wuwen5.hessian.io.StringValueDeserializer;
 import io.github.wuwen5.hessian.io.StringValueSerializer;
 import javax.management.*;
@@ -67,7 +67,8 @@ public class JMXSerializerFactory extends AbstractSerializerFactory {
      *
      * @return a serializer object for the serialization.
      */
-    public Serializer getSerializer(Class cl) throws HessianProtocolException {
+    @Override
+    public HessianSerializer getSerializer(Class cl) throws HessianProtocolException {
         if (ObjectName.class.equals(cl)) {
             return new StringValueSerializer();
         }
@@ -82,7 +83,8 @@ public class JMXSerializerFactory extends AbstractSerializerFactory {
      *
      * @return a deserializer object for the serialization.
      */
-    public Deserializer getDeserializer(Class cl) throws HessianProtocolException {
+    @Override
+    public HessianDeserializer getDeserializer(Class cl) throws HessianProtocolException {
         if (ObjectName.class.equals(cl)) {
             return new StringValueDeserializer(cl);
         } else if (ObjectInstance.class.equals(cl)) {

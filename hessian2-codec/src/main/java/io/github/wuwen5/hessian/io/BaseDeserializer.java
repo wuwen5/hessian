@@ -53,7 +53,7 @@ import java.io.IOException;
 /**
  * Deserializing an object.
  */
-public class BaseDeserializer implements Deserializer {
+public class BaseDeserializer implements HessianDeserializer {
     public static final NullDeserializer NULL = new NullDeserializer();
 
     @Override

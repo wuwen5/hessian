@@ -54,14 +54,14 @@ import java.io.IOException;
  * Serializing an object for known object types.
  */
 public class ThrowableSerializer extends AbstractSerializerWrapper {
-    private final Serializer ser;
+    private final HessianSerializer ser;
 
-    public ThrowableSerializer(Serializer ser) {
+    public ThrowableSerializer(HessianSerializer ser) {
         this.ser = ser;
     }
 
     @Override
-    protected Serializer getDelegate() {
+    protected HessianSerializer getDelegate() {
         return ser;
     }
 

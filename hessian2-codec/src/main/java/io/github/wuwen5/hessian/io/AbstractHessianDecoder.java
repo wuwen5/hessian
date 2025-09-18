@@ -59,7 +59,7 @@ import java.io.Reader;
  * need to use the methods in this class.
  */
 public abstract class AbstractHessianDecoder implements Closeable {
-    private HessianRemoteResolver resolver;
+    private Hessian2RemoteResolver resolver;
     private byte[] buffer;
 
     /**
@@ -70,14 +70,14 @@ public abstract class AbstractHessianDecoder implements Closeable {
     /**
      * Sets the resolver used to lookup remote objects.
      */
-    public void setRemoteResolver(HessianRemoteResolver resolver) {
+    public void setRemoteResolver(Hessian2RemoteResolver resolver) {
         this.resolver = resolver;
     }
 
     /**
      * Sets the resolver used to lookup remote objects.
      */
-    public HessianRemoteResolver getRemoteResolver() {
+    public Hessian2RemoteResolver getRemoteResolver() {
         return resolver;
     }
 

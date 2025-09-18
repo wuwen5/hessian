@@ -59,7 +59,7 @@ public class ByteArraySerializer extends AbstractSerializer implements ObjectSer
     private ByteArraySerializer() {}
 
     @Override
-    public Serializer getObjectSerializer() {
+    public HessianSerializer getObjectSerializer() {
         return this;
     }
 

@@ -58,7 +58,7 @@ import lombok.extern.slf4j.Slf4j;
  * Serializing an object.
  */
 @Slf4j
-public abstract class AbstractSerializer implements Serializer {
+public abstract class AbstractSerializer implements HessianSerializer {
     public static final NullSerializer NULL = new NullSerializer();
 
     /**

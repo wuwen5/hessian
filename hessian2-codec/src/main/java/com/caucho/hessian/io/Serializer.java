@@ -48,7 +48,9 @@
 
 package com.caucho.hessian.io;
 
+import io.github.wuwen5.hessian.io.HessianSerializer;
+
 /**
  * Serializing an object.
  */
-public interface Serializer extends io.github.wuwen5.hessian.io.Serializer {}
+public interface Serializer extends HessianSerializer {}
