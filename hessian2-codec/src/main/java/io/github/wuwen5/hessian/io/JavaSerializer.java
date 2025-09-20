@@ -203,16 +203,12 @@ public class JavaSerializer extends AbstractSerializer {
                 // hessian/3a5a
                 int ref = out.writeObjectBegin(cl.getName());
 
-                if (ref < -1) {
-                    writeObject10(repl, out);
-                } else {
-                    if (ref == -1) {
-                        writeDefinition20(out);
-                        out.writeObjectBegin(cl.getName());
-                    }
-
-                    writeInstance(repl, out);
+                if (ref == -1) {
+                    writeDefinition20(out);
+                    out.writeObjectBegin(cl.getName());
                 }
+
+                writeInstance(repl, out);
 
                 return;
             }
@@ -222,16 +218,12 @@ public class JavaSerializer extends AbstractSerializer {
 
         int ref = out.writeObjectBegin(cl.getName());
 
-        if (ref < -1) {
-            writeObject10(obj, out);
-        } else {
-            if (ref == -1) {
-                writeDefinition20(out);
-                out.writeObjectBegin(cl.getName());
-            }
-
-            writeInstance(obj, out);
+        if (ref == -1) {
+            writeDefinition20(out);
+            out.writeObjectBegin(cl.getName());
         }
+
+        writeInstance(obj, out);
     }
 
     @Override

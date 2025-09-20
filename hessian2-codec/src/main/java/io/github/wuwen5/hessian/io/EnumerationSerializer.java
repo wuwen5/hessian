@@ -55,14 +55,10 @@ import java.util.Enumeration;
  * Serializing a JDK 1.2 Enumeration.
  */
 public class EnumerationSerializer extends AbstractSerializer {
-    private static EnumerationSerializer serializer;
+    private static final EnumerationSerializer SERIALIZER = new EnumerationSerializer();
 
     public static EnumerationSerializer create() {
-        if (serializer == null) {
-            serializer = new EnumerationSerializer();
-        }
-
-        return serializer;
+        return SERIALIZER;
     }
 
     @Override

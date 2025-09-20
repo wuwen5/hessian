@@ -14,21 +14,21 @@ public class LocaleScriptTest extends SerializeTestBase {
     @Test
     void testLocaleWithScript() throws IOException {
         // Create a Locale with script
-        Locale zh_CN_Hans = new Locale.Builder()
+        Locale zhCNHans = new Locale.Builder()
                 .setLanguage("zh")
                 .setRegion("CN")
                 .setScript("Hans")
                 .build();
 
         // Serialize and deserialize
-        Locale result = baseHessian2Serialize(zh_CN_Hans);
+        Locale result = baseHessian2Serialize(zhCNHans);
 
         // The script should be preserved
-        assertEquals(zh_CN_Hans.getLanguage(), result.getLanguage(), "Language should be preserved");
-        assertEquals(zh_CN_Hans.getCountry(), result.getCountry(), "Country should be preserved");
-        assertEquals(zh_CN_Hans.getScript(), result.getScript(), "Script should be preserved");
-        assertEquals(zh_CN_Hans.toString(), result.toString(), "String representation should match");
-        assertEquals(zh_CN_Hans, result, "Locales should be equal");
+        assertEquals(zhCNHans.getLanguage(), result.getLanguage(), "Language should be preserved");
+        assertEquals(zhCNHans.getCountry(), result.getCountry(), "Country should be preserved");
+        assertEquals(zhCNHans.getScript(), result.getScript(), "Script should be preserved");
+        assertEquals(zhCNHans.toString(), result.toString(), "String representation should match");
+        assertEquals(zhCNHans, result, "Locales should be equal");
     }
 
     @Test

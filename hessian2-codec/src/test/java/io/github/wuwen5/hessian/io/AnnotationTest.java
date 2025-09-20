@@ -48,7 +48,7 @@ public class AnnotationTest extends SerializeTestBase {
         Assertions.assertEquals(TestAnnotation.class, testAnnotation.annotationType());
         Assertions.assertEquals(annotation, testAnnotation);
         // validate invocation handler equals
-        Assertions.assertTrue(testAnnotation.equals(annotation));
+        Assertions.assertEquals(testAnnotation, annotation);
         Assertions.assertDoesNotThrow(testAnnotation::toString);
         Assertions.assertDoesNotThrow(testAnnotation::hashCode);
     }

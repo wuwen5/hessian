@@ -94,19 +94,16 @@ public abstract class AbstractSerializer implements HessianSerializer {
 
         int ref = out.writeObjectBegin(cl.getName());
 
-        if (ref < -1) {
-            writeObject10(obj, out);
-        } else {
-            if (ref == -1) {
-                writeDefinition20(cl, out);
+        if (ref == -1) {
+            writeDefinition20(cl, out);
 
-                out.writeObjectBegin(cl.getName());
-            }
-
-            writeInstance(obj, out);
+            out.writeObjectBegin(cl.getName());
         }
+
+        writeInstance(obj, out);
     }
 
+    @SuppressWarnings("unused")
     protected Object writeReplace(Object obj) {
         return null;
     }

@@ -25,7 +25,7 @@ import java.net.InetAddress;
  * Serializing a locale.
  */
 public class InetAddressSerializer extends AbstractSerializer {
-    private static InetAddressSerializer SERIALIZER = new InetAddressSerializer();
+    private static final InetAddressSerializer SERIALIZER = new InetAddressSerializer();
 
     public static InetAddressSerializer create() {
         return SERIALIZER;

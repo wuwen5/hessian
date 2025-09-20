@@ -69,6 +69,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.SneakyThrows;
 
 /**
@@ -103,7 +105,17 @@ public class Hessian2SerializerFactory implements ISerializerFactory {
     private final ConcurrentMap<Class<?>, HessianDeserializer> cachedDeserializerMap = new ConcurrentHashMap<>(8);
     private final ConcurrentMap<String, HessianDeserializer> cachedTypeDeserializerMap = new ConcurrentHashMap<>();
 
+    /**
+     * -- SETTER --
+     *  If true, non-serializable objects are allowed.
+     * -- GETTER --
+     *  If true, non-serializable objects are allowed.
+     *
+     */
+    @Getter
+    @Setter
     private boolean isAllowNonSerializable;
+
     private final boolean isEnableUnsafeSerializer = (UnsafeSerializer.isEnabled() && UnsafeDeserializer.isEnabled());
 
     private final FieldDeserializer2Factory fieldDeserializer2Factory;
@@ -179,20 +191,6 @@ public class Hessian2SerializerFactory implements ISerializerFactory {
     }
 
     /**
-     * If true, non-serializable objects are allowed.
-     */
-    public void setAllowNonSerializable(boolean allow) {
-        isAllowNonSerializable = allow;
-    }
-
-    /**
-     * If true, non-serializable objects are allowed.
-     */
-    public boolean isAllowNonSerializable() {
-        return isAllowNonSerializable;
-    }
-
-    /**
      * Returns the serializer for a class.
      *
      * @param cl the class of the object that needs to be serialized.
@@ -249,9 +247,7 @@ public class Hessian2SerializerFactory implements ISerializerFactory {
     protected HessianSerializer loadSerializer(Class<?> cl) {
         HessianSerializer serializer;
 
-        for (int i = 0; factories != null && i < factories.size(); i++) {
-            ISerializerFactory factory = factories.get(i);
-
+        for (ISerializerFactory factory : factories) {
             serializer = factory.getSerializer(cl);
 
             if (serializer != null) {
@@ -281,11 +277,7 @@ public class Hessian2SerializerFactory implements ISerializerFactory {
 
         if (HessianRemoteObject.class.isAssignableFrom(cl)) {
             return new RemoteSerializer();
-        } // TODO
-        //    else if (BurlapRemoteObject.class.isAssignableFrom(cl)) {
-        //      return new RemoteSerializer();
-        //    }
-        else if (InetAddress.class.isAssignableFrom(cl)) {
+        } else if (InetAddress.class.isAssignableFrom(cl)) {
             return InetAddressSerializer.create();
         } else if (JavaSerializer.getWriteReplace(cl) != null) {
             HessianSerializer baseSerializer = getDefaultSerializer(cl);
@@ -370,16 +362,14 @@ public class Hessian2SerializerFactory implements ISerializerFactory {
 
     @SneakyThrows
     protected HessianDeserializer loadDeserializer(Class<?> cl) {
-        HessianDeserializer deserializer = null;
+        HessianDeserializer deserializer;
 
-        for (int i = 0; deserializer == null && factories != null && i < factories.size(); i++) {
-            ISerializerFactory factory = factories.get(i);
-
+        for (ISerializerFactory factory : factories) {
             deserializer = factory.getDeserializer(cl);
-        }
 
-        if (deserializer != null) {
-            return deserializer;
+            if (deserializer != null) {
+                return deserializer;
+            }
         }
 
         // XXX: need test
@@ -649,7 +639,7 @@ public class Hessian2SerializerFactory implements ISerializerFactory {
         return deserializer;
     }
 
-    private static void addBasic(Class<?> cl, String typeName, int type) {
+    private static void addBasic(String typeName, int type) {
         HessianDeserializer deserializer = new BasicDeserializer(type);
 
         STATIC_TYPE_MAP.put(typeName, deserializer);
@@ -658,51 +648,45 @@ public class Hessian2SerializerFactory implements ISerializerFactory {
     static {
         STATIC_TYPE_MAP = new HashMap<>();
 
-        addBasic(void.class, "void", BasicSerializer.NULL);
+        addBasic("void", BasicSerializer.NULL);
 
-        addBasic(Boolean.class, "boolean", BasicSerializer.BOOLEAN);
-        addBasic(Byte.class, "byte", BasicSerializer.BYTE);
-        addBasic(Short.class, "short", BasicSerializer.SHORT);
-        addBasic(Integer.class, "int", BasicSerializer.INTEGER);
-        addBasic(Long.class, "long", BasicSerializer.LONG);
-        addBasic(Float.class, "float", BasicSerializer.FLOAT);
-        addBasic(Double.class, "double", BasicSerializer.DOUBLE);
-        addBasic(Character.class, "char", BasicSerializer.CHARACTER_OBJECT);
-        addBasic(String.class, "string", BasicSerializer.STRING);
-        addBasic(StringBuilder.class, "string", BasicSerializer.STRING_BUILDER);
-        addBasic(Object.class, "object", BasicSerializer.OBJECT);
-        addBasic(java.util.Date.class, "date", BasicSerializer.DATE);
+        addBasic("boolean", BasicSerializer.BOOLEAN);
+        addBasic("byte", BasicSerializer.BYTE);
+        addBasic("short", BasicSerializer.SHORT);
+        addBasic("int", BasicSerializer.INTEGER);
+        addBasic("long", BasicSerializer.LONG);
+        addBasic("float", BasicSerializer.FLOAT);
+        addBasic("double", BasicSerializer.DOUBLE);
+        addBasic("char", BasicSerializer.CHARACTER_OBJECT);
+        addBasic("string", BasicSerializer.STRING);
+        addBasic("string", BasicSerializer.STRING_BUILDER);
+        addBasic("object", BasicSerializer.OBJECT);
+        addBasic("date", BasicSerializer.DATE);
 
-        addBasic(boolean.class, "boolean", BasicSerializer.BOOLEAN);
-        addBasic(byte.class, "byte", BasicSerializer.BYTE);
-        addBasic(short.class, "short", BasicSerializer.SHORT);
-        addBasic(int.class, "int", BasicSerializer.INTEGER);
-        addBasic(long.class, "long", BasicSerializer.LONG);
-        addBasic(float.class, "float", BasicSerializer.FLOAT);
-        addBasic(double.class, "double", BasicSerializer.DOUBLE);
-        addBasic(char.class, "char", BasicSerializer.CHARACTER);
+        addBasic("boolean", BasicSerializer.BOOLEAN);
+        addBasic("byte", BasicSerializer.BYTE);
+        addBasic("short", BasicSerializer.SHORT);
+        addBasic("int", BasicSerializer.INTEGER);
+        addBasic("long", BasicSerializer.LONG);
+        addBasic("float", BasicSerializer.FLOAT);
+        addBasic("double", BasicSerializer.DOUBLE);
+        addBasic("char", BasicSerializer.CHARACTER);
 
-        addBasic(boolean[].class, "[boolean", BasicSerializer.BOOLEAN_ARRAY);
-        addBasic(byte[].class, "[byte", BasicSerializer.BYTE_ARRAY);
-        addBasic(short[].class, "[short", BasicSerializer.SHORT_ARRAY);
-        addBasic(int[].class, "[int", BasicSerializer.INTEGER_ARRAY);
-        addBasic(long[].class, "[long", BasicSerializer.LONG_ARRAY);
-        addBasic(float[].class, "[float", BasicSerializer.FLOAT_ARRAY);
-        addBasic(double[].class, "[double", BasicSerializer.DOUBLE_ARRAY);
-        addBasic(char[].class, "[char", BasicSerializer.CHARACTER_ARRAY);
-        addBasic(String[].class, "[string", BasicSerializer.STRING_ARRAY);
-        addBasic(Object[].class, "[object", BasicSerializer.OBJECT_ARRAY);
+        addBasic("[boolean", BasicSerializer.BOOLEAN_ARRAY);
+        addBasic("[byte", BasicSerializer.BYTE_ARRAY);
+        addBasic("[short", BasicSerializer.SHORT_ARRAY);
+        addBasic("[int", BasicSerializer.INTEGER_ARRAY);
+        addBasic("[long", BasicSerializer.LONG_ARRAY);
+        addBasic("[float", BasicSerializer.FLOAT_ARRAY);
+        addBasic("[double", BasicSerializer.DOUBLE_ARRAY);
+        addBasic("[char", BasicSerializer.CHARACTER_ARRAY);
+        addBasic("[string", BasicSerializer.STRING_ARRAY);
+        addBasic("[object", BasicSerializer.OBJECT_ARRAY);
 
         HessianDeserializer objectDeserializer = new JavaDeserializer(Object.class, new FieldDeserializer2Factory());
         STATIC_TYPE_MAP.put("object", objectDeserializer);
         STATIC_TYPE_MAP.put(HessianRemote.class.getName(), RemoteDeserializer.DESER);
 
-        ClassLoader systemClassLoader = null;
-        try {
-            systemClassLoader = ClassLoader.getSystemClassLoader();
-        } catch (Exception ignored) {
-        }
-
-        SYSTEM_CLASS_LOADER = systemClassLoader;
+        SYSTEM_CLASS_LOADER = ClassLoader.getSystemClassLoader();
     }
 }

@@ -265,7 +265,7 @@ public abstract class AbstractHessianEncoder implements Closeable {
      * Writes a byte buffer to the stream.
      * @throws IOException if an I/O error occurs
      */
-    public abstract void writeByteBufferStart() throws IOException;
+    public void writeByteBufferStart() throws IOException {}
 
     /**
      * Writes a byte buffer to the stream.
@@ -439,7 +439,7 @@ public abstract class AbstractHessianEncoder implements Closeable {
     public int writeObjectBegin(String type) throws IOException {
         writeMapBegin(type);
 
-        return -2;
+        return -1;
     }
 
     /**

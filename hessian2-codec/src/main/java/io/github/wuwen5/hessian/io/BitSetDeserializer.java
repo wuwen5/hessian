@@ -47,7 +47,7 @@ public class BitSetDeserializer extends JavaDeserializer {
             // Try to force recalculation by accessing some bits
             try {
                 // Check if the BitSet appears empty but might have underlying data
-                if (bitSet.length() == 0 && bitSet.size() > 0) {
+                if (bitSet.isEmpty() && bitSet.size() > 0) {
                     // The BitSet has allocated space but no active bits
                     // This suggests the wordsInUse field is 0 but words array has data
 
@@ -61,7 +61,7 @@ public class BitSetDeserializer extends JavaDeserializer {
                     }
 
                     // If that didn't work, try iterating through potential bits
-                    if (bitSet.length() == 0) {
+                    if (bitSet.isEmpty()) {
                         // Create a new BitSet by copying all bits we can find
                         BitSet newBitSet = new BitSet();
                         for (int i = 0; i < bitSet.size(); i++) {

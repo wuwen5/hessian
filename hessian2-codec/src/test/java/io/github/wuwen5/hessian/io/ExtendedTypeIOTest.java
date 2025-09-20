@@ -37,24 +37,24 @@ public class ExtendedTypeIOTest extends SerializeTestBase {
     void testLocale() throws IOException {
         Locale en = Locale.ENGLISH;
         Locale zh = Locale.SIMPLIFIED_CHINESE;
-        Locale zh_CN_Hans = new Locale.Builder()
+        Locale zhCNHans = new Locale.Builder()
                 .setLanguage("zh")
                 .setRegion("CN")
                 .setScript("Hans") // 设置脚本
                 .build();
 
-        Object en_ret = hessianIO(output -> Try.run(() -> output.writeObject(en)), input -> Try.of(input::readObject)
+        Object enRet = hessianIO(output -> Try.run(() -> output.writeObject(en)), input -> Try.of(input::readObject)
                 .get());
 
-        Object zh_ret = hessianIO(output -> Try.run(() -> output.writeObject(zh)), input -> Try.of(input::readObject)
+        Object zhRet = hessianIO(output -> Try.run(() -> output.writeObject(zh)), input -> Try.of(input::readObject)
                 .get());
 
         Object zhCnHansRet =
-                hessianIO(output -> Try.run(() -> output.writeObject(zh_CN_Hans)), input -> Try.of(input::readObject)
+                hessianIO(output -> Try.run(() -> output.writeObject(zhCNHans)), input -> Try.of(input::readObject)
                         .get());
 
-        assertEquals(en.toString(), en_ret.toString());
-        assertEquals(zh.toString(), zh_ret.toString());
-        assertEquals(zh_CN_Hans.toString(), zhCnHansRet.toString());
+        assertEquals(en.toString(), enRet.toString());
+        assertEquals(zh.toString(), zhRet.toString());
+        assertEquals(zhCNHans.toString(), zhCnHansRet.toString());
     }
 }

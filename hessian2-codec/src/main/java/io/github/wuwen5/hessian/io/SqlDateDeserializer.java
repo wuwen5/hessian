@@ -122,10 +122,12 @@ public class SqlDateDeserializer extends BaseDeserializer {
     }
 
     private Object create(long initValue) throws IOException {
-        if (initValue == Long.MIN_VALUE) throw new IOException(cl.getName() + " expects name.");
+        if (initValue == Long.MIN_VALUE) {
+            throw new IOException(cl.getName() + " expects name.");
+        }
 
         try {
-            return constructor.newInstance(new Long(initValue));
+            return constructor.newInstance(initValue);
         } catch (Exception e) {
             throw new IOExceptionWrapper(e);
         }

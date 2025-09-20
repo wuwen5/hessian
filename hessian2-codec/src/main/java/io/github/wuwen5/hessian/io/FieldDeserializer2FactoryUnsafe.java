@@ -60,8 +60,6 @@ import sun.misc.Unsafe;
 @Slf4j
 public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
 
-    private static boolean isEnabled;
-
     @SuppressWarnings("restriction")
     private static Unsafe unsafe;
 
@@ -108,15 +106,6 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
         return deser;
     }
 
-    static class NullFieldDeserializer implements FieldDeserializer {
-        static NullFieldDeserializer DESER = new NullFieldDeserializer();
-
-        @Override
-        public void deserialize(AbstractHessianDecoder in, Object obj) throws IOException {
-            in.readObject();
-        }
-    }
-
     static class ObjectFieldDeserializer implements FieldDeserializer {
         private final Field field;
         private final long offset;
@@ -137,7 +126,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
 
                 unsafe.putObject(obj, offset, value);
             } catch (Exception e) {
-                logDeserializeError(field, obj, value, e);
+                logDeserializeError(field, value, e);
             }
         }
     }
@@ -162,7 +151,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
 
                 unsafe.putBoolean(obj, offset, value);
             } catch (Exception e) {
-                logDeserializeError(field, obj, value, e);
+                logDeserializeError(field, value, e);
             }
         }
     }
@@ -187,7 +176,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
 
                 unsafe.putByte(obj, offset, (byte) value);
             } catch (Exception e) {
-                logDeserializeError(field, obj, value, e);
+                logDeserializeError(field, value, e);
             }
         }
     }
@@ -220,7 +209,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
 
                 unsafe.putChar(obj, offset, ch);
             } catch (Exception e) {
-                logDeserializeError(field, obj, value, e);
+                logDeserializeError(field, value, e);
             }
         }
     }
@@ -245,7 +234,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
 
                 unsafe.putShort(obj, offset, (short) value);
             } catch (Exception e) {
-                logDeserializeError(field, obj, value, e);
+                logDeserializeError(field, value, e);
             }
         }
     }
@@ -270,7 +259,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
 
                 unsafe.putInt(obj, offset, value);
             } catch (Exception e) {
-                logDeserializeError(field, obj, value, e);
+                logDeserializeError(field, value, e);
             }
         }
     }
@@ -295,7 +284,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
 
                 unsafe.putLong(obj, offset, value);
             } catch (Exception e) {
-                logDeserializeError(field, obj, value, e);
+                logDeserializeError(field, value, e);
             }
         }
     }
@@ -319,7 +308,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
 
                 unsafe.putFloat(obj, aLong, (float) value);
             } catch (Exception e) {
-                logDeserializeError(field, obj, value, e);
+                logDeserializeError(field, value, e);
             }
         }
     }
@@ -343,7 +332,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
 
                 unsafe.putDouble(obj, offset, value);
             } catch (Exception e) {
-                logDeserializeError(field, obj, value, e);
+                logDeserializeError(field, value, e);
             }
         }
     }
@@ -367,7 +356,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
 
                 unsafe.putObject(obj, offset, value);
             } catch (Exception e) {
-                logDeserializeError(field, obj, value, e);
+                logDeserializeError(field, value, e);
             }
         }
     }
@@ -398,7 +387,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
                     unsafe.putObject(obj, offset, null);
                 }
             } catch (Exception e) {
-                logDeserializeError(field, obj, value, e);
+                logDeserializeError(field, value, e);
             }
         }
     }
@@ -429,7 +418,7 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
                     unsafe.putObject(obj, offset, null);
                 }
             } catch (Exception e) {
-                logDeserializeError(field, obj, value, e);
+                logDeserializeError(field, value, e);
             }
         }
     }
@@ -459,34 +448,12 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
                     unsafe.putObject(obj, offset, null);
                 }
             } catch (Exception e) {
-                logDeserializeError(field, obj, value, e);
+                logDeserializeError(field, value, e);
             }
         }
     }
 
-    static void logDeserializeError(Field field, Object obj, Object value, Throwable e) throws IOException {
-        String fieldName = (field.getDeclaringClass().getName() + "." + field.getName());
-
-        if (e instanceof HessianFieldException) {
-            throw (HessianFieldException) e;
-        } else if (e instanceof IOException) {
-            throw new HessianFieldException(fieldName + ": " + e.getMessage(), e);
-        }
-
-        if (value != null) {
-            throw new HessianFieldException(
-                    fieldName + ": " + value.getClass().getName() + " (" + value + ")" + " cannot be assigned to '"
-                            + field.getType().getName() + "'",
-                    e);
-        } else {
-            throw new HessianFieldException(
-                    fieldName + ": " + field.getType().getName() + " cannot be assigned from null", e);
-        }
-    }
-
     static {
-        boolean isEnabled = false;
-
         try {
             Class<?> unsafe = Class.forName("sun.misc.Unsafe");
             Field theUnsafe = null;
@@ -501,17 +468,8 @@ public class FieldDeserializer2FactoryUnsafe extends FieldDeserializer2Factory {
                 FieldDeserializer2FactoryUnsafe.unsafe = (Unsafe) theUnsafe.get(null);
             }
 
-            isEnabled = FieldDeserializer2FactoryUnsafe.unsafe != null;
-
-            String unsafeProp = System.getProperty("com.caucho.hessian.unsafe");
-
-            if ("false".equals(unsafeProp)) {
-                isEnabled = false;
-            }
         } catch (Throwable e) {
             log.trace(e.toString(), e);
         }
-
-        FieldDeserializer2FactoryUnsafe.isEnabled = isEnabled;
     }
 }

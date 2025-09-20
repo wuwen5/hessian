@@ -3406,7 +3406,6 @@ public class HessianDecoder extends AbstractHessianDecoder implements Hessian2Co
             while (read() >= 0) {}
         }
     }
-    ;
 
     static final class ObjectDefinition {
         private final String type;

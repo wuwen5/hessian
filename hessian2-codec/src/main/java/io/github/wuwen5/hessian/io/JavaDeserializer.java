@@ -343,7 +343,7 @@ public class JavaDeserializer extends AbstractMapDeserializer {
      * Creates a map of the classes fields.
      */
     protected HashMap<String, FieldDeserializer> getFieldMap(Class<?> cl, FieldDeserializer2Factory fieldFactory) {
-        HashMap<String, FieldDeserializer> fieldMap = new HashMap<>();
+        HashMap<String, FieldDeserializer> fieldMap = new HashMap<>(8);
 
         for (; cl != null; cl = cl.getSuperclass()) {
             Field[] fields = cl.getDeclaredFields();

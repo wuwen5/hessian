@@ -69,19 +69,13 @@ public class StringValueSerializer extends AbstractSerializer {
 
             int ref = out.writeObjectBegin(cl.getName());
 
-            if (ref < -1) {
+            if (ref == -1) {
+                out.writeInt(1);
                 out.writeString("value");
-                out.writeString(obj.toString());
-                out.writeMapEnd();
-            } else {
-                if (ref == -1) {
-                    out.writeInt(1);
-                    out.writeString("value");
-                    out.writeObjectBegin(cl.getName());
-                }
-
-                out.writeString(obj.toString());
+                out.writeObjectBegin(cl.getName());
             }
+
+            out.writeString(obj.toString());
         }
     }
 }

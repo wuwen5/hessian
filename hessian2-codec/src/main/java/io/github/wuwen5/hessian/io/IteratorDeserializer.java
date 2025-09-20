@@ -56,14 +56,10 @@ import java.util.List;
  * Deserializing a JDK 1.2 Collection.
  */
 public class IteratorDeserializer extends AbstractListDeserializer {
-    private static IteratorDeserializer deserializer;
+    private static final IteratorDeserializer DESERIALIZER = new IteratorDeserializer();
 
     public static IteratorDeserializer create() {
-        if (deserializer == null) {
-            deserializer = new IteratorDeserializer();
-        }
-
-        return deserializer;
+        return DESERIALIZER;
     }
 
     @Override

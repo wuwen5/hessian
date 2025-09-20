@@ -304,7 +304,7 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
             if (ref <= OBJECT_DIRECT_MAX) {
                 buffer[offset++] = (byte) (BC_OBJECT_DIRECT + ref);
             } else {
-                buffer[offset++] = (byte) 'O';
+                buffer[offset++] = (byte) BC_OBJECT;
                 writeInt(ref);
             }
 
@@ -326,12 +326,6 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
     public void writeClassFieldLength(int len) throws IOException {
         writeInt(len);
     }
-
-    /**
-     * Writes the tail of the object definition to the stream.
-     */
-    @Override
-    public void writeObjectEnd() {}
 
     /**
      * <pre>
@@ -886,12 +880,6 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
             this.offset += length;
         }
     }
-
-    /**
-     * Writes a byte buffer to the stream.
-     */
-    @Override
-    public void writeByteBufferStart() {}
 
     /**
      * Writes a byte buffer to the stream.

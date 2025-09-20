@@ -55,14 +55,10 @@ import java.util.Vector;
  * Deserializing a JDK 1.2 Collection.
  */
 public class EnumerationDeserializer extends AbstractListDeserializer {
-    private static EnumerationDeserializer deserializer;
+    private static final EnumerationDeserializer DESERIALIZER = new EnumerationDeserializer();
 
     public static EnumerationDeserializer create() {
-        if (deserializer == null) {
-            deserializer = new EnumerationDeserializer();
-        }
-
-        return deserializer;
+        return DESERIALIZER;
     }
 
     @Override
