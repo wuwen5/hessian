@@ -55,6 +55,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import sun.misc.Unsafe;
 
@@ -64,6 +65,7 @@ import sun.misc.Unsafe;
 @Slf4j
 public class UnsafeDeserializer extends AbstractMapDeserializer {
 
+    @Getter
     private static boolean isEnabled;
 
     @SuppressWarnings("restriction")
@@ -82,10 +84,6 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
         if (readResolve != null) {
             readResolve.setAccessible(true);
         }
-    }
-
-    public static boolean isEnabled() {
-        return isEnabled;
     }
 
     @Override
@@ -190,7 +188,9 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
 
             Object resolve = resolve(in, obj);
 
-            if (obj != resolve) in.setRef(ref, resolve);
+            if (obj != resolve) {
+                in.setRef(ref, resolve);
+            }
 
             return resolve;
         } catch (IOException e) {
@@ -276,7 +276,7 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
      * Creates a map of the classes fields.
      */
     protected Map<String, FieldDeserializer> getFieldMap(Class<?> cl, FieldDeserializer2Factory fieldFactory) {
-        Map<String, FieldDeserializer> map = new HashMap<>();
+        Map<String, FieldDeserializer> map = new HashMap<>(8);
 
         for (; cl != null; cl = cl.getSuperclass()) {
             Field[] fields = cl.getDeclaredFields();
@@ -292,26 +292,6 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
         }
 
         return map;
-    }
-
-    static void logDeserializeError(Field field, Object obj, Object value, Throwable e) throws IOException {
-        String fieldName = (field.getDeclaringClass().getName() + "." + field.getName());
-
-        if (e instanceof HessianFieldException) {
-            throw (HessianFieldException) e;
-        } else if (e instanceof IOException) {
-            throw new HessianFieldException(fieldName + ": " + e.getMessage(), e);
-        }
-
-        if (value != null) {
-            throw new HessianFieldException(
-                    fieldName + ": " + value.getClass().getName() + " (" + value + ")" + " cannot be assigned to '"
-                            + field.getType().getName() + "'",
-                    e);
-        } else {
-            throw new HessianFieldException(
-                    fieldName + ": " + field.getType().getName() + " cannot be assigned from null", e);
-        }
     }
 
     static {

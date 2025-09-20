@@ -143,7 +143,7 @@ public class FieldDeserializer2Factory {
     }
 
     static class NullFieldDeserializer implements FieldDeserializer {
-        static NullFieldDeserializer DESER = new NullFieldDeserializer();
+        static final NullFieldDeserializer DESER = new NullFieldDeserializer();
 
         @Override
         public void deserialize(AbstractHessianDecoder in, Object obj) throws IOException {
@@ -167,7 +167,7 @@ public class FieldDeserializer2Factory {
 
                 field.set(obj, value);
             } catch (Exception e) {
-                logDeserializeError(field, obj, value, e);
+                logDeserializeError(field, value, e);
             }
         }
     }
@@ -188,7 +188,7 @@ public class FieldDeserializer2Factory {
 
                 field.setBoolean(obj, value);
             } catch (Exception e) {
-                logDeserializeError(field, obj, value, e);
+                logDeserializeError(field, value, e);
             }
         }
     }
@@ -209,7 +209,7 @@ public class FieldDeserializer2Factory {
 
                 field.setByte(obj, (byte) value);
             } catch (Exception e) {
-                logDeserializeError(field, obj, value, e);
+                logDeserializeError(field, value, e);
             }
         }
     }
@@ -230,7 +230,7 @@ public class FieldDeserializer2Factory {
 
                 field.setShort(obj, (short) value);
             } catch (Exception e) {
-                logDeserializeError(field, obj, value, e);
+                logDeserializeError(field, value, e);
             }
         }
     }
@@ -251,7 +251,7 @@ public class FieldDeserializer2Factory {
 
                 field.setInt(obj, value);
             } catch (Exception e) {
-                logDeserializeError(field, obj, value, e);
+                logDeserializeError(field, value, e);
             }
         }
     }
@@ -272,7 +272,7 @@ public class FieldDeserializer2Factory {
 
                 field.setLong(obj, value);
             } catch (Exception e) {
-                logDeserializeError(field, obj, value, e);
+                logDeserializeError(field, value, e);
             }
         }
     }
@@ -293,7 +293,7 @@ public class FieldDeserializer2Factory {
 
                 field.setFloat(obj, (float) value);
             } catch (Exception e) {
-                logDeserializeError(field, obj, value, e);
+                logDeserializeError(field, value, e);
             }
         }
     }
@@ -314,7 +314,7 @@ public class FieldDeserializer2Factory {
 
                 field.setDouble(obj, value);
             } catch (Exception e) {
-                logDeserializeError(field, obj, value, e);
+                logDeserializeError(field, value, e);
             }
         }
     }
@@ -335,7 +335,7 @@ public class FieldDeserializer2Factory {
 
                 field.set(obj, value);
             } catch (Exception e) {
-                logDeserializeError(field, obj, value, e);
+                logDeserializeError(field, value, e);
             }
         }
     }
@@ -362,7 +362,7 @@ public class FieldDeserializer2Factory {
                     field.set(obj, null);
                 }
             } catch (Exception e) {
-                logDeserializeError(field, obj, value, e);
+                logDeserializeError(field, value, e);
             }
         }
     }
@@ -389,7 +389,7 @@ public class FieldDeserializer2Factory {
                     field.set(obj, null);
                 }
             } catch (Exception e) {
-                logDeserializeError(field, obj, value, e);
+                logDeserializeError(field, value, e);
             }
         }
     }
@@ -416,12 +416,12 @@ public class FieldDeserializer2Factory {
                     field.set(obj, null);
                 }
             } catch (Exception e) {
-                logDeserializeError(field, obj, value, e);
+                logDeserializeError(field, value, e);
             }
         }
     }
 
-    static void logDeserializeError(Field field, Object obj, Object value, Throwable e) throws IOException {
+    static void logDeserializeError(Field field, Object value, Throwable e) throws IOException {
         String fieldName = (field.getDeclaringClass().getName() + "." + field.getName());
 
         if (e instanceof HessianFieldException) {

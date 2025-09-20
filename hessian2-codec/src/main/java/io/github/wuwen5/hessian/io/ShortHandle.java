@@ -67,7 +67,7 @@ public class ShortHandle implements Serializable {
     }
 
     public Object readResolve() {
-        return new Short(_value);
+        return _value;
     }
 
     @Override

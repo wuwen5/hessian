@@ -107,6 +107,7 @@ public abstract class AbstractSerializer implements HessianSerializer {
         }
     }
 
+    @SuppressWarnings("unused")
     protected Object writeReplace(Object obj) {
         return null;
     }

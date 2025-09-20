@@ -28,7 +28,6 @@ import io.github.wuwen5.hessian.io.beans.BasicTypeBean;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -41,12 +40,10 @@ import org.junit.jupiter.api.Test;
 class HessianFactoryTest {
 
     private HessianFactory hessianFactory;
-    private InputStream inputStream;
 
     @BeforeEach
     void setUp() {
         hessianFactory = new HessianFactory();
-        inputStream = new ByteArrayInputStream(new byte[0]);
     }
 
     @Test

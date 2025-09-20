@@ -90,14 +90,8 @@ public class ArrayDeserializer extends AbstractListDeserializer {
 
             in.addRef(data);
 
-            if (componentType != null) {
-                for (int i = 0; i < data.length; i++) {
-                    data[i] = in.readObject(componentType);
-                }
-            } else {
-                for (int i = 0; i < data.length; i++) {
-                    data[i] = in.readObject();
-                }
+            for (int i = 0; i < data.length; i++) {
+                data[i] = componentType == null ? in.readObject() : in.readObject(componentType);
             }
 
             in.readListEnd();
@@ -108,14 +102,8 @@ public class ArrayDeserializer extends AbstractListDeserializer {
 
             in.addRef(list);
 
-            if (componentType != null) {
-                while (!in.isEnd()) {
-                    list.add(in.readObject(componentType));
-                }
-            } else {
-                while (!in.isEnd()) {
-                    list.add(in.readObject());
-                }
+            while (!in.isEnd()) {
+                list.add(componentType == null ? in.readObject() : in.readObject(componentType));
             }
 
             in.readListEnd();
@@ -138,14 +126,8 @@ public class ArrayDeserializer extends AbstractListDeserializer {
 
         in.addRef(data);
 
-        if (componentType != null) {
-            for (int i = 0; i < data.length; i++) {
-                data[i] = in.readObject(componentType);
-            }
-        } else {
-            for (int i = 0; i < data.length; i++) {
-                data[i] = in.readObject();
-            }
+        for (int i = 0; i < data.length; i++) {
+            data[i] = componentType == null ? in.readObject() : in.readObject(componentType);
         }
 
         return data;

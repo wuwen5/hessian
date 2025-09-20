@@ -133,9 +133,9 @@ public class Hessian2ReuseTest extends SerializeTestBase {
 
     @Test
     public void testType() throws IOException {
-        serializeAndDeserialize(Type.Lower, Type.class);
-        serializeAndDeserialize(Type.Normal, Type.class);
-        serializeAndDeserialize(Type.High, Type.class);
+        serializeAndDeserialize(Type.LOWER, Type.class);
+        serializeAndDeserialize(Type.NORMAL, Type.class);
+        serializeAndDeserialize(Type.HIGH, Type.class);
     }
 
     @Test

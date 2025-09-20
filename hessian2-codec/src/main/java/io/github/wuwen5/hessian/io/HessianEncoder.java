@@ -328,12 +328,6 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
     }
 
     /**
-     * Writes the tail of the object definition to the stream.
-     */
-    @Override
-    public void writeObjectEnd() {}
-
-    /**
      * <pre>
      * <code>
      * type ::= string
@@ -886,12 +880,6 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
             this.offset += length;
         }
     }
-
-    /**
-     * Writes a byte buffer to the stream.
-     */
-    @Override
-    public void writeByteBufferStart() {}
 
     /**
      * Writes a byte buffer to the stream.

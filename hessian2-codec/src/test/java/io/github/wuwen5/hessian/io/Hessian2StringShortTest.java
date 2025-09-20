@@ -17,6 +17,8 @@
 package io.github.wuwen5.hessian.io;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.github.wuwen5.hessian.io.beans.Hessian2StringShortType;
@@ -46,9 +48,9 @@ public class Hessian2StringShortTest extends SerializeTestBase {
         stringShort.stringShortMap = stringShortMap;
 
         Hessian2StringShortType deserialize = baseHessian2Serialize(stringShort);
-        assertTrue(deserialize.stringShortMap != null);
-        assertTrue(deserialize.stringShortMap.size() == 2);
-        assertTrue(deserialize.stringShortMap.get("last") instanceof Short);
+        assertNotNull(deserialize.stringShortMap);
+        assertEquals(2, deserialize.stringShortMap.size());
+        assertInstanceOf(Short.class, deserialize.stringShortMap.get("last"));
         assertEquals(Short.valueOf((short) 0), deserialize.stringShortMap.get("first"));
         assertEquals(Short.valueOf((short) 60), deserialize.stringShortMap.get("last"));
     }
@@ -63,9 +65,9 @@ public class Hessian2StringShortTest extends SerializeTestBase {
         stringShort.stringByteMap = stringByteMap;
 
         Hessian2StringShortType deserialize = baseHessian2Serialize(stringShort);
-        assertTrue(deserialize.stringByteMap != null);
-        assertTrue(deserialize.stringByteMap.size() == 2);
-        assertTrue(deserialize.stringByteMap.get("last") instanceof Byte);
+        assertNotNull(deserialize.stringByteMap);
+        assertEquals(2, deserialize.stringByteMap.size());
+        assertInstanceOf(Byte.class, deserialize.stringByteMap.get("last"));
         assertEquals(Byte.valueOf((byte) 0), deserialize.stringByteMap.get("first"));
         assertEquals(Byte.valueOf((byte) 60), deserialize.stringByteMap.get("last"));
     }
@@ -87,9 +89,9 @@ public class Hessian2StringShortTest extends SerializeTestBase {
         HessianDecoder input = new HessianDecoder(bin);
         // (Map) input.readObject(HashMap.class, String.class, Short.class); TODO
         Map deserialize = (Map) input.readObject();
-        assertTrue(deserialize != null);
-        assertTrue(deserialize.size() == 2);
-        assertTrue(deserialize.get("last") instanceof Short);
+        assertNotNull(deserialize);
+        assertEquals(2, deserialize.size());
+        assertInstanceOf(Short.class, deserialize.get("last"));
         assertEquals(Short.valueOf((short) 0), deserialize.get("first"));
         assertEquals(Short.valueOf((short) 60), deserialize.get("last"));
     }
@@ -110,17 +112,17 @@ public class Hessian2StringShortTest extends SerializeTestBase {
         ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
         HessianDecoder input = new HessianDecoder(bin);
 
-        List<Class<?>> keyValueType = new ArrayList<Class<?>>();
+        List<Class<?>> keyValueType = new ArrayList<>();
         keyValueType.add(String.class);
         keyValueType.add(short.class);
 
         // (Map) input.readObject(keyValueType); TODO
         Map deserialize = (Map) input.readObject();
-        assertTrue(deserialize != null);
-        assertTrue(deserialize.size() == 2);
-        assertTrue(deserialize.get("last") instanceof Short);
-        assertEquals(Short.valueOf((short) 0), deserialize.get("first"));
-        assertEquals(Short.valueOf((short) 60), deserialize.get("last"));
+        assertNotNull(deserialize);
+        assertEquals(2, deserialize.size());
+        assertInstanceOf(Short.class, deserialize.get("last"));
+        assertEquals((short) 0, deserialize.get("first"));
+        assertEquals((short) 60, deserialize.get("last"));
     }
 
     @Test
@@ -148,9 +150,9 @@ public class Hessian2StringShortTest extends SerializeTestBase {
         HessianDecoder input = new HessianDecoder(bin);
 
         Hessian2StringShortType deserialize = (Hessian2StringShortType) input.readObject();
-        assertTrue(deserialize.stringPersonTypeMap != null);
-        assertTrue(deserialize.stringPersonTypeMap.size() == 2);
-        assertTrue(deserialize.stringPersonTypeMap.get("last") instanceof PersonType);
+        assertNotNull(deserialize.stringPersonTypeMap);
+        assertEquals(2, deserialize.stringPersonTypeMap.size());
+        assertInstanceOf(PersonType.class, deserialize.stringPersonTypeMap.get("last"));
 
         assertEquals(
                 new PersonType(
@@ -180,9 +182,9 @@ public class Hessian2StringShortTest extends SerializeTestBase {
         HessianDecoder input = new HessianDecoder(bin);
         // (List) input.readObject(ArrayList.class, Short.class); TODO
         List<Short> deserialize = (List) input.readObject();
-        assertTrue(deserialize != null);
-        assertTrue(deserialize.size() == 2);
-        assertTrue(deserialize.get(1) instanceof Short);
+        assertNotNull(deserialize);
+        assertEquals(2, deserialize.size());
+        assertInstanceOf(Short.class, deserialize.get(1));
         assertEquals(Short.valueOf((short) 0), deserialize.get(0));
         assertEquals(Short.valueOf((short) 60), deserialize.get(1));
     }
@@ -208,9 +210,9 @@ public class Hessian2StringShortTest extends SerializeTestBase {
 
         // (List) input.readObject(valueType); TODO
         List<Short> deserialize = (List) input.readObject();
-        assertTrue(deserialize != null);
-        assertTrue(deserialize.size() == 2);
-        assertTrue(deserialize.get(1) instanceof Short);
+        assertNotNull(deserialize);
+        assertEquals(2, deserialize.size());
+        assertInstanceOf(Short.class, deserialize.get(1));
         assertEquals(Short.valueOf((short) 0), deserialize.get(0));
         assertEquals(Short.valueOf((short) 60), deserialize.get(1));
     }
@@ -225,8 +227,8 @@ public class Hessian2StringShortTest extends SerializeTestBase {
         stringShort.shortSet = shortSet;
 
         Hessian2StringShortType deserialize = baseHessian2Serialize(stringShort);
-        assertTrue(deserialize.shortSet != null);
-        assertTrue(deserialize.shortSet.size() == 2);
+        assertNotNull(deserialize.shortSet);
+        assertEquals(2, deserialize.shortSet.size());
         assertTrue(deserialize.shortSet.contains((short) 0));
         assertTrue(deserialize.shortSet.contains((short) 60));
     }

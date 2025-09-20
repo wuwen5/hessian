@@ -67,7 +67,7 @@ public class FloatHandle implements Serializable {
     }
 
     public Object readResolve() {
-        return new Float(_value);
+        return _value;
     }
 
     @Override

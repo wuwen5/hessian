@@ -245,7 +245,7 @@ public class BeanDeserializer extends AbstractMapDeserializer {
      * Creates a map of the classes fields.
      */
     protected Map<String, Method> getMethodMap(Class<?> cl) {
-        Map<String, Method> mMap = new HashMap<>();
+        Map<String, Method> mMap = new HashMap<>(8);
 
         for (; cl != null; cl = cl.getSuperclass()) {
             Method[] methods = cl.getDeclaredMethods();

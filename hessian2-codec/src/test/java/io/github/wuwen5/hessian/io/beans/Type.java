@@ -18,7 +18,7 @@
 package io.github.wuwen5.hessian.io.beans;
 
 public enum Type {
-    High,
-    Normal,
-    Lower
+    HIGH,
+    NORMAL,
+    LOWER
 }

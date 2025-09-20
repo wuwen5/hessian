@@ -69,6 +69,6 @@ public class ByteHandle implements Serializable {
     }
 
     public Object readResolve() {
-        return new Byte(_value);
+        return _value;
     }
 }

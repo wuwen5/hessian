@@ -55,14 +55,10 @@ import java.util.Iterator;
  * Serializing a JDK 1.2 Iterator.
  */
 public class IteratorSerializer extends AbstractSerializer {
-    private static IteratorSerializer serializer;
+    private static final IteratorSerializer SERIALIZER = new IteratorSerializer();
 
     public static IteratorSerializer create() {
-        if (serializer == null) {
-            serializer = new IteratorSerializer();
-        }
-
-        return serializer;
+        return SERIALIZER;
     }
 
     @Override

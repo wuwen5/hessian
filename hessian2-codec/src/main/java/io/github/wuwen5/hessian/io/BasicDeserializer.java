@@ -283,7 +283,7 @@ public class BasicDeserializer extends BaseDeserializer {
                     List<Boolean> list = new ArrayList<>();
 
                     while (!in.isEnd()) {
-                        list.add(Boolean.valueOf(in.readBoolean()));
+                        list.add(in.readBoolean());
                     }
 
                     in.readEnd();
