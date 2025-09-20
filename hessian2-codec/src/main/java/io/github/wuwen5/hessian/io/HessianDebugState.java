@@ -1389,15 +1389,13 @@ public class HessianDebugState implements Hessian2Constants {
                     return nextObject(ch);
 
                 case FIELD:
-                    if (def != null && def.getFields().size() <= count) {
+                    if (def == null || def.getFields().size() <= count) {
                         return next.next(ch);
                     }
 
                     fieldDepth = next.depth() + 2;
                     super.println();
-                    if (def != null) {
-                        print(def.getFields().get(count++) + ": ");
-                    }
+                    print(def.getFields().get(count++) + ": ");
 
                     fieldDepth = column;
 
