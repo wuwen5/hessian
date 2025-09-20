@@ -290,6 +290,7 @@ public class HessianRpcOutput extends Hessian2Output implements AbstractHessianO
      *
      * @param code the fault code, a three digit
      */
+    @Override
     public void writeFault(String code, String message, Object detail) throws IOException {
         flushIfFull();
 

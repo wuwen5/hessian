@@ -112,9 +112,9 @@ public class Hessian2StringShortTest extends SerializeTestBase {
         ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
         HessianDecoder input = new HessianDecoder(bin);
 
-        List<Class<?>> keyValueType = new ArrayList<>();
-        keyValueType.add(String.class);
-        keyValueType.add(short.class);
+        //        List<Class<?>> keyValueType = new ArrayList<>();
+        //        keyValueType.add(String.class);
+        //        keyValueType.add(short.class);
 
         // (Map) input.readObject(keyValueType); TODO
         Map deserialize = (Map) input.readObject();

@@ -154,8 +154,6 @@ public class UnsafeSerializer extends AbstractSerializer {
             writeDefinition20(out);
             out.writeObjectBegin(cl.getName());
             writeInstance(obj, out);
-        } else {
-            writeObject10(obj, out);
         }
     }
 

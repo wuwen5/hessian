@@ -64,7 +64,6 @@ public class HessianDebugState implements Hessian2Constants {
     private final PrintWriter dbg;
 
     private State state;
-    private final List<State> stateStack = new ArrayList<>();
 
     private final List<ObjectDef> objectDefList = new ArrayList<>();
 
@@ -101,14 +100,6 @@ public class HessianDebugState implements Hessian2Constants {
      */
     public void next(int ch) {
         state = state.next(ch);
-    }
-
-    void pushStack(State state) {
-        stateStack.add(state);
-    }
-
-    State popStack() {
-        return stateStack.remove(stateStack.size() - 1);
     }
 
     void println() {
@@ -636,8 +627,6 @@ public class HessianDebugState implements Hessian2Constants {
 
             if (ch == 'R') {
                 return new Reply2State(this);
-            } else if (ch == 'F') {
-                return new Fault2State(this);
             } else if (ch == 'C') {
                 return new Call2State(this);
             } else if (ch == 'H') {
@@ -769,28 +758,9 @@ public class HessianDebugState implements Hessian2Constants {
     }
 
     class RefState extends State {
-        String typeCode;
-
-        int length;
-        int value;
 
         RefState(State next) {
             super(next);
-        }
-
-        RefState(State next, String typeCode) {
-            super(next);
-
-            this.typeCode = typeCode;
-        }
-
-        RefState(State next, String typeCode, int value, int length) {
-            super(next);
-
-            this.typeCode = typeCode;
-
-            this.value = value;
-            this.length = length;
         }
 
         @Override
@@ -1368,6 +1338,7 @@ public class HessianDebugState implements Hessian2Constants {
                 log.warn("{} {} is an unknown object type", this, def);
 
                 super.println(this + " object unknown  (#" + this.refId + ")");
+                return;
             }
 
             this.def = objectDefList.get(def);
@@ -1418,13 +1389,15 @@ public class HessianDebugState implements Hessian2Constants {
                     return nextObject(ch);
 
                 case FIELD:
-                    if (def.getFields().size() <= count) {
+                    if (def != null && def.getFields().size() <= count) {
                         return next.next(ch);
                     }
 
                     fieldDepth = next.depth() + 2;
                     super.println();
-                    print(def.getFields().get(count++) + ": ");
+                    if (def != null) {
+                        print(def.getFields().get(count++) + ": ");
+                    }
 
                     fieldDepth = column;
 
@@ -1802,24 +1775,6 @@ public class HessianDebugState implements Hessian2Constants {
             } else {
                 return nextObject(ch);
             }
-        }
-    }
-
-    class Fault2State extends State {
-        Fault2State(State next) {
-            super(next);
-
-            super.println(-2, "Fault");
-        }
-
-        @Override
-        int depth() {
-            return next.depth() + 2;
-        }
-
-        @Override
-        State next(int ch) {
-            return nextObject(ch);
         }
     }
 

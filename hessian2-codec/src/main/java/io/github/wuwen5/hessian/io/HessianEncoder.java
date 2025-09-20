@@ -304,7 +304,7 @@ public class HessianEncoder extends AbstractHessianEncoder implements Hessian2Co
             if (ref <= OBJECT_DIRECT_MAX) {
                 buffer[offset++] = (byte) (BC_OBJECT_DIRECT + ref);
             } else {
-                buffer[offset++] = (byte) 'O';
+                buffer[offset++] = (byte) BC_OBJECT;
                 writeInt(ref);
             }
 

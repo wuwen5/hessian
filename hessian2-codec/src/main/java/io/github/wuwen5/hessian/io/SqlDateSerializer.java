@@ -68,19 +68,13 @@ public class SqlDateSerializer extends AbstractSerializer {
 
             int ref = out.writeObjectBegin(cl.getName());
 
-            if (ref < -1) {
+            if (ref == -1) {
+                out.writeInt(1);
                 out.writeString("value");
-                out.writeUTCDate(((Date) obj).getTime());
-                out.writeMapEnd();
-            } else {
-                if (ref == -1) {
-                    out.writeInt(1);
-                    out.writeString("value");
-                    out.writeObjectBegin(cl.getName());
-                }
-
-                out.writeUTCDate(((Date) obj).getTime());
+                out.writeObjectBegin(cl.getName());
             }
+
+            out.writeUTCDate(((Date) obj).getTime());
         }
     }
 }

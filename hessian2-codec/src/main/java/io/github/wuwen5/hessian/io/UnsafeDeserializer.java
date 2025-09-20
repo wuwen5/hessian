@@ -119,7 +119,7 @@ public class UnsafeDeserializer extends AbstractMapDeserializer {
         Object reader = fieldMap.get(name);
 
         if (reader == null) {
-            reader = FieldDeserializer2FactoryUnsafe.NullFieldDeserializer.DESER;
+            reader = FieldDeserializer2Factory.NullFieldDeserializer.DESER;
         }
 
         return reader;

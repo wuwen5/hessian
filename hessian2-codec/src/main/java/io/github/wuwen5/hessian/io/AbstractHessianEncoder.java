@@ -439,7 +439,7 @@ public abstract class AbstractHessianEncoder implements Closeable {
     public int writeObjectBegin(String type) throws IOException {
         writeMapBegin(type);
 
-        return -2;
+        return -1;
     }
 
     /**
