@@ -240,7 +240,7 @@ public abstract class AbstractFieldDeserializer extends AbstractMapDeserializer 
         }
     }
 
-    protected Object resolve(AbstractHessianDecoder in, Object obj) throws Exception {
+    protected Object resolve(@SuppressWarnings("unused") AbstractHessianDecoder in, Object obj) throws Exception {
         // if there's a readResolve method, call it
         try {
             if (readResolve != null) {
