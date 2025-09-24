@@ -1,0 +1,244 @@
+/*
+ * Copyright (c) 2001-2008 Caucho Technology, Inc.  All rights reserved.
+ *
+ * The Apache Software License, Version 1.1
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. The end-user documentation included with the redistribution, if
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
+ *        Caucho Technology (http://www.caucho.com/)."
+ *    Alternately, this acknowlegement may appear in the software itself,
+ *    if and wherever such third-party acknowlegements normally appear.
+ *
+ * 4. The names "Burlap", "Resin", and "Caucho" must not be used to
+ *    endorse or promote products derived from this software without prior
+ *    written permission. For written permission, please contact
+ *    info@caucho.com.
+ *
+ * 5. Products derived from this software may not be called "Resin"
+ *    nor may "Resin" appear in their names without prior written
+ *    permission of Caucho Technology.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED.  IN NO EVENT SHALL CAUCHO TECHNOLOGY OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+ * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+ * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+ * BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+ * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+ * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * @author Scott Ferguson
+ */
+
+package io.github.wuwen5.hessian.io;
+
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collections;
+
+/**
+ * Base class for field-based serializers that provides common functionality
+ * for JavaSerializer and UnsafeSerializer.
+ */
+public abstract class FieldBasedSerializer extends AbstractSerializer {
+
+    protected Field[] fields;
+    protected Object writeReplaceFactory;
+    protected Method writeReplace;
+
+    /**
+     * Common writeObject implementation with writeReplace handling
+     */
+    @Override
+    public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
+        if (out.addRef(obj)) {
+            return;
+        }
+
+        Class<?> cl = obj.getClass();
+
+        try {
+            if (writeReplace != null) {
+                Object repl = invokeWriteReplace(obj);
+
+                // hessian/3a5a
+                int ref = out.writeObjectBegin(cl.getName());
+
+                if (ref == -1) {
+                    writeDefinition20(out);
+                    out.writeObjectBegin(cl.getName());
+                }
+
+                writeInstance(repl, out);
+
+                return;
+            }
+        } catch (InvocationTargetException | IllegalAccessException e) {
+            throw new IllegalStateException(e);
+        }
+
+        int ref = out.writeObjectBegin(cl.getName());
+
+        if (ref == -1) {
+            writeDefinition20(out);
+            out.writeObjectBegin(cl.getName());
+        }
+
+        writeInstance(obj, out);
+    }
+
+    /**
+     * Invokes writeReplace method
+     */
+    protected Object invokeWriteReplace(Object obj) throws InvocationTargetException, IllegalAccessException {
+        if (writeReplaceFactory != null) {
+            return writeReplace.invoke(writeReplaceFactory, obj);
+        } else {
+            return writeReplace.invoke(obj);
+        }
+    }
+
+    /**
+     * Common writeDefinition20 implementation for field-based serializers
+     */
+    protected void writeDefinition20(AbstractHessianEncoder out) throws IOException {
+        out.writeClassFieldLength(fields.length);
+
+        for (Field field : fields) {
+            out.writeString(field.getName());
+        }
+    }
+
+    /**
+     * Common field introspection logic
+     */
+    protected void introspectFields(Class<?> cl) {
+        ArrayList<Field> primitiveFields = new ArrayList<>();
+        ArrayList<Field> compoundFields = new ArrayList<>();
+
+        for (; cl != null; cl = cl.getSuperclass()) {
+            for (Field field : cl.getDeclaredFields()) {
+                if (Modifier.isTransient(field.getModifiers()) || Modifier.isStatic(field.getModifiers())) {
+                    continue;
+                }
+
+                // XXX: could parameterize the handler to only deal with public
+                try {
+                    field.setAccessible(true);
+                } catch (Exception e) {
+                    // Skip fields that cannot be made accessible (e.g., Java 9+ modules)
+                    continue;
+                }
+
+                if (field.getType().isPrimitive()
+                        || (field.getType().getName().startsWith("java.lang.")
+                                && !field.getType().equals(Object.class))) {
+                    primitiveFields.add(field);
+                } else {
+                    compoundFields.add(field);
+                }
+            }
+        }
+
+        ArrayList<Field> fieldArrayList = new ArrayList<>();
+        fieldArrayList.addAll(primitiveFields);
+        fieldArrayList.addAll(compoundFields);
+        Collections.reverse(fieldArrayList);
+
+        this.fields = new Field[fieldArrayList.size()];
+        fieldArrayList.toArray(this.fields);
+    }
+
+    /**
+     * Find writeReplace method
+     */
+    protected static Method getWriteReplace(Class<?> cl) {
+        for (; cl != null; cl = cl.getSuperclass()) {
+            Method[] methods = cl.getDeclaredMethods();
+
+            for (Method method : methods) {
+                if ("writeReplace".equals(method.getName()) && method.getParameterTypes().length == 0) {
+                    return method;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Find writeReplace method with parameter
+     */
+    protected Method getWriteReplace(Class<?> cl, Class<?> param) {
+        for (; cl != null; cl = cl.getSuperclass()) {
+            for (Method method : cl.getDeclaredMethods()) {
+                if ("writeReplace".equals(method.getName())
+                        && method.getParameterTypes().length == 1
+                        && param.equals(method.getParameterTypes()[0])) {
+                    return method;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Common writeObject10 implementation for field-based serializers
+     */
+    @Override
+    protected void writeObject10(Object obj, AbstractHessianEncoder out) throws IOException {
+        for (Field field : fields) {
+            out.writeString(field.getName());
+            writeFieldValue(out, obj, field);
+        }
+
+        out.writeMapEnd();
+    }
+
+    /**
+     * Abstract method for writing field values - implemented differently by subclasses
+     */
+    protected abstract void writeFieldValue(AbstractHessianEncoder out, Object obj, Field field) throws IOException;
+
+    /**
+     * Common writeInstance implementation with error handling
+     */
+    @Override
+    public void writeInstance(Object obj, AbstractHessianEncoder out) throws IOException {
+        try {
+            writeInstanceFields(obj, out);
+        } catch (RuntimeException e) {
+            throw new IllegalStateException(
+                    e.getMessage() + "\n class: " + obj.getClass().getName() + " (object=" + obj + ")", e);
+        } catch (IOException e) {
+            throw new IOExceptionWrapper(
+                    e.getMessage() + "\n class: " + obj.getClass().getName() + " (object=" + obj + ")", e);
+        }
+    }
+
+    /**
+     * Abstract method for writing instance fields - implemented differently by subclasses
+     */
+    protected abstract void writeInstanceFields(Object obj, AbstractHessianEncoder out) throws IOException;
+}

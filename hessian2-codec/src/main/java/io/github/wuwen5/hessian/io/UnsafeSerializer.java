@@ -52,9 +52,6 @@ import com.caucho.hessian.HessianUnshared;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.WeakHashMap;
 import lombok.extern.slf4j.Slf4j;
 import sun.misc.Unsafe;
@@ -63,13 +60,12 @@ import sun.misc.Unsafe;
  * Serializing an object for known object types.
  */
 @Slf4j
-public class UnsafeSerializer extends AbstractSerializer {
+public class UnsafeSerializer extends FieldBasedSerializer {
     private static boolean isEnabled;
     private static final Unsafe UNSAFE;
 
     private static final WeakHashMap<Class<?>, SoftReference<UnsafeSerializer>> SERIALIZER_MAP = new WeakHashMap<>();
 
-    private Field[] fields;
     private FieldSerializer[] fieldSerializers;
 
     public static boolean isEnabled() {
@@ -77,7 +73,35 @@ public class UnsafeSerializer extends AbstractSerializer {
     }
 
     public UnsafeSerializer(Class<?> cl) {
-        introspect(cl);
+        introspectFields(cl);
+
+        fieldSerializers = new FieldSerializer[this.fields.length];
+
+        for (int i = 0; i < this.fields.length; i++) {
+            fieldSerializers[i] = getFieldSerializer(this.fields[i]);
+        }
+    }
+
+    /**
+     * UnsafeSerializer doesn't use writeReplace, so override the base implementation
+     */
+    @Override
+    public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
+        if (out.addRef(obj)) {
+            return;
+        }
+
+        Class<?> cl = obj.getClass();
+
+        int ref = out.writeObjectBegin(cl.getName());
+
+        if (ref >= 0) {
+            writeInstance(obj, out);
+        } else if (ref == -1) {
+            writeDefinition20(out);
+            out.writeObjectBegin(cl.getName());
+            writeInstance(obj, out);
+        }
     }
 
     public static UnsafeSerializer create(Class<?> cl) {
@@ -102,94 +126,30 @@ public class UnsafeSerializer extends AbstractSerializer {
         }
     }
 
-    protected void introspect(Class<?> cl) {
-        ArrayList<Field> primitiveFields = new ArrayList<>();
-        ArrayList<Field> compoundFields = new ArrayList<>();
-
-        for (; cl != null; cl = cl.getSuperclass()) {
-
-            for (Field field : cl.getDeclaredFields()) {
-                if (Modifier.isTransient(field.getModifiers()) || Modifier.isStatic(field.getModifiers())) {
-                    continue;
-                }
-
-                if (field.getType().isPrimitive()
-                        || (field.getType().getName().startsWith("java.lang.")
-                                && !field.getType().equals(Object.class))) {
-                    primitiveFields.add(field);
-                } else {
-                    compoundFields.add(field);
-                }
-            }
-        }
-
-        ArrayList<Field> fieldArrayList = new ArrayList<>();
-        fieldArrayList.addAll(primitiveFields);
-        fieldArrayList.addAll(compoundFields);
-        Collections.reverse(fieldArrayList);
-
-        this.fields = new Field[fieldArrayList.size()];
-        fieldArrayList.toArray(this.fields);
-
-        fieldSerializers = new FieldSerializer[this.fields.length];
-
-        for (int i = 0; i < this.fields.length; i++) {
-            fieldSerializers[i] = getFieldSerializer(this.fields[i]);
-        }
-    }
-
+    /**
+     * Implement abstract method from FieldBasedSerializer
+     */
     @Override
-    public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
-        if (out.addRef(obj)) {
-            return;
-        }
-
-        Class<?> cl = obj.getClass();
-
-        int ref = out.writeObjectBegin(cl.getName());
-
-        if (ref >= 0) {
-            writeInstance(obj, out);
-        } else if (ref == -1) {
-            writeDefinition20(out);
-            out.writeObjectBegin(cl.getName());
-            writeInstance(obj, out);
-        }
-    }
-
-    @Override
-    protected void writeObject10(Object obj, AbstractHessianEncoder out) throws IOException {
+    protected void writeFieldValue(AbstractHessianEncoder out, Object obj, Field field) throws IOException {
+        int index = -1;
         for (int i = 0; i < fields.length; i++) {
-            Field field = fields[i];
-
-            out.writeString(field.getName());
-
-            fieldSerializers[i].serialize(out, obj);
-        }
-
-        out.writeMapEnd();
-    }
-
-    private void writeDefinition20(AbstractHessianEncoder out) throws IOException {
-        out.writeClassFieldLength(fields.length);
-
-        for (Field field : fields) {
-            out.writeString(field.getName());
-        }
-    }
-
-    @Override
-    public final void writeInstance(Object obj, AbstractHessianEncoder out) throws IOException {
-        try {
-            for (FieldSerializer fieldSerializer : this.fieldSerializers) {
-                fieldSerializer.serialize(out, obj);
+            if (fields[i] == field) {
+                index = i;
+                break;
             }
-        } catch (RuntimeException e) {
-            throw new IllegalStateException(
-                    e.getMessage() + "\n class: " + obj.getClass().getName() + " (object=" + obj + ")", e);
-        } catch (IOException e) {
-            throw new IOExceptionWrapper(
-                    e.getMessage() + "\n class: " + obj.getClass().getName() + " (object=" + obj + ")", e);
+        }
+        if (index >= 0) {
+            fieldSerializers[index].serialize(out, obj);
+        }
+    }
+
+    /**
+     * Implement abstract method from FieldBasedSerializer
+     */
+    @Override
+    protected void writeInstanceFields(Object obj, AbstractHessianEncoder out) throws IOException {
+        for (FieldSerializer fieldSerializer : this.fieldSerializers) {
+            fieldSerializer.serialize(out, obj);
         }
     }
 
