@@ -69,10 +69,10 @@ public class JavaSerializer extends FieldBasedSerializer {
     public JavaSerializer(Class<?> cl) {
         introspectFields(cl);
 
-        writeReplace = getWriteReplace(cl);
+        writeReplaceMethod = getWriteReplace(cl);
 
-        if (writeReplace != null) {
-            writeReplace.setAccessible(true);
+        if (writeReplaceMethod != null) {
+            writeReplaceMethod.setAccessible(true);
         }
 
         fieldSerializers = new FieldSerializer[this.fields.length];

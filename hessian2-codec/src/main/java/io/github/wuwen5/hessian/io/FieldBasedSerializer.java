@@ -63,7 +63,7 @@ import java.util.Collections;
 public abstract class FieldBasedSerializer extends AbstractSerializer {
 
     protected Field[] fields;
-    protected Method writeReplace;
+    protected Method writeReplaceMethod;
 
     /**
      * Common writeObject implementation with writeReplace handling
@@ -77,7 +77,7 @@ public abstract class FieldBasedSerializer extends AbstractSerializer {
         Class<?> cl = obj.getClass();
 
         try {
-            if (writeReplace != null) {
+            if (writeReplaceMethod != null) {
                 Object repl = invokeWriteReplace(obj);
 
                 // hessian/3a5a
@@ -110,7 +110,7 @@ public abstract class FieldBasedSerializer extends AbstractSerializer {
      * Invokes writeReplace method
      */
     protected Object invokeWriteReplace(Object obj) throws InvocationTargetException, IllegalAccessException {
-        return writeReplace.invoke(obj);
+        return writeReplaceMethod.invoke(obj);
     }
 
     /**
