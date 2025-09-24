@@ -117,21 +117,6 @@ public class JavaSerializer extends FieldBasedSerializer {
         }
     }
 
-    /**
-     * writeObject10 implementation for JavaSerializer
-     */
-    protected void writeObject10(Object obj, AbstractHessianEncoder out) throws IOException {
-        for (int i = 0; i < fields.length; i++) {
-            Field field = fields[i];
-
-            out.writeString(field.getName());
-
-            fieldSerializers[i].serialize(out, obj, field);
-        }
-
-        out.writeMapEnd();
-    }
-
     private static FieldSerializer getFieldSerializer(Class<?> type) {
         if (int.class.equals(type) || byte.class.equals(type) || short.class.equals(type)) {
             return IntFieldSerializer.SER;

@@ -63,7 +63,6 @@ import java.util.Collections;
 public abstract class FieldBasedSerializer extends AbstractSerializer {
 
     protected Field[] fields;
-    protected Object writeReplaceFactory;
     protected Method writeReplace;
 
     /**
@@ -111,11 +110,7 @@ public abstract class FieldBasedSerializer extends AbstractSerializer {
      * Invokes writeReplace method
      */
     protected Object invokeWriteReplace(Object obj) throws InvocationTargetException, IllegalAccessException {
-        if (writeReplaceFactory != null) {
-            return writeReplace.invoke(writeReplaceFactory, obj);
-        } else {
-            return writeReplace.invoke(obj);
-        }
+        return writeReplace.invoke(obj);
     }
 
     /**
