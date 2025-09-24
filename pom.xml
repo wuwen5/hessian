@@ -355,11 +355,7 @@
       <properties>
         <argLine>--add-opens java.base/java.util=ALL-UNNAMED
           --add-opens java.base/java.util.concurrent.atomic=ALL-UNNAMED
-          --add-opens java.base/java.time.temporal=ALL-UNNAMED
-          --add-opens java.base/java.lang=ALL-UNNAMED
-          --add-opens java.base/java.math=ALL-UNNAMED
-          --add-opens java.base/java.text=ALL-UNNAMED
-          --add-opens java.base/java.net=ALL-UNNAMED</argLine>
+          --add-opens java.base/java.time.temporal=ALL-UNNAMED</argLine>
       </properties>
     </profile>
 

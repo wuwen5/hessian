@@ -153,6 +153,21 @@ public class UnsafeSerializer extends FieldBasedSerializer {
         }
     }
 
+    /**
+     * writeObject10 implementation for UnsafeSerializer
+     */
+    protected void writeObject10(Object obj, AbstractHessianEncoder out) throws IOException {
+        for (int i = 0; i < fields.length; i++) {
+            Field field = fields[i];
+
+            out.writeString(field.getName());
+
+            fieldSerializers[i].serialize(out, obj);
+        }
+
+        out.writeMapEnd();
+    }
+
     private static FieldSerializer getFieldSerializer(Field field) {
         Class<?> type = field.getType();
 

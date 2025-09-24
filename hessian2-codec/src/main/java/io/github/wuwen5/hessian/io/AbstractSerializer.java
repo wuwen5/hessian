@@ -146,10 +146,6 @@ public abstract class AbstractSerializer implements HessianSerializer {
         return obj.getClass();
     }
 
-    protected void writeObject10(Object obj, AbstractHessianEncoder out) throws IOException {
-        throw new UnsupportedOperationException(getClass().getName());
-    }
-
     protected void writeDefinition20(Class<?> cl, AbstractHessianEncoder out) throws IOException {
         throw new UnsupportedOperationException(getClass().getName());
     }

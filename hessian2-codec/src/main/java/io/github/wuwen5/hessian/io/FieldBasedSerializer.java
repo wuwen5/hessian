@@ -142,8 +142,7 @@ public abstract class FieldBasedSerializer extends AbstractSerializer {
                     continue;
                 }
 
-                // XXX: could parameterize the handler to only deal with public
-                field.setAccessible(true);
+                // Note: setAccessible(true) is handled by subclasses that need it (JavaSerializer)
 
                 if (field.getType().isPrimitive()
                         || (field.getType().getName().startsWith("java.lang.")
@@ -162,19 +161,6 @@ public abstract class FieldBasedSerializer extends AbstractSerializer {
 
         this.fields = new Field[fieldArrayList.size()];
         fieldArrayList.toArray(this.fields);
-    }
-
-    /**
-     * Common writeObject10 implementation for field-based serializers
-     */
-    @Override
-    protected void writeObject10(Object obj, AbstractHessianEncoder out) throws IOException {
-        for (Field field : fields) {
-            out.writeString(field.getName());
-            writeFieldValue(out, obj, field);
-        }
-
-        out.writeMapEnd();
     }
 
     /**
