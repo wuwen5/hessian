@@ -143,12 +143,7 @@ public abstract class FieldBasedSerializer extends AbstractSerializer {
                 }
 
                 // XXX: could parameterize the handler to only deal with public
-                try {
-                    field.setAccessible(true);
-                } catch (Exception e) {
-                    // Skip fields that cannot be made accessible (e.g., Java 9+ modules)
-                    continue;
-                }
+                field.setAccessible(true);
 
                 if (field.getType().isPrimitive()
                         || (field.getType().getName().startsWith("java.lang.")
@@ -167,40 +162,6 @@ public abstract class FieldBasedSerializer extends AbstractSerializer {
 
         this.fields = new Field[fieldArrayList.size()];
         fieldArrayList.toArray(this.fields);
-    }
-
-    /**
-     * Find writeReplace method
-     */
-    protected static Method getWriteReplace(Class<?> cl) {
-        for (; cl != null; cl = cl.getSuperclass()) {
-            Method[] methods = cl.getDeclaredMethods();
-
-            for (Method method : methods) {
-                if ("writeReplace".equals(method.getName()) && method.getParameterTypes().length == 0) {
-                    return method;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Find writeReplace method with parameter
-     */
-    protected Method getWriteReplace(Class<?> cl, Class<?> param) {
-        for (; cl != null; cl = cl.getSuperclass()) {
-            for (Method method : cl.getDeclaredMethods()) {
-                if ("writeReplace".equals(method.getName())
-                        && method.getParameterTypes().length == 1
-                        && param.equals(method.getParameterTypes()[0])) {
-                    return method;
-                }
-            }
-        }
-
-        return null;
     }
 
     /**

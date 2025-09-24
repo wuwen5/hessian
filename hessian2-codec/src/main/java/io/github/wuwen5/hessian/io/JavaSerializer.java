@@ -52,7 +52,6 @@ import io.github.wuwen5.hessian.HessianUnshared;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -102,13 +101,6 @@ public class JavaSerializer extends FieldBasedSerializer {
 
             return base;
         }
-    }
-
-    /**
-     * Returns the writeReplace method with parameter - delegates to base class
-     */
-    protected Method getWriteReplaceWithParam(Class<?> cl, Class<?> param) {
-        return super.getWriteReplace(cl, param);
     }
 
     /**
