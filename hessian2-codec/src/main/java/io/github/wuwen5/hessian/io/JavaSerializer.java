@@ -52,9 +52,6 @@ import io.github.wuwen5.hessian.HessianUnshared;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -85,42 +82,6 @@ public class JavaSerializer extends FieldBasedSerializer {
         }
     }
 
-    /**
-     * Override introspectFields to add setAccessible(true) call for JavaSerializer
-     */
-    @Override
-    protected void introspectFields(Class<?> cl) {
-        ArrayList<Field> primitiveFields = new ArrayList<>();
-        ArrayList<Field> compoundFields = new ArrayList<>();
-
-        for (; cl != null; cl = cl.getSuperclass()) {
-            for (Field field : cl.getDeclaredFields()) {
-                if (Modifier.isTransient(field.getModifiers()) || Modifier.isStatic(field.getModifiers())) {
-                    continue;
-                }
-
-                // XXX: could parameterize the handler to only deal with public
-                field.setAccessible(true);
-
-                if (field.getType().isPrimitive()
-                        || (field.getType().getName().startsWith("java.lang.")
-                                && !field.getType().equals(Object.class))) {
-                    primitiveFields.add(field);
-                } else {
-                    compoundFields.add(field);
-                }
-            }
-        }
-
-        ArrayList<Field> fieldArrayList = new ArrayList<>();
-        fieldArrayList.addAll(primitiveFields);
-        fieldArrayList.addAll(compoundFields);
-        Collections.reverse(fieldArrayList);
-
-        this.fields = new Field[fieldArrayList.size()];
-        fieldArrayList.toArray(this.fields);
-    }
-
     public static HessianSerializer create(Class<?> cl) {
         synchronized (SERIALIZER_MAP) {
             SoftReference<JavaSerializer> baseRef = SERIALIZER_MAP.get(cl);
@@ -144,28 +105,14 @@ public class JavaSerializer extends FieldBasedSerializer {
 
     /**
      * Implement abstract method from FieldBasedSerializer
-     */
-    @Override
-    protected void writeFieldValue(AbstractHessianEncoder out, Object obj, Field field) throws IOException {
-        int index = -1;
-        for (int i = 0; i < fields.length; i++) {
-            if (fields[i] == field) {
-                index = i;
-                break;
-            }
-        }
-        if (index >= 0) {
-            fieldSerializers[index].serialize(out, obj, field);
-        }
-    }
-
-    /**
-     * Implement abstract method from FieldBasedSerializer
+     * JavaSerializer needs to call setAccessible(true) on fields for reflection access
      */
     @Override
     protected void writeInstanceFields(Object obj, AbstractHessianEncoder out) throws IOException {
         for (int i = 0; i < fields.length; i++) {
             Field field = fields[i];
+            // XXX: could parameterize the handler to only deal with public
+            field.setAccessible(true);
             fieldSerializers[i].serialize(out, obj, field);
         }
     }

@@ -164,11 +164,6 @@ public abstract class FieldBasedSerializer extends AbstractSerializer {
     }
 
     /**
-     * Abstract method for writing field values - implemented differently by subclasses
-     */
-    protected abstract void writeFieldValue(AbstractHessianEncoder out, Object obj, Field field) throws IOException;
-
-    /**
      * Common writeInstance implementation with error handling
      */
     @Override

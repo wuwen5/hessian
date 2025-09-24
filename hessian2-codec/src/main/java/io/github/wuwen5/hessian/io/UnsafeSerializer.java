@@ -130,23 +130,6 @@ public class UnsafeSerializer extends FieldBasedSerializer {
      * Implement abstract method from FieldBasedSerializer
      */
     @Override
-    protected void writeFieldValue(AbstractHessianEncoder out, Object obj, Field field) throws IOException {
-        int index = -1;
-        for (int i = 0; i < fields.length; i++) {
-            if (fields[i] == field) {
-                index = i;
-                break;
-            }
-        }
-        if (index >= 0) {
-            fieldSerializers[index].serialize(out, obj);
-        }
-    }
-
-    /**
-     * Implement abstract method from FieldBasedSerializer
-     */
-    @Override
     protected void writeInstanceFields(Object obj, AbstractHessianEncoder out) throws IOException {
         for (FieldSerializer fieldSerializer : this.fieldSerializers) {
             fieldSerializer.serialize(out, obj);
