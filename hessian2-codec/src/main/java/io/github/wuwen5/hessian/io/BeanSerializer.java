@@ -144,7 +144,7 @@ public class BeanSerializer extends AbstractSerializer {
 
             Object serializerObject = serializerClass.getDeclaredConstructor().newInstance();
 
-            Method method = getWriteReplace(serializerClass, cl);
+            Method method = getWriteReplaceWithParam(serializerClass, cl);
 
             if (method != null) {
                 writeReplaceFactory = serializerObject;
@@ -156,39 +156,21 @@ public class BeanSerializer extends AbstractSerializer {
             log.trace(e.toString(), e);
         }
 
-        writeReplace = getWriteReplace(cl);
+        writeReplace = getWriteReplaceForBean(cl);
     }
 
     /**
-     * Returns the writeReplace method
+     * Use shared method from AbstractSerializer - delegates to base class
      */
-    protected Method getWriteReplace(Class<?> cl) {
-        for (; cl != null; cl = cl.getSuperclass()) {
-            for (Method method : cl.getDeclaredMethods()) {
-                if ("writeReplace".equals(method.getName()) && method.getParameterTypes().length == 0) {
-                    return method;
-                }
-            }
-        }
-
-        return null;
+    protected Method getWriteReplaceForBean(Class<?> cl) {
+        return AbstractSerializer.getWriteReplace(cl);
     }
 
     /**
-     * Returns the writeReplace method
+     * Use shared method from AbstractSerializer - delegates to base class
      */
-    protected Method getWriteReplace(Class<?> cl, Class<?> param) {
-        for (; cl != null; cl = cl.getSuperclass()) {
-            for (Method method : cl.getDeclaredMethods()) {
-                if ("writeReplace".equals(method.getName())
-                        && method.getParameterTypes().length == 1
-                        && param.equals(method.getParameterTypes()[0])) {
-                    return method;
-                }
-            }
-        }
-
-        return null;
+    protected Method getWriteReplaceWithParam(Class<?> cl, Class<?> param) {
+        return AbstractSerializer.getWriteReplace(cl, param);
     }
 
     @Override

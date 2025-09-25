@@ -52,11 +52,6 @@ import io.github.wuwen5.hessian.HessianUnshared;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -64,24 +59,26 @@ import java.util.logging.Logger;
 /**
  * Serializing an object for known object types.
  */
-public class JavaSerializer extends AbstractSerializer {
+public class JavaSerializer extends FieldBasedSerializer {
     private static final Logger log = Logger.getLogger(JavaSerializer.class.getName());
 
     private static final WeakHashMap<Class<?>, SoftReference<JavaSerializer>> SERIALIZER_MAP = new WeakHashMap<>();
 
-    private Field[] fields;
     private FieldSerializer[] fieldSerializers;
 
-    private Object writeReplaceFactory;
-    private final Method writeReplace;
-
     public JavaSerializer(Class<?> cl) {
-        introspect(cl);
+        introspectFields(cl);
 
-        writeReplace = getWriteReplace(cl);
+        writeReplaceMethod = getWriteReplace(cl);
 
-        if (writeReplace != null) {
-            writeReplace.setAccessible(true);
+        if (writeReplaceMethod != null) {
+            writeReplaceMethod.setAccessible(true);
+        }
+
+        fieldSerializers = new FieldSerializer[this.fields.length];
+
+        for (int i = 0; i < this.fields.length; i++) {
+            fieldSerializers[i] = getFieldSerializer(this.fields[i].getType());
         }
     }
 
@@ -106,161 +103,17 @@ public class JavaSerializer extends AbstractSerializer {
         }
     }
 
-    protected void introspect(Class<?> cl) {
-        if (writeReplace != null) {
-            writeReplace.setAccessible(true);
-        }
-
-        ArrayList<Field> primitiveFields = new ArrayList<>();
-        ArrayList<Field> compoundFields = new ArrayList<>();
-
-        for (; cl != null; cl = cl.getSuperclass()) {
-            for (Field field : cl.getDeclaredFields()) {
-                if (Modifier.isTransient(field.getModifiers()) || Modifier.isStatic(field.getModifiers())) {
-                    continue;
-                }
-
-                // XXX: could parameterize the handler to only deal with public
-                field.setAccessible(true);
-
-                if (field.getType().isPrimitive()
-                        || (field.getType().getName().startsWith("java.lang.")
-                                && !field.getType().equals(Object.class))) {
-                    primitiveFields.add(field);
-                } else {
-                    compoundFields.add(field);
-                }
-            }
-        }
-
-        ArrayList<Field> fieldArrayList = new ArrayList<>();
-        fieldArrayList.addAll(primitiveFields);
-        fieldArrayList.addAll(compoundFields);
-        Collections.reverse(fieldArrayList);
-
-        this.fields = new Field[fieldArrayList.size()];
-        fieldArrayList.toArray(this.fields);
-
-        fieldSerializers = new FieldSerializer[this.fields.length];
-
-        for (int i = 0; i < this.fields.length; i++) {
-            fieldSerializers[i] = getFieldSerializer(this.fields[i].getType());
-        }
-    }
-
     /**
-     * Returns the writeReplace method
+     * Implement abstract method from FieldBasedSerializer
+     * JavaSerializer needs to call setAccessible(true) on fields for reflection access
      */
-    public static Method getWriteReplace(Class<?> cl) {
-        for (; cl != null; cl = cl.getSuperclass()) {
-            Method[] methods = cl.getDeclaredMethods();
-
-            for (Method method : methods) {
-                if ("writeReplace".equals(method.getName()) && method.getParameterTypes().length == 0) {
-                    return method;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Returns the writeReplace method
-     */
-    protected Method getWriteReplace(Class<?> cl, Class<?> param) {
-        for (; cl != null; cl = cl.getSuperclass()) {
-            for (Method method : cl.getDeclaredMethods()) {
-                if ("writeReplace".equals(method.getName())
-                        && method.getParameterTypes().length == 1
-                        && param.equals(method.getParameterTypes()[0])) {
-                    return method;
-                }
-            }
-        }
-
-        return null;
-    }
-
     @Override
-    public void writeObject(Object obj, AbstractHessianEncoder out) throws IOException {
-        if (out.addRef(obj)) {
-            return;
-        }
-
-        Class<?> cl = obj.getClass();
-
-        try {
-            if (writeReplace != null) {
-                Object repl;
-
-                if (writeReplaceFactory != null) {
-                    repl = writeReplace.invoke(writeReplaceFactory, obj);
-                } else {
-                    repl = writeReplace.invoke(obj);
-                }
-
-                // hessian/3a5a
-                int ref = out.writeObjectBegin(cl.getName());
-
-                if (ref == -1) {
-                    writeDefinition20(out);
-                    out.writeObjectBegin(cl.getName());
-                }
-
-                writeInstance(repl, out);
-
-                return;
-            }
-        } catch (InvocationTargetException | IllegalAccessException e) {
-            throw new IllegalStateException(e);
-        }
-
-        int ref = out.writeObjectBegin(cl.getName());
-
-        if (ref == -1) {
-            writeDefinition20(out);
-            out.writeObjectBegin(cl.getName());
-        }
-
-        writeInstance(obj, out);
-    }
-
-    @Override
-    protected void writeObject10(Object obj, AbstractHessianEncoder out) throws IOException {
+    protected void writeInstanceFields(Object obj, AbstractHessianEncoder out) throws IOException {
         for (int i = 0; i < fields.length; i++) {
             Field field = fields[i];
-
-            out.writeString(field.getName());
-
+            // XXX: could parameterize the handler to only deal with public
+            field.setAccessible(true);
             fieldSerializers[i].serialize(out, obj, field);
-        }
-
-        out.writeMapEnd();
-    }
-
-    private void writeDefinition20(AbstractHessianEncoder out) throws IOException {
-        out.writeClassFieldLength(fields.length);
-
-        for (Field field : fields) {
-            out.writeString(field.getName());
-        }
-    }
-
-    @Override
-    public void writeInstance(Object obj, AbstractHessianEncoder out) throws IOException {
-        try {
-            for (int i = 0; i < fields.length; i++) {
-                Field field = fields[i];
-
-                fieldSerializers[i].serialize(out, obj, field);
-            }
-        } catch (RuntimeException e) {
-            throw new IllegalStateException(
-                    e.getMessage() + "\n class: " + obj.getClass().getName() + " (object=" + obj + ")", e);
-        } catch (IOException e) {
-            throw new IOExceptionWrapper(
-                    e.getMessage() + "\n class: " + obj.getClass().getName() + " (object=" + obj + ")", e);
         }
     }
 

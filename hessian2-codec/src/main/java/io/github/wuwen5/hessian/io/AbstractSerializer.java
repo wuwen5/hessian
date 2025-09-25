@@ -103,6 +103,40 @@ public abstract class AbstractSerializer implements HessianSerializer {
         writeInstance(obj, out);
     }
 
+    /**
+     * Shared writeReplace method discovery for all serializers
+     */
+    protected static Method getWriteReplace(Class<?> cl) {
+        for (; cl != null; cl = cl.getSuperclass()) {
+            Method[] methods = cl.getDeclaredMethods();
+
+            for (Method method : methods) {
+                if ("writeReplace".equals(method.getName()) && method.getParameterTypes().length == 0) {
+                    return method;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Shared writeReplace method discovery with parameter for all serializers
+     */
+    protected static Method getWriteReplace(Class<?> cl, Class<?> param) {
+        for (; cl != null; cl = cl.getSuperclass()) {
+            for (Method method : cl.getDeclaredMethods()) {
+                if ("writeReplace".equals(method.getName())
+                        && method.getParameterTypes().length == 1
+                        && param.equals(method.getParameterTypes()[0])) {
+                    return method;
+                }
+            }
+        }
+
+        return null;
+    }
+
     @SuppressWarnings("unused")
     protected Object writeReplace(Object obj) {
         return null;
@@ -110,10 +144,6 @@ public abstract class AbstractSerializer implements HessianSerializer {
 
     protected Class<?> getClass(Object obj) {
         return obj.getClass();
-    }
-
-    protected void writeObject10(Object obj, AbstractHessianEncoder out) throws IOException {
-        throw new UnsupportedOperationException(getClass().getName());
     }
 
     protected void writeDefinition20(Class<?> cl, AbstractHessianEncoder out) throws IOException {
