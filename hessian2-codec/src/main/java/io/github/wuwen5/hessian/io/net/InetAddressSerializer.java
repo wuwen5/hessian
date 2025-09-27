@@ -24,7 +24,7 @@ import java.net.Inet6Address;
 import java.net.InetAddress;
 
 /**
- * Serializing a locale.
+ * Serializing an InetAddress object.
  */
 public class InetAddressSerializer extends AbstractSerializer {
     private static final InetAddressSerializer SERIALIZER = new InetAddressSerializer();
