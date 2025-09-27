@@ -24,7 +24,43 @@ import java.net.Inet6Address;
 import java.net.InetAddress;
 
 /**
- * Serializing an InetAddress object.
+ * Serializes {@link InetAddress} objects (including {@link Inet4Address} and {@link Inet6Address}) to the Hessian2 format.
+ *
+ * <p>Serialization format:
+ * <ul>
+ *   <li>For {@code Inet4Address}:
+ *     <ul>
+ *       <li>Class name: {@code java.net.Inet4Address}</li>
+ *       <li>Fields:
+ *         <ul>
+ *           <li>{@code hostName} (String): The host name of the address.</li>
+ *           <li>{@code address} (int): The IPv4 address as a 32-bit integer.</li>
+ *         </ul>
+ *       </li>
+ *     </ul>
+ *   </li>
+ *   <li>For {@code Inet6Address}:
+ *     <ul>
+ *       <li>Class name: {@code java.net.Inet6Address}</li>
+ *       <li>Fields:
+ *         <ul>
+ *           <li>{@code hostName} (String): The host name of the address.</li>
+ *           <li>{@code ipaddress} (byte[]): The raw IPv6 address bytes.</li>
+ *           <li>{@code scope_id} (int): The scope ID for the address.</li>
+ *           <li>{@code scope_id_set} (boolean): Whether the scope ID is set.</li>
+ *           <li>{@code ifname} (String): The name of the network interface, if available.</li>
+ *         </ul>
+ *       </li>
+ *     </ul>
+ *   </li>
+ * </ul>
+ *
+ * <p>Object references:
+ * <ul>
+ *   <li>If the object has already been serialized, a reference is written instead of serializing the object again (see {@code out.addRef(obj)}).</li>
+ * </ul>
+ *
+ * <p>This serializer ensures that both IPv4 and IPv6 addresses are correctly mapped to their respective fields and formats, and handles object references to avoid redundant serialization.
  */
 public class InetAddressSerializer extends AbstractSerializer {
     private static final InetAddressSerializer SERIALIZER = new InetAddressSerializer();
