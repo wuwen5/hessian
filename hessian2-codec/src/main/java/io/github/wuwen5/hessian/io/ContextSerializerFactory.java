@@ -51,11 +51,14 @@ package io.github.wuwen5.hessian.io;
 import io.github.wuwen5.hessian.HessianException;
 import io.github.wuwen5.hessian.io.net.InetAddressDeserializer;
 import io.github.wuwen5.hessian.io.net.InetAddressSerializer;
+import io.github.wuwen5.hessian.io.net.InetSocketAddressDeserializer;
+import io.github.wuwen5.hessian.io.net.InetSocketAddressSerializer;
 import java.io.InputStream;
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
+import java.net.InetSocketAddress;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -439,6 +442,7 @@ public class ContextSerializerFactory {
 
         staticSerializerMap.put(Inet4Address.class.getName(), InetAddressSerializer.create());
         staticSerializerMap.put(Inet6Address.class.getName(), InetAddressSerializer.create());
+        staticSerializerMap.put(InetSocketAddress.class.getName(), new InetSocketAddressSerializer());
 
         SqlDateSerializer sqlDateSerializer = new SqlDateSerializer();
         staticSerializerMap.put(java.sql.Date.class.getName(), sqlDateSerializer);
@@ -455,6 +459,7 @@ public class ContextSerializerFactory {
 
         staticDeserializerMap.put(Inet4Address.class.getName(), new InetAddressDeserializer(Inet4Address.class));
         staticDeserializerMap.put(Inet6Address.class.getName(), new InetAddressDeserializer(Inet6Address.class));
+        staticDeserializerMap.put(InetSocketAddress.class.getName(), new InetSocketAddressDeserializer());
 
         ClassLoader systemClassLoader = null;
         try {

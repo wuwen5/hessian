@@ -21,14 +21,11 @@ import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class InetSocketAddressTest extends SerializeTestBase {
     @Test
-    @Disabled
-    void testJdk8() throws Exception {
-        // TODO fix me
+    void testBasic() throws Exception {
         InetSocketAddress inetSocketAddress = new InetSocketAddress("localhost", 8080);
         Assertions.assertEquals(inetSocketAddress, baseHessian2Serialize(inetSocketAddress));
         Assertions.assertEquals(
@@ -79,13 +76,9 @@ public class InetSocketAddressTest extends SerializeTestBase {
                 baseHessian2Serialize(inetSocketAddress).getPort());
     }
 
-    /***
-     * TODO
-     */
     @Test
-    @Disabled
-    void testJdk17() throws Exception {
+    void testListDuplicateReferences() throws Exception {
         InetSocketAddress inetSocketAddress = new InetSocketAddress("localhost", 8080);
-        Assertions.assertEquals(inetSocketAddress, baseHessian2Serialize(inetSocketAddress));
+        assertListDuplicateReferences(inetSocketAddress);
     }
 }
