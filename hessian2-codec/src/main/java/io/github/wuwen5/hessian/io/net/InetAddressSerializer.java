@@ -74,7 +74,9 @@ public class InetAddressSerializer extends AbstractSerializer {
         if (inet6Address != null) {
             out.writeObject(addr.getAddress());
             out.writeInt(inet6Address.getScopeId());
-            out.writeBoolean(inet6Address.getHostAddress().contains("%"));
+            out.writeBoolean(inet6Address.getScopeId() > 0
+                    || (inet6Address.getScopeId() == 0
+                            && inet6Address.getHostAddress().contains("%")));
             out.writeString(
                     inet6Address.getScopedInterface() == null
                             ? null
