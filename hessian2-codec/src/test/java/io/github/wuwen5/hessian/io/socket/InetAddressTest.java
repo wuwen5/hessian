@@ -59,6 +59,15 @@ public class InetAddressTest extends SerializeTestBase {
         Assertions.assertEquals(inet6Address.getHostAddress(), inet6Address1.getHostAddress());
         Assertions.assertEquals(inet6Address.getHostName(), inet6Address1.getHostName());
         Assertions.assertArrayEquals(inet6Address.getAddress(), inet6Address1.getAddress());
+
+        // Boundary value testing
+        inet6Address = Inet6Address.getByAddress(
+                "baidu.com", new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}, 0);
+        inet6Address1 = baseHessian2Serialize(inet6Address);
+        Assertions.assertEquals(inet6Address, inet6Address1);
+        Assertions.assertEquals(inet6Address.getHostAddress(), inet6Address1.getHostAddress());
+        Assertions.assertEquals(inet6Address.getHostName(), inet6Address1.getHostName());
+        Assertions.assertArrayEquals(inet6Address.getAddress(), inet6Address1.getAddress());
     }
 
     @Test
@@ -97,6 +106,8 @@ public class InetAddressTest extends SerializeTestBase {
         Assertions.assertEquals(bean.getAddr3(), ret.getAddr3());
         Assertions.assertEquals(ret.getAddr2(), ret.getAddr3());
         Assertions.assertEquals(System.identityHashCode(ret.getAddr2()), System.identityHashCode(ret.getAddr3()));
+
+        assertListDuplicateReferences(inet4Address);
     }
 
     @Getter
