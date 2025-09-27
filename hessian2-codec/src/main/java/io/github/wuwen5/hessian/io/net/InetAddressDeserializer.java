@@ -41,8 +41,8 @@ public class InetAddressDeserializer extends BaseDeserializer {
     }
 
     /**
-     * Get the type of object that this deserializer
-     * @return the type of object that this deserializer
+     * Get the type of object that this deserializer handles.
+     * @return the Class type this deserializer can handle
      */
     @Override
     public Class<?> getType() {
