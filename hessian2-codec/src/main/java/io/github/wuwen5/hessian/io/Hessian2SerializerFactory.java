@@ -55,7 +55,6 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -277,8 +276,6 @@ public class Hessian2SerializerFactory implements ISerializerFactory {
 
         if (HessianRemoteObject.class.isAssignableFrom(cl)) {
             return new RemoteSerializer();
-        } else if (InetAddress.class.isAssignableFrom(cl)) {
-            return InetAddressSerializer.create();
         } else if (JavaSerializer.getWriteReplace(cl) != null) {
             HessianSerializer baseSerializer = getDefaultSerializer(cl);
 
