@@ -49,10 +49,13 @@
 package io.github.wuwen5.hessian.io;
 
 import io.github.wuwen5.hessian.HessianException;
+import io.github.wuwen5.hessian.io.net.InetAddressDeserializer;
+import io.github.wuwen5.hessian.io.net.InetAddressSerializer;
 import java.io.InputStream;
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
-import java.net.InetAddress;
+import java.net.Inet4Address;
+import java.net.Inet6Address;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -434,25 +437,13 @@ public class ContextSerializerFactory {
 
         staticDeserializerMap.put(Number.class.getName(), new BasicDeserializer(BasicSerializer.NUMBER));
 
-        /*
-        for (Class cl : new Class[] { BigDecimal.class, File.class, ObjectName.class }) {
-          _staticSerializerMap.put(cl, StringValueSerializer.SER);
-          _staticDeserializerMap.put(cl, new StringValueDeserializer(cl));
-        }
+        staticSerializerMap.put(Inet4Address.class.getName(), InetAddressSerializer.create());
+        staticSerializerMap.put(Inet6Address.class.getName(), InetAddressSerializer.create());
 
-        _staticSerializerMap.put(ObjectName.class, StringValueSerializer.SER);
-        try {
-          _staticDeserializerMap.put(ObjectName.class,
-                               new StringValueDeserializer(ObjectName.class));
-        } catch (Throwable e) {
-        }
-        */
-
-        staticSerializerMap.put(InetAddress.class.getName(), InetAddressSerializer.create());
-
-        staticSerializerMap.put(java.sql.Date.class.getName(), new SqlDateSerializer());
-        staticSerializerMap.put(java.sql.Time.class.getName(), new SqlDateSerializer());
-        staticSerializerMap.put(java.sql.Timestamp.class.getName(), new SqlDateSerializer());
+        SqlDateSerializer sqlDateSerializer = new SqlDateSerializer();
+        staticSerializerMap.put(java.sql.Date.class.getName(), sqlDateSerializer);
+        staticSerializerMap.put(java.sql.Time.class.getName(), sqlDateSerializer);
+        staticSerializerMap.put(java.sql.Timestamp.class.getName(), sqlDateSerializer);
 
         staticDeserializerMap.put(java.sql.Date.class.getName(), new SqlDateDeserializer(java.sql.Date.class));
         staticDeserializerMap.put(java.sql.Time.class.getName(), new SqlDateDeserializer(java.sql.Time.class));
@@ -461,6 +452,9 @@ public class ContextSerializerFactory {
 
         // hessian/3bb5
         staticDeserializerMap.put(StackTraceElement.class.getName(), new StackTraceElementDeserializer(fieldFactory));
+
+        staticDeserializerMap.put(Inet4Address.class.getName(), new InetAddressDeserializer(Inet4Address.class));
+        staticDeserializerMap.put(Inet6Address.class.getName(), new InetAddressDeserializer(Inet6Address.class));
 
         ClassLoader systemClassLoader = null;
         try {

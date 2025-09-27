@@ -24,7 +24,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
+import org.junit.jupiter.api.Assertions;
 import org.slf4j.spi.LocationAwareLogger;
 
 /**
@@ -94,5 +97,19 @@ public abstract class SerializeTestBase {
             input.setSerializerFactory(serializerFactory);
         }
         return inFun.apply(input);
+    }
+
+    protected <T> void assertListDuplicateReferences(T t) throws IOException {
+        List<Object> list = new ArrayList<>();
+        list.add(t);
+        list.add(t);
+        List<Object> result = baseHessian2Serialize(list);
+        Assertions.assertEquals(list.size(), result.size());
+        Assertions.assertSame(result.get(0), result.get(1));
+        if (t instanceof Object[]) {
+            Assertions.assertArrayEquals((Object[]) t, (Object[]) result.get(0));
+        } else {
+            Assertions.assertEquals(t, result.get(0));
+        }
     }
 }
