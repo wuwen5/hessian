@@ -50,7 +50,7 @@ public class InetSocketAddressDeserializer extends BaseDeserializer {
     public Object readObject(AbstractHessianDecoder in, Object[] fields) throws IOException {
         String hostName = null;
         InetAddress address = null;
-        int port = -1;
+        int port = 0;
 
         int ref = in.addRef(null);
 
