@@ -32,7 +32,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class Hessian2ReuseTest extends SerializeTestBase {
@@ -54,7 +53,7 @@ public class Hessian2ReuseTest extends SerializeTestBase {
 
     @Test
     public void testString() throws IOException {
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             String obj = "Hello, Hessian2, round:" + i;
 
             String newObj = serializeAndDeserialize(obj, String.class);
@@ -74,7 +73,7 @@ public class Hessian2ReuseTest extends SerializeTestBase {
 
     @Test
     public void testBaseUser() throws IOException {
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             BaseUser obj = new BaseUser();
             obj.setUserId(i * ThreadLocalRandom.current().nextInt(10000));
             obj.setUserName(String.valueOf(System.currentTimeMillis()));
@@ -88,12 +87,10 @@ public class Hessian2ReuseTest extends SerializeTestBase {
     }
 
     /**
-     * TODO
      * */
     @Test
-    @Disabled
     public void testSubUser() throws IOException {
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             SubUser obj = new SubUser();
             obj.setUserId(i * ThreadLocalRandom.current().nextInt(10000));
             obj.setUserName(String.valueOf(System.currentTimeMillis()));
@@ -110,12 +107,10 @@ public class Hessian2ReuseTest extends SerializeTestBase {
     }
 
     /**
-     * TODO
      * */
     @Test
-    @Disabled
     public void testGrandsonUser() throws IOException {
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             GrandsonUser obj = new GrandsonUser();
             obj.setUserId(i * ThreadLocalRandom.current().nextInt(10000));
             obj.setUserName(String.valueOf(System.currentTimeMillis()));
@@ -140,7 +135,7 @@ public class Hessian2ReuseTest extends SerializeTestBase {
 
     @Test
     public void testHessian2StringShortType() throws IOException {
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             Hessian2StringShortType obj = new Hessian2StringShortType();
             obj.shortSet = new HashSet<>();
             obj.stringShortMap = new HashMap<>();

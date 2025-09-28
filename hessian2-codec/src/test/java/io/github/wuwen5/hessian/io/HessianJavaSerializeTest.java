@@ -81,9 +81,6 @@ public class HessianJavaSerializeTest extends SerializeTestBase {
     @Test
     public void testFloat() throws Exception {
         Float fData = 99.8F;
-        Double dData = 99.8D;
-        // TODO Why does dubbo-hessian need to be converted to double? Is it a bug in dubbo-hessian ?
-        // https://github.com/apache/dubbo-hessian-lite/pull/12 ?
         Assertions.assertEquals(fData, baseHessian2Serialize(fData));
     }
 }

@@ -18,6 +18,8 @@ package io.github.wuwen5.hessian.io;
 
 import java.io.IOException;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -30,40 +32,34 @@ public class NumberFormatTest extends SerializeTestBase {
         NumberFormat result = baseHessian2Serialize(originalNumberFormat);
 
         Assertions.assertEquals(originalNumberFormat.getMaximumFractionDigits(), result.getMaximumFractionDigits());
-        // TODO
-        //        Assertions.assertEquals(originalNumberFormat.getMaximumIntegerDigits(),
-        // result.getMaximumIntegerDigits());
+        Assertions.assertEquals(originalNumberFormat.getMaximumIntegerDigits(), result.getMaximumIntegerDigits());
         Assertions.assertEquals(originalNumberFormat.getMinimumFractionDigits(), result.getMinimumFractionDigits());
         Assertions.assertEquals(originalNumberFormat.getMinimumIntegerDigits(), result.getMinimumIntegerDigits());
         Assertions.assertEquals(originalNumberFormat.getRoundingMode(), result.getRoundingMode());
-        // TODO Support currency
-        //        Assertions.assertEquals(originalNumberFormat.getCurrency(), result.getCurrency());
+        Assertions.assertEquals(originalNumberFormat.getCurrency(), result.getCurrency());
     }
 
     @Test
-    void testCompact() throws IOException {
-        NumberFormat obj = NumberFormat.getInstance(Locale.US);
-        // TODO
-        //        Assertions.assertEquals(
-        //                obj.getMaximumFractionDigits(), baseHessian2Serialize(obj).getMaximumFractionDigits());
-        //        Assertions.assertEquals(
-        //                obj.getMaximumIntegerDigits(), baseHessian2Serialize(obj).getMaximumIntegerDigits());
-        //        Assertions.assertEquals(
-        //                obj.getMinimumFractionDigits(), baseHessian2Serialize(obj).getMinimumFractionDigits());
-        //        Assertions.assertEquals(
-        //                obj.getMinimumIntegerDigits(), baseHessian2Serialize(obj).getMinimumIntegerDigits());
-        //        Assertions.assertEquals(
-        //                obj.getRoundingMode(), baseHessian2Serialize(obj).getRoundingMode());
-        // TODO Support currency
-        //        Assertions.assertEquals(obj.getCurrency(), baseHessian2Serialize(obj).getCurrency());
+    void testCollection() throws IOException {
+        NumberFormat originalNumberFormat = NumberFormat.getInstance(Locale.US);
 
-        // TODO Support currency
-        //        Assertions.assertEquals(obj.getCurrency(), hessian3ToHessian3(obj).getCurrency());
+        List<NumberFormat> list = new ArrayList<>();
+        list.add(originalNumberFormat);
+        list.add(originalNumberFormat);
 
-        // TODO Support currency
-        //        Assertions.assertEquals(obj.getCurrency(), hessian4ToHessian3(obj).getCurrency());
+        List<NumberFormat> result = baseHessian2Serialize(list);
 
-        // TODO Support currency
-        //        Assertions.assertEquals(obj.getCurrency(), hessian3ToHessian4(obj).getCurrency());
+        Assertions.assertEquals(list.size(), result.size());
+        Assertions.assertSame(result.get(0), result.get(1));
+        Assertions.assertEquals(
+                originalNumberFormat.getMaximumFractionDigits(), result.get(0).getMaximumFractionDigits());
+        Assertions.assertEquals(
+                originalNumberFormat.getMaximumIntegerDigits(), result.get(0).getMaximumIntegerDigits());
+        Assertions.assertEquals(
+                originalNumberFormat.getMinimumFractionDigits(), result.get(0).getMinimumFractionDigits());
+        Assertions.assertEquals(
+                originalNumberFormat.getMinimumIntegerDigits(), result.get(0).getMinimumIntegerDigits());
+        Assertions.assertEquals(
+                originalNumberFormat.getRoundingMode(), result.get(0).getRoundingMode());
     }
 }
