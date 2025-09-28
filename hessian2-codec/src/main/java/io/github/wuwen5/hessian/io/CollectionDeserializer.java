@@ -49,6 +49,8 @@
 package io.github.wuwen5.hessian.io;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 /**
@@ -101,7 +103,10 @@ public class CollectionDeserializer extends AbstractListDeserializer {
             list = new ArrayList<>();
         } else if (!type.isInterface()) {
             try {
-                list = (Collection) type.getDeclaredConstructor().newInstance();
+                Constructor<?> declaredConstructor = type.getDeclaredConstructor();
+                if (Modifier.isPublic(declaredConstructor.getModifiers())) {
+                    list = (Collection) declaredConstructor.newInstance();
+                }
             } catch (Exception ignored) {
             }
         }
