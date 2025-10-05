@@ -1,3 +1,5 @@
 java.io.File=io.github.wuwen5.hessian.io.FileDeserializer
 java.math.BigDecimal=io.github.wuwen5.hessian.io.BigDecimalDeserializer
 javax.management.ObjectName=io.github.wuwen5.hessian.io.ObjectNameDeserializer
+java.time.Duration=io.github.wuwen5.hessian.io.time.DurationDeserializer
+java.time.Instant=io.github.wuwen5.hessian.io.time.InstantDeserializer
