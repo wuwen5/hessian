@@ -4,3 +4,5 @@ java.io.File=io.github.wuwen5.hessian.io.StringValueSerializer
 java.math.BigDecimal=io.github.wuwen5.hessian.io.StringValueSerializer
 java.util.Locale=io.github.wuwen5.hessian.io.LocaleSerializer
 javax.management.ObjectName=io.github.wuwen5.hessian.io.StringValueSerializer
+java.time.Duration=io.github.wuwen5.hessian.io.time.DurationSerializer
+java.time.Instant=io.github.wuwen5.hessian.io.time.InstantSerializer
