@@ -25,7 +25,17 @@ import java.io.Serializable;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.MonthDay;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
+import java.time.Period;
+import java.time.Year;
+import java.time.YearMonth;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -78,6 +88,86 @@ public class JavaTimeTest extends SerializeTestBase {
         LocalDate date = baseHessian2Serialize(localDate);
         assertEquals(date, localDate);
         assertListDuplicateReferences(LocalDate.now());
+    }
+
+    @Test
+    public void testLocalDateTime() throws Exception {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        LocalDateTime dateTime = baseHessian2Serialize(localDateTime);
+        assertEquals(dateTime, localDateTime);
+        assertListDuplicateReferences(LocalDateTime.now());
+    }
+
+    @Test
+    public void testMonthDay() throws Exception {
+        MonthDay monthDay = MonthDay.of(12, 25);
+        MonthDay result = baseHessian2Serialize(monthDay);
+        assertEquals(result, monthDay);
+        assertListDuplicateReferences(MonthDay.now());
+    }
+
+    @Test
+    public void testZoneOffset() throws Exception {
+        ZoneOffset zoneOffset = ZoneOffset.ofHours(8);
+        ZoneOffset result = baseHessian2Serialize(zoneOffset);
+        assertEquals(result, zoneOffset);
+        assertListDuplicateReferences(ZoneOffset.UTC);
+    }
+
+    @Test
+    public void testOffsetTime() throws Exception {
+        OffsetTime offsetTime = OffsetTime.now();
+        OffsetTime result = baseHessian2Serialize(offsetTime);
+        assertEquals(result, offsetTime);
+        assertListDuplicateReferences(OffsetTime.now(ZoneOffset.UTC));
+    }
+
+    @Test
+    public void testOffsetDateTime() throws Exception {
+        OffsetDateTime offsetDateTime = OffsetDateTime.now();
+        OffsetDateTime result = baseHessian2Serialize(offsetDateTime);
+        assertEquals(result, offsetDateTime);
+        assertListDuplicateReferences(OffsetDateTime.now(ZoneOffset.UTC));
+    }
+
+    @Test
+    public void testZonedDateTime() throws Exception {
+        ZonedDateTime zonedDateTime = ZonedDateTime.now();
+        ZonedDateTime result = baseHessian2Serialize(zonedDateTime);
+        assertEquals(result, zonedDateTime);
+        assertListDuplicateReferences(ZonedDateTime.now(ZoneId.of("UTC")));
+    }
+
+    @Test
+    public void testYearMonth() throws Exception {
+        YearMonth yearMonth = YearMonth.of(2023, 12);
+        YearMonth result = baseHessian2Serialize(yearMonth);
+        assertEquals(result, yearMonth);
+        assertListDuplicateReferences(YearMonth.now());
+    }
+
+    @Test
+    public void testYear() throws Exception {
+        Year year = Year.of(2023);
+        Year result = baseHessian2Serialize(year);
+        assertEquals(result, year);
+        assertListDuplicateReferences(Year.now());
+    }
+
+    @Test
+    public void testPeriod() throws Exception {
+        Period period = Period.of(1, 2, 3);
+        Period result = baseHessian2Serialize(period);
+        assertEquals(result, period);
+        assertListDuplicateReferences(Period.ofDays(10));
+    }
+
+    @Test
+    public void testZoneId() throws Exception {
+        ZoneId zoneId = ZoneId.of("America/New_York");
+        ZoneId result = baseHessian2Serialize(zoneId);
+        assertEquals(result, zoneId);
+        assertListDuplicateReferences(ZoneId.of("UTC"));
     }
 
     static class TestInner implements Serializable {
