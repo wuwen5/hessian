@@ -24,6 +24,8 @@ import io.github.wuwen5.hessian.io.SerializeTestBase;
 import java.io.Serializable;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -60,6 +62,22 @@ public class JavaTimeTest extends SerializeTestBase {
         assertEquals(ret, instant);
 
         assertListDuplicateReferences(Instant.now());
+    }
+
+    @Test
+    public void testLocalTime() throws Exception {
+        LocalTime localTime = LocalTime.now();
+        LocalTime time = baseHessian2Serialize(localTime);
+        assertEquals(time, localTime);
+        assertListDuplicateReferences(LocalTime.now());
+    }
+
+    @Test
+    public void testLocalDate() throws Exception {
+        LocalDate localDate = LocalDate.now();
+        LocalDate date = baseHessian2Serialize(localDate);
+        assertEquals(date, localDate);
+        assertListDuplicateReferences(LocalDate.now());
     }
 
     static class TestInner implements Serializable {

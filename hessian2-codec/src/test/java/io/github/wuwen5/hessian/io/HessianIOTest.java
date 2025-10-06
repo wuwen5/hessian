@@ -55,7 +55,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,7 +66,6 @@ import java.util.stream.IntStream;
 import lombok.Getter;
 import lombok.Setter;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class HessianIOTest extends SerializeTestBase {
@@ -539,21 +537,6 @@ public class HessianIOTest extends SerializeTestBase {
         assertEquals(now, sqlDate.getTime());
         assertEquals(timestamp, dm.getTime());
         assertEquals(timestamp, utcTime);
-    }
-
-    /**
-     * TODO
-     */
-    @Test
-    @Disabled
-    public void testLocalDate() throws IOException {
-        // Test local date
-        LocalDate now = LocalDate.now();
-
-        LocalDate localDate = (LocalDate)
-                hessianIO(output -> Try.run(() -> output.writeObject(now)), input -> Try.of(input::readObject)
-                        .get());
-        assertEquals(now, localDate);
     }
 
     @Test
