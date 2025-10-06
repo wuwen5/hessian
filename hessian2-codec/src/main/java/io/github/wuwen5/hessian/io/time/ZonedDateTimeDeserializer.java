@@ -20,9 +20,7 @@ package io.github.wuwen5.hessian.io.time;
 import com.caucho.hessian.io.AbstractDeserializer;
 import io.github.wuwen5.hessian.io.AbstractHessianDecoder;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
@@ -49,11 +47,11 @@ public class ZonedDateTimeDeserializer extends AbstractDeserializer {
      */
     @Override
     public Object readObject(AbstractHessianDecoder in, Object[] fields) throws IOException {
-        LocalDate date = LocalDate.ofEpochDay(in.readLong());
-        LocalTime time = LocalTime.ofNanoOfDay(in.readLong());
-        ZoneId zone = ZoneId.of(in.readString());
-        Object obj = ZonedDateTime.of(LocalDateTime.of(date, time), zone);
-        in.addRef(obj);
+        int ref = in.addRef(null);
+        LocalDateTime dateTime = (LocalDateTime) in.readObject();
+        ZoneId zone = (ZoneId) in.readObject();
+        Object obj = ZonedDateTime.of(dateTime, zone);
+        in.setRef(ref, obj);
         return obj;
     }
 }

@@ -36,17 +36,15 @@ public class OffsetDateTimeSerializer extends AbstractSerializer {
         int ref = out.writeObjectBegin(className);
 
         if (ref == -1) {
-            out.writeClassFieldLength(3);
+            out.writeClassFieldLength(2);
 
-            out.writeString("date");
-            out.writeString("time");
+            out.writeString("dateTime");
             out.writeString("offset");
 
             out.writeObjectBegin(className);
         }
 
-        out.writeLong(offsetDateTime.toLocalDate().toEpochDay());
-        out.writeLong(offsetDateTime.toLocalTime().toNanoOfDay());
-        out.writeInt(offsetDateTime.getOffset().getTotalSeconds());
+        out.writeObject(offsetDateTime.toLocalDateTime());
+        out.writeObject(offsetDateTime.getOffset());
     }
 }

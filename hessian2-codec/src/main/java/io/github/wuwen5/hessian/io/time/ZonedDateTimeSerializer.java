@@ -36,17 +36,15 @@ public class ZonedDateTimeSerializer extends AbstractSerializer {
         int ref = out.writeObjectBegin(className);
 
         if (ref == -1) {
-            out.writeClassFieldLength(3);
+            out.writeClassFieldLength(2);
 
-            out.writeString("date");
-            out.writeString("time");
+            out.writeString("dateTime");
             out.writeString("zone");
 
             out.writeObjectBegin(className);
         }
 
-        out.writeLong(zonedDateTime.toLocalDate().toEpochDay());
-        out.writeLong(zonedDateTime.toLocalTime().toNanoOfDay());
-        out.writeString(zonedDateTime.getZone().getId());
+        out.writeObject(zonedDateTime.toLocalDateTime());
+        out.writeObject(zonedDateTime.getZone());
     }
 }
