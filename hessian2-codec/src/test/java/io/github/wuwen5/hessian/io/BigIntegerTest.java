@@ -30,4 +30,32 @@ public class BigIntegerTest extends SerializeTestBase {
 
         Assertions.assertEquals(originalBigInteger, result);
     }
+
+    @Test
+    void testWithUnsafeDisabled() throws IOException {
+        String originalUnsafeProp = System.getProperty("com.caucho.hessian.unsafe");
+        try {
+            System.setProperty("com.caucho.hessian.unsafe", "false");
+
+            BigInteger originalBigInteger = new BigInteger("1234567890");
+            BigInteger result = baseHessian2Serialize(originalBigInteger);
+            Assertions.assertEquals(originalBigInteger, result);
+
+            // Test with larger value
+            BigInteger largeBigInteger = new BigInteger("123456789012345678901234567890");
+            BigInteger largeResult = baseHessian2Serialize(largeBigInteger);
+            Assertions.assertEquals(largeBigInteger, largeResult);
+
+            // Test with negative value
+            BigInteger negativeBigInteger = new BigInteger("-9876543210");
+            BigInteger negativeResult = baseHessian2Serialize(negativeBigInteger);
+            Assertions.assertEquals(negativeBigInteger, negativeResult);
+        } finally {
+            if (originalUnsafeProp != null) {
+                System.setProperty("com.caucho.hessian.unsafe", originalUnsafeProp);
+            } else {
+                System.clearProperty("com.caucho.hessian.unsafe");
+            }
+        }
+    }
 }
