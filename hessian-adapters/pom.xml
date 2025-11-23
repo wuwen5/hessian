@@ -9,6 +9,7 @@
 
   <artifactId>hessian-adapters</artifactId>
   <packaging>pom</packaging>
+  <name>hessian-adapters</name>
   <modules>
     <module>hessian-dubbo-adapter</module>
   </modules>

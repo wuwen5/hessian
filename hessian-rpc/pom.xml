@@ -8,6 +8,7 @@
   </parent>
 
   <artifactId>hessian-rpc</artifactId>
+  <name>hessian-rpc</name>
 
   <properties />
 

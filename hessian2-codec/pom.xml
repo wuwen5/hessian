@@ -8,6 +8,7 @@
   </parent>
 
   <artifactId>hessian2-codec</artifactId>
+  <name>hessian2-codec</name>
 
   <dependencies>
     <dependency>

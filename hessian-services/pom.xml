@@ -8,6 +8,7 @@
   </parent>
 
   <artifactId>hessian-services</artifactId>
+  <name>hessian-services</name>
 
   <dependencies>
     <dependency>

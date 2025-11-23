@@ -8,6 +8,7 @@
   </parent>
 
   <artifactId>hessian-dubbo-adapter</artifactId>
+  <name>hessian-dubbo-adapter</name>
 
   <properties />
 
