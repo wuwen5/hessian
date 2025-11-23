@@ -14,7 +14,9 @@
     <module>dubbo-scenario</module>
   </modules>
 
-  <properties />
+  <properties>
+    <maven.deploy.skip>true</maven.deploy.skip>
+  </properties>
 
   <build>
     <plugins>
