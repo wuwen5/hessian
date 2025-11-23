@@ -13,6 +13,7 @@
     <!--    <dubbo.version>3.3.5</dubbo.version>-->
     <dubbo.version>3.2.18</dubbo.version>
     <jmh.version>1.37</jmh.version>
+    <skip_maven_deploy>true</skip_maven_deploy>
   </properties>
 
   <dependencies>
@@ -52,7 +53,23 @@
   </dependencies>
 
   <build>
-    <plugins />
+    <plugins>
+      <plugin>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.sonatype.central</groupId>
+        <artifactId>central-publishing-maven-plugin</artifactId>
+        <version>0.9.0</version>
+        <configuration>
+          <skip>true</skip>
+          <skipPublishing>true</skipPublishing>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 
 </project>

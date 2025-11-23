@@ -395,10 +395,14 @@
             <extensions>true</extensions>
             <configuration>
               <publishingServerId>central</publishingServerId>
+              <skip>${skip_maven_deploy}</skip>
             </configuration>
           </plugin>
           <plugin>
             <artifactId>maven-deploy-plugin</artifactId>
+            <configuration>
+              <skip>${skip_maven_deploy}</skip>
+            </configuration>
           </plugin>
           <plugin>
             <artifactId>maven-source-plugin</artifactId>
