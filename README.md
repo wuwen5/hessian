@@ -81,7 +81,7 @@ Hessian2 是 Hessian 协议的升级版本，主要特性包括：
 <dependency>
     <groupId>io.github.wuwen5.hessian</groupId>
     <artifactId>hessian2-codec</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.0</version>
 </dependency>
 ```
 
@@ -94,12 +94,12 @@ Hessian2 是 Hessian 协议的升级版本，主要特性包括：
   <dependency>
     <groupId>io.github.wuwen5.hessian</groupId>
     <artifactId>hessian2-codec</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.0</version>
   </dependency>
   <dependency>
     <groupId>io.github.wuwen5.hessian</groupId>
     <artifactId>hessian-dubbo-adapter</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.0</version>
   </dependency>
   <dependency>
     <groupId>org.apache.dubbo</groupId>
