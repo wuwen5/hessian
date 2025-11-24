@@ -6,7 +6,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/wuwen5/hessian/badge.svg?branch=main)](https://coveralls.io/github/wuwen5/hessian?branch=main)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=wuwen5_hessian&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=wuwen5_hessian)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=wuwen5_hessian&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=wuwen5_hessian)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.wuwen5.hessian/hessian/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.wuwen5.hessian/hessian/)
+[![Maven Central](https://maven-badges.herokuapp.com/sonatype-central/io.github.wuwen5.hessian/hessian/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.wuwen5.hessian/hessian/)
 [![Last SNAPSHOT](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fcentral.sonatype.com%2Frepository%2Fmaven-snapshots%2Fio%2Fgithub%2Fwuwen5%2Fhessian%2Fhessian%2Fmaven-metadata.xml&label=latest%20snapshot)](https://central.sonatype.com/repository/maven-snapshots/io/github/wuwen5/hessian/hessian/maven-metadata.xml)
 [![GitHub release](https://img.shields.io/github/release/wuwen5/hessian.svg)](https://github.com/wuwen5/hessian/releases)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
