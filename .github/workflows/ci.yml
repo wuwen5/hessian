@@ -33,7 +33,7 @@ jobs:
         run: ./mvnw -B clean verify javadoc:javadoc --file pom.xml
       - name: Upload coverage to Codecov
         if: matrix.os == 'ubuntu-latest' && matrix.java == '11'
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./hessian2-codec/target/site/jacoco/jacoco.xml
