@@ -24,7 +24,7 @@ jobs:
         run: ./mvnw -B clean verify --file pom.xml
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./hessian2-codec/target/site/jacoco/jacoco.xml
