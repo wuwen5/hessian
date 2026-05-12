@@ -76,7 +76,7 @@
     <sonar.plugin>5.5.0.6356</sonar.plugin>
     <sonar.organization>wuwen5</sonar.organization>
 
-    <slf4j.version>2.0.17</slf4j.version>
+    <slf4j.version>2.0.18</slf4j.version>
     <lombok.version>1.18.42</lombok.version>
     <junit_version>5.13.4</junit_version>
     <mockito_version>5.21.0</mockito_version>
