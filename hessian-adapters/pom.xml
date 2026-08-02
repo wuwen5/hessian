@@ -15,7 +15,7 @@
   </modules>
 
   <properties>
-    <dubbo.version>3.2.18</dubbo.version>
+    <dubbo.version>3.3.6</dubbo.version>
   </properties>
 
   <dependencies>
